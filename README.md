@@ -14,7 +14,8 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 
 ## Create Contracts Webhooks - Update Contracts
 - Copy new contracts into contracts folder.
-- 
+- If needed update addresses or abis in `wagmi.config.ts`
+- From console, execute `npx wagmi generate`
 
 ## Deploy on Vercel
 
