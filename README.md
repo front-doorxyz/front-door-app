@@ -17,6 +17,14 @@ You can start editing the page by modifying `pages/index.tsx`. The page auto-upd
 - If needed update addresses or abis in `wagmi.config.ts`
 - From console, execute `npx wagmi generate`
 
+## .env.local
+a .env.local file is required to run this application:
+
+```
+NEXT_PUBLIC_PROJECT_ID=<WALLET CONNECT PROJECT ID>
+NEXT_PUBLIC_APP_NAME='Front Door'
+```
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
