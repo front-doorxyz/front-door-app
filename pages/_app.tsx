@@ -10,8 +10,7 @@ import { publicProvider } from 'wagmi/providers/public';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [
-    hardhat,
-    ...(process.env.NEXT_PUBLIC_ENABLE_TESTNETS === 'true' ? [goerli] : []),
+    hardhat
   ],
   [publicProvider()]
 );
@@ -19,8 +18,8 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
 
 
 const { connectors } = getDefaultWallets({
-  appName: process.env.APP_NAME as string, 
-  projectId: process.env.PROJECT_ID as string,
+  appName: process.env.NEXT_PUBLIC_APP_NAME as string, 
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID as string,
   chains,
 });
 
