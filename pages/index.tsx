@@ -41,10 +41,6 @@ const Home: NextPage = () => {
               </p>
             </div>
             <div className="md:w-1/2 lg:w-1/2">
-              {/* <div
-                className="bg-cover bg-center h-full w-full "
-                style={{ backgroundImage: `url(${authImg.src})` }}
-              /> */}
               <Image
                 src={authImg}
                 alt="Front Door"
