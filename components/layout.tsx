@@ -49,6 +49,9 @@ export const Layout: React.FC<Props> = ({ children, title = "" }) => {
         <NavLink href="/">Home</NavLink>
       </li>
       <li>
+        <NavLink href="/faucet">Faucet</NavLink>
+      </li>
+      <li>
         <NavLink href="/all-jobs">All Jobs</NavLink>
       </li>
       {address ? (
@@ -82,7 +85,9 @@ export const Layout: React.FC<Props> = ({ children, title = "" }) => {
         />
         <link href="/favicon.ico" rel="icon" />
       </Head>
-      <div className="sticky top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary dark:bg-slate-500 flex m-auto py-2">
+      
+      <main className="bg-slate-200 dark:bg-slate-800 h-screen">
+      <nav className="sticky top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary dark:bg-slate-500 flex m-auto py-2 mb-3">
         <div className="navbar-start w-auto lg:w-1/2">
           <div className="lg:hidden dropdown" ref={burgerMenuRef}>
             <button
@@ -119,8 +124,7 @@ export const Layout: React.FC<Props> = ({ children, title = "" }) => {
         <div className="navbar-end mr-2">
           <ConnectButton />
         </div>
-      </div>
-      <main className="bg-slate-200 dark:bg-slate-800 h-screen">
+      </nav>
         <div className='container w-5/6 mx-auto'>
           {children}
         </div>
