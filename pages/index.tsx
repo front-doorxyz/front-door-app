@@ -4,26 +4,14 @@ import Head from 'next/head';
 import authImg from '../assets/frontdoor.jpg';
 import howitworks from "../assets/howitworks.png";
 import Image from 'next/image'
-
+import { Layout } from '../components/layout';
 
 
 const Home: NextPage = () => {
 
   return (
-    <div className="text-3xl font-bold ">
-      <Head>
-        <title>Front-Door</title>
-        <meta
-          content="Front-Door WEB 3 Recruiting Platform"
-          name="description"
-        />
-        <link href="/favicon.ico" rel="icon" />
-      </Head>
-
-      <main className="bg-slate-200 dark:bg-slate-800 h-screen relative">
-        {/* <ConnectButton /> */}
-
-        <div className='container mx-auto'>
+    <Layout title='Home' >    
+        
           <div className='dark:text-white mx-auto text-center py-10'>Front Door Protocol</div>
           <div className="flex mt-10">
             <div className="md:w-1/2 lg:w-1/2 dark:text-white mr-2 text-lg mt-5">
@@ -60,9 +48,9 @@ const Home: NextPage = () => {
                   height: 'auto',
                 }} priority />
           </div>
-        </div>
-      </main>
-    </div>
+          
+
+    </Layout>
   );
 };
 
