@@ -9,8 +9,7 @@ const Home: NextPage = () => {
 
   return (
     <Layout title='Home' >    
-        
-          <div className='dark:text-white mx-auto text-center py-10'>Front Door Protocol</div>
+          <h1 className='dark:text-white font-extrabold lg:text-4xl text-white-900 mx-auto text-center my-5'>Front Door Protocol</h1>
           <div className="flex mt-10">
             <div className="md:w-1/2 lg:w-1/2 dark:text-white mr-2 text-lg mt-5">
               <p className='mb-10'>
@@ -32,22 +31,36 @@ const Home: NextPage = () => {
                 alt="Front Door"
                 style={{
                   width: '100%',
-                  height: 'auto',
+                  height: '85%',
                 }} priority />
             </div>
           </div>
-          <div className='dark:text-white mx-auto text-center py-10 my-5'>How does it works?</div>
-          <div className="mx-auto">
-          <Image
+          <h1 className='dark:text-blue font-extrabold lg:text-4xl text-blue-900 mx-auto text-center my-5'>How does it work?</h1>
+          <div className="flex mt-10">
+            <div className="md:w-1/2 lg:w-1/2 dark:text-black mr-2 text-lg mt-5">
+              <h1 className="mb-10 text-4xl font-extrabold leading-none tracking-tight text-blue-900 md:text-5xl lg:text-3xl dark:text-blue"
+              >
+              Approach             
+              </h1>
+              <ol className="mb-10 list-decimal list-inside dark:text-blue text-blue-900">
+                <li>Clients sign up to a Dapp and post job requirements, accepting terms and conditions as part of the smart contract transaction.</li>
+                <li>Role is promoted to Front Door's network for referral monetization.</li>
+                <li>Client receives suggested shortlist of candidates from platform representatives and controls the interview process.</li>
+                <li>Client sets the fee for the role and funds are only released when refund timings have been passed, minimizing credit risk.</li>
+                <li>Candidate receives the recruitment fee once the client makes full payment, which is controlled by the Front Door finance team.</li>
+                <li>A 3-month refund period exists for clients, with a refund percentage decreasing each month. Failure to make full payment leads to platform ban and bad debt collection policies.</li>
+              </ol>
+            </div>
+            <div className="md:w-1/2 lg:w-1/2">
+              <Image
                 src={howitworks}
                 alt="Front Door"
                 style={{
-                  width: '100%',
-                  height: 'auto',
+                  width: '150%',
+                  height: '100%',
                 }} priority />
-          </div>
-          
-
+            </div>
+          </div>    
     </Layout>
   );
 };

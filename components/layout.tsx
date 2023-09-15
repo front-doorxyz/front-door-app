@@ -6,6 +6,7 @@ import { useAccount } from "wagmi";
 import { Bars3Icon, BugAntIcon, MagnifyingGlassIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import Head from "next/head";
+import logo from "../assets/logo.svg";
 
 interface Props {
   children: React.ReactNode;
@@ -87,7 +88,7 @@ export const Layout: React.FC<Props> = ({ children, title = "" }) => {
       </Head>
       
       <main className="bg-slate-200 dark:bg-slate-800 h-screen">
-      <nav className="sticky top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary dark:bg-slate-500 flex m-auto py-2 mb-3">
+      <nav className="sticky top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary dark:bg-green-500 flex m-auto py-2 mb-3">
         <div className="navbar-start w-auto lg:w-1/2">
           <div className="lg:hidden dropdown" ref={burgerMenuRef}>
             <button
@@ -112,7 +113,7 @@ export const Layout: React.FC<Props> = ({ children, title = "" }) => {
           </div>
           <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-6">
             <div className="flex relative w-10 h-10">
-              <Image alt="frontdoor logo" className="cursor-pointer" fill src="/logo.svg" />
+              <Image alt="frontdoor logo" className="cursor-pointer" fill src={logo} />
             </div>
             <div className="flex flex-col">
               <span className="font-bold leading-tight">Front-Door</span>
