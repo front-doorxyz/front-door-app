@@ -46,13 +46,13 @@ export const Layout: React.FC<Props> = ({ children, title = "" }) => {
 
   const navLinks = (
     <>
-      <li>
+      <li className="dark:text-white">
         <NavLink href="/">Home</NavLink>
       </li>
-      <li>
+      <li className="dark:text-white">
         <NavLink href="/faucet">Faucet</NavLink>
       </li>
-      <li>
+      <li className="dark:text-white">
         <NavLink href="/all-jobs">All Jobs</NavLink>
       </li>
       {address ? (
@@ -65,12 +65,12 @@ export const Layout: React.FC<Props> = ({ children, title = "" }) => {
           </li> */}
         </>
       ) : (
-        <li>
+        <li className="dark:text-white">
           <NavLink href="/register">Register</NavLink>
         </li>
       )}
 
-      <li>
+      <li className="dark:text-white">
         <NavLink href="/contactus">Contact us</NavLink>
       </li>
     </>
@@ -87,7 +87,7 @@ export const Layout: React.FC<Props> = ({ children, title = "" }) => {
         <link href="/favicon.ico" rel="icon" />
       </Head>
       
-      <main className="bg-slate-200 dark:bg-slate-800 h-screen">
+      <main className="bg-slate-200 dark:bg-slate-800">
       <nav className="sticky top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary dark:bg-green-500 flex m-auto py-2 mb-3">
         <div className="navbar-start w-auto lg:w-1/2">
           <div className="lg:hidden dropdown" ref={burgerMenuRef}>
@@ -111,7 +111,7 @@ export const Layout: React.FC<Props> = ({ children, title = "" }) => {
               </ul>
             )}
           </div>
-          <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-6">
+          <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-6 dark:text-white">
             <div className="flex relative w-10 h-10">
               <Image alt="frontdoor logo" className="cursor-pointer" fill src={logo} />
             </div>
