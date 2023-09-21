@@ -63,39 +63,32 @@ const Home: NextPage = () => {
           />
         </div>
       </div>
-      <h1 className="dark:text-blue font-extrabold lg:text-4xl text-blue-900 mx-auto text-center my-5">
+      <h1 className="dark:text-white font-extrabold lg:text-4xl text-white-900 mx-auto text-center my-5">
         How does it work?
       </h1>
       <div className="flex mt-10">
         <div className="md:w-1/2 lg:w-1/2 dark:text-black mr-2 text-lg mt-5">
-          <h1 className="mb-10 text-4xl font-extrabold leading-none tracking-tight text-blue-900 md:text-5xl lg:text-3xl dark:text-blue">
+          <h1 className="mb-10 text-4xl font-extrabold leading-none tracking-tight text-white-900 md:text-5xl lg:text-3xl dark:text-white">
             Approach
           </h1>
-          <ol className="mb-10 list-decimal list-inside dark:text-blue text-blue-900">
+          <ol className="mb-10 list-decimal list-inside dark:text-white text-white-900">
             <li>
-              Clients sign up to a Dapp and post job requirements, accepting
-              terms and conditions as part of the smart contract transaction.
+              You sign up, post your role requirements, and set your fee level
+              in 2 easy steps.
             </li>
             <li>
-              Role is promoted to Front Door's network for referral
-              monetization.
+              Front Door promotes the role to a broad network of trusted
+              referrers and recruiters.
             </li>
             <li>
-              Client receives suggested shortlist of candidates from platform
-              representatives and controls the interview process.
+              You’ll receive a shortlist, prioritised based on the the quality
+              of referrers track record of success. From that you can vet and
+              interview candidates as you wish.
             </li>
             <li>
-              Client sets the fee for the role and funds are only released when
-              refund timings have been passed, minimizing credit risk.
-            </li>
-            <li>
-              Candidate receives the recruitment fee once the client makes full
-              payment, which is controlled by the Front Door finance team.
-            </li>
-            <li>
-              A 3-month refund period exists for clients, with a refund
-              percentage decreasing each month. Failure to make full payment
-              leads to platform ban and bad debt collection policies.
+              If you hire a candidate, the referral fee that you set at the
+              beginning is released as they pass through the stages of
+              probation.
             </li>
           </ol>
         </div>
@@ -111,41 +104,38 @@ const Home: NextPage = () => {
           />
         </div>
       </div>
-      <h1 className="dark:text-blue font-extrabold lg:text-4xl text-blue-900 mx-auto text-center my-5 py-10 mt-10">
-        Register
+
+      <h1 className="dark:text-white font-extrabold lg:text-4xl text-white-900 mx-auto text-center my-5 mt-40">
+        Subscribe to our mailing list
       </h1>
-      <div className="flex mt-10 ">
-        <div className="pt-[1%] w-[50%]">
-          <div className="tabs tabs-boxed flex justify-center  gap-2">
-            <a
-              id="1"
-              className={`inline-block px-4 py-3 text-white bg-blue-600 rounded-lg  ${active ? "tab-active" : ""}`}
-              onClick={activeTab}
+      <div className="flex flex-col justify-center items-center">
+        <p className="dark:text-white font-bold text-white-900 mx-auto text-center my-5">Stay up to date with Frontdoor Developments</p>
+        <div className="w-1/2">
+          <form>
+            <label
+              htmlFor="search"
+              className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
             >
-              Company Register
-            </a>
-            <a
-              id="2"
-              className={`inline-block px-4 py-3 text-white bg-green-600 rounded-lg ${!active ? "tab-active" : ""}`}
-              onClick={activeTab}
-            >
-              Referrer Register
-            </a>
-          </div>
-          <div className="flex justify-center">
-            {active ? <CompanyRegister /> : <ReferrerRegister />}
-          </div>
+              Search
+            </label>
+            <div className="relative">
+              <input
+                type="search"
+                id="search"
+                className="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                placeholder="Email address"
+                required
+              />
+              <button
+                type="submit"
+                className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Subscribe
+              </button>
+            </div>
+          </form>
         </div>
-        <div className="absolute right-0 hidden mt-[0.2%]   md:block lg:w-[47vw]">
-          <div
-            className="absolute flex h-[94vh] w-4/5  bg-secondary bg-contain bg-no-repeat bg-start "
-            style={{
-              backgroundImage: active
-                ? `url(${register.src})`
-                : `url(${register2.src})`,
-            }}
-          />
-        </div>
+        <p className="dark:text-white font-bold text-white-900 mx-auto text-center my-5">By subscribing you accept our <span className="text-blue-700 dark:text-blue">Privacy Notice</span></p>
       </div>
     </Layout>
   );

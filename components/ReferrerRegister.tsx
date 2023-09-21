@@ -27,7 +27,7 @@ const ReferrerRegister = () => {
         className="bg-blue-50 w-[300px] md:w-[30vw]  h-[50vh] p-2  flex flex-col items-center justify-center gap-4 shadow-2xl mt-[2%]"
       >
         <div className="flex flex-col gap-2">
-          <span className="w-1/5 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Name</span>
+          <span className="w-1/5 bg-blue-100 text-white text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-white-900">Name</span>
 
           <input
             type="text"
@@ -37,7 +37,7 @@ const ReferrerRegister = () => {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <span className="w-1/5 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Email</span>
+          <span className="w-1/5 bg-blue-100 text-white text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-white-900">Email</span>
 
           <input
             type="text"

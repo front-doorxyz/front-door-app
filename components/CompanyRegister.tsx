@@ -30,7 +30,7 @@ const CompanyRegister = () => {
         className="bg-blue-50 w-[300px] md:w-[30vw]  h-[50vh] p-2  flex flex-col items-center justify-center gap-4 shadow-2xl mt-[2%]"
       >
         <div className="flex flex-col gap-2">
-          <span className="w-1/2 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Company Name</span>
+          <span className="w-1/2 bg-blue-100 text-white text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-white-900">Company Name</span>
           <input
             type="text"
             value={companyName}
@@ -39,7 +39,7 @@ const CompanyRegister = () => {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <span className="w-1/3 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Description</span>
+          <span className="w-1/3 bg-blue-100 text-white text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-white-900">Description</span>
           <textarea
             value={companyDescription}
             onChange={handleCompanyDescriptionChange}
@@ -47,7 +47,7 @@ const CompanyRegister = () => {
           />
         </div>
         <div className="flex flex-col gap-2">
-        <span className="w-2/4 bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300">Company Website</span>
+        <span className="w-2/4 bg-blue-100 text-white text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-white-900">Company Website</span>
           <input
             type="text"
             value={companySite}
