@@ -1,136 +1,35 @@
-import React, { useCallback, useContext, useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import { useAccount } from "wagmi";
-import { Bars3Icon, BugAntIcon, MagnifyingGlassIcon, SparklesIcon } from "@heroicons/react/24/outline";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import React from "react";
 import Head from "next/head";
-import logo from "../assets/logo.svg";
+import Header from "./Header";
 
 interface Props {
   children: React.ReactNode;
-  title: string
+  title: string;
 }
 
-const NavLink = ({ href, children }: { href: string; children: React.ReactNode }) => {
-  const router = useRouter();
-  const isActive = router.pathname === href;
-
-
-  return (
-    <Link
-      href={href}
-      passHref
-      className={`${isActive ? "bg-secondary shadow-md uppercase" : ""
-        } hover:bg-secondary hover:shadow-md focus:bg-secondary py-1.5 px-3 text-sm rounded-full gap-2 uppercase`}
-    >
-      {children}
-    </Link>
-  );
-};
-
-/**
- * Site header
- */
 export const Layout: React.FC<Props> = ({ children, title = "" }) => {
   //const { registered } = useContext(GeneralContext);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { address } = useAccount();
-  const burgerMenuRef = useRef<HTMLDivElement>(null);
 
   // useOutsideClick(
   //   burgerMenuRef,
   //   useCallback(() => setIsDrawerOpen(false), []),
   // );
 
-  const navLinks = (
-    <>
-      <li className="dark:text-white">
-        <NavLink href="/">Home</NavLink>
-      </li>
-      <li className="dark:text-white">
-        <NavLink href="/faucet">Faucet</NavLink>
-      </li>
-      <li className="dark:text-white">
-        <NavLink href="/all-jobs">All Jobs</NavLink>
-      </li>
-      {address ? (
-        <>
-          <li>
-            <NavLink href="/client">Client</NavLink>
-          </li>
-          {/* <li>
-            <NavLink href="/profile">Profile</NavLink>
-          </li> */}
-        </>
-      ) : (
-        <li className="dark:text-white">
-          <NavLink href="/register">Register</NavLink>
-        </li>
-      )}
-
-      <li className="dark:text-white">
-        <NavLink href="/contactus">Contact us</NavLink>
-      </li>
-    </>
-  );
-
   return (
     <>
       <Head>
-        <title>Front-Door -  {title}</title>
+        <title>Front-Door - {title}</title>
         <meta
           content="Front-Door WEB 3 Recruiting Platform"
           name="description"
         />
         <link href="/favicon.ico" rel="icon" />
       </Head>
-      
-      <main className="bg-slate-200 dark:bg-slate-800">
-      <nav className="sticky top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary dark:bg-green-500 flex m-auto py-2 mb-3">
-        <div className="navbar-start w-auto lg:w-1/2">
-          <div className="lg:hidden dropdown" ref={burgerMenuRef}>
-            <button
-              className={`ml-1 btn btn-ghost ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
-              onClick={() => {
-                setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
-              }}
-            >
-              <Bars3Icon className="h-1/2" />
-            </button>
-            {isDrawerOpen && (
-              <ul
-                tabIndex={0}
-                className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
-                onClick={() => {
-                  setIsDrawerOpen(false);
-                }}
-              >
-                {navLinks}
-              </ul>
-            )}
-          </div>
-          <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-6 dark:text-white">
-            <div className="flex relative w-10 h-10">
-              <Image alt="frontdoor logo" className="cursor-pointer" fill src={logo} />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold leading-tight">Front-Door</span>
-              <span className="text-xs flex">Open Referrals Network</span>
-            </div>
-          </Link>
-          <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">{navLinks}</ul>
-        </div>
-        <div className="navbar-end mr-2">
-          <ConnectButton />
-        </div>
-      </nav>
-        <div className='container w-5/6 mx-auto'>
-          {children}
-        </div>
-      </main>
 
+      <main className="bg-slate-200 dark:bg-slate-800 min-h-screen">
+        <Header />
+        <div className="container w-5/6 mx-auto">{children}</div>
+      </main>
     </>
   );
 };
