@@ -26,7 +26,7 @@ export const Layout: React.FC<Props> = ({ children, title = "" }) => {
         <link href="/favicon.ico" rel="icon" />
       </Head>
 
-      <main className="bg-primary dark:bg-slate-800 min-h-screen">
+      <main className="bg-slate-200 dark:bg-slate-800 min-h-screen">
         <Header />
         <div className="container w-5/6 mx-auto">{children}</div>
       </main>
