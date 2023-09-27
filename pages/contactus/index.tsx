@@ -140,7 +140,7 @@ const ContactUs: NextPage = () => {
             disabled={enableSubmit ? false : true}
             className={
               enableSubmit
-                ? "px-8 py-3 btn btn-primary text-white rounded focus:outline-none w-[200px] md:w-[20vw] hover:scale-110 "
+                ? "px-8 py-3 btn btn-primary text-white rounded focus:outline-none w-[200px] md:w-[20vw] hover:scale-110 bg-blue-900"
                 : "px-8 py-3 bg-slate-500 text-white rounded focus:outline-none w-[200px] md:w-[20vw]"
             }
             type="submit"
