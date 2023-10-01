@@ -62,7 +62,7 @@ const JobInfo: NextPage = () => {
                 bounty={jobInfo.bounty}
               />
             </div>
-            <div className="bg-white shadow-lg col-span-1 mt-[4%] h-[30vh]">
+            <div className="bg-white shadow-lg col-span-1 mt-[4%] h-[30vh] rounded-md">
               hi
             </div>
           </div>

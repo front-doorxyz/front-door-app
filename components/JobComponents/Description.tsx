@@ -60,7 +60,7 @@ const Description = ({
             <ClockIcon className="h-6" />
             Start time
           </div>
-          <div className=" flex  items-center bg-[#3F3F5F] p-2">
+          <div className=" flex  items-center gap-2 bg-[#3F3F5F] p-2">
             <ShoppingBagIcon className="h-6" />
             Occupation
           </div>
