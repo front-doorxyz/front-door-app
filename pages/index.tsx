@@ -67,7 +67,7 @@ const Home: NextPage = () => {
         How does it work?
       </h1>
       <div className="flex mt-10">
-        <div className="md:w-1/2 lg:w-1/2 dark:text-black mr-2 text-lg mt-5">
+        <div className="md:w-1/2 lg:w-1/2 dark:text=[#3F3F5F] mr-2 text-lg mt-5">
           <h1 className="mb-10 text-4xl font-extrabold leading-none tracking-tight text-white-900 md:text-5xl lg:text-3xl dark:text-white">
             Approach
           </h1>
@@ -109,13 +109,14 @@ const Home: NextPage = () => {
         Subscribe to our mailing list
       </h1>
       <div className="flex flex-col justify-center items-center">
-        <p className="dark:text-white font-bold text-white-900 mx-auto text-center my-5">Stay up to date with Frontdoor Developments</p>
+        <p className="dark:text-white font-bold text-white-900 mx-auto text-center my-5">
+          Stay up to date with Frontdoor Developments
+        </p>
         <div className="w-1/2">
           <form>
             <label
               htmlFor="search"
-              className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-            >
+              className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">
               Search
             </label>
             <div className="relative">
@@ -128,14 +129,16 @@ const Home: NextPage = () => {
               />
               <button
                 type="submit"
-                className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
+                className="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                 Subscribe
               </button>
             </div>
           </form>
         </div>
-        <p className="dark:text-white font-bold text-white-900 mx-auto text-center my-5">By subscribing you accept our <span className="text-blue-700 dark:text-blue">Privacy Notice</span></p>
+        <p className="dark:text-white font-bold text-white-900 mx-auto text-center my-5">
+          By subscribing you accept our{" "}
+          <span className="text-blue-700 dark:text-blue">Privacy Notice</span>
+        </p>
       </div>
     </Layout>
   );

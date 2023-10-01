@@ -1,5 +1,6 @@
 import { NextPage } from "next";
 import React, { useEffect, useState } from "react";
+import Banner from "../../components/Banner";
 import Job from "../../components/JobComponents/Job";
 import { Layout } from "../../components/layout";
 import usePolybase from "../../hooks/usePolybase";
@@ -17,13 +18,16 @@ const AllJobs: NextPage = () => {
   }, []);
   return (
     <Layout title="Jobs">
-      <h1 className="dark:text-white font-extrabold lg:text-4xl text-white-900 mx-auto text-center my-5">
-        All Jobs
-      </h1>
+      <Banner
+        title="Find Best jobs"
+        subtitle="Looking for jobs? Browse our latesting job openings to view"
+      />
       <div className="flex flex-wrap items-center justify-center gap-8 mt-[2%]">
         {jobArr.map((job: any) => (
           <Job
+            key={job.id}
             id={job.id}
+            description={job.description}
             companyName={job.companyName}
             roleTitle={job.roleTitle}
             location={job.location}

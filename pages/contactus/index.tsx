@@ -12,7 +12,12 @@ interface IErrors {
   captcha: boolean;
 }
 
-const errorTemplate: IErrors = { fullname: false, email: false, message: false, captcha: false };
+const errorTemplate: IErrors = {
+  fullname: false,
+  email: false,
+  message: false,
+  captcha: false,
+};
 
 const ContactUs: NextPage = () => {
   const captchaKey = process.env.NEXT_PUBLIC_CAPTCHA_KEY;
@@ -35,7 +40,8 @@ const ContactUs: NextPage = () => {
   const [showFailureMessage, setShowFailureMessage] = useState<boolean>(false);
 
   // form validation
-  const isEmail = (email: string): boolean => /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
+  const isEmail = (email: string): boolean =>
+    /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(email);
   const handleValidation = (): boolean => {
     const tempErrors: IErrors = errorTemplate;
     let isValid = true;
@@ -70,19 +76,26 @@ const ContactUs: NextPage = () => {
       setSubmitButtonText("Submit");
       setEnableSubmit(false);
       try {
-        emailjs.sendForm(serviceId as string, templateId as string, e.currentTarget, emailjsKey).then(
-          (result: { text: any }) => {
-            setShowSuccessMessage(true);
-            setShowFailureMessage(false);
-            setSubmitButtonText("Submit");
-            setEnableSubmit(true);
-          },
-          (error: { text: any }) => {
-            setShowFailureMessage(false);
-            setSubmitButtonText("Submit");
-            setEnableSubmit(true);
-          },
-        );
+        emailjs
+          .sendForm(
+            serviceId as string,
+            templateId as string,
+            e.currentTarget,
+            emailjsKey
+          )
+          .then(
+            (result: { text: any }) => {
+              setShowSuccessMessage(true);
+              setShowFailureMessage(false);
+              setSubmitButtonText("Submit");
+              setEnableSubmit(true);
+            },
+            (error: { text: any }) => {
+              setShowFailureMessage(false);
+              setSubmitButtonText("Submit");
+              setEnableSubmit(true);
+            }
+          );
       } catch (e) {
         setShowFailureMessage(true);
         return;
@@ -96,65 +109,101 @@ const ContactUs: NextPage = () => {
 
   return (
     <Layout title="Contactus">
-    <div className="flex flex-col items-center  mt-[2%]">
-      <form onSubmit={(e: React.FormEvent<HTMLFormElement>) => handleSubmit(e)}>
-        <div id="info" className="flex flex-col items-center justify-center gap-2">
-          {/* <h3 className="text-sm md:text-xl">Get in touch</h3> */}
-          <h3 className="dark:text-white font-extrabold lg:text-4xl text-white-900 mx-auto text-center my-5">
-          Get in touch</h3>
-          <h1 className="text-xl md:text-5xl font-bold font-bai-jamjuree text-black dark:text-gray-300">
-            We&apos;d love to hear from you
-          </h1>
-        </div>
-        <div
-          id="form"
-          className="shadow-2xl w-[300px] mx-auto md:w-[30vw] bg-white rounded-[2%] p-10 mt-[4%] flex flex-col items-center justify-center gap-5 "
-        >
-          <h3 className="text-sm md:text-xl font-bold text-blue dark:text-blue-900">Feel free to reach out</h3>
-          {errors.fullname && <ErrorHandler showError={errors.fullname} errorMsg="Name cannot be empty." />}
-          {errors.email && <ErrorHandler showError={errors.email} errorMsg="Invalid email." />}
-          {errors.message && <ErrorHandler showError={errors.message} errorMsg="Message cannot be empty." />}
-          {errors.captcha && <ErrorHandler showError={errors.captcha} errorMsg="Please complet the captcha." />}
-          <input
-            type="text"
-            placeholder="Enter your name"
-            name="name"
-            className="input input-bordered h-10 p-3 rounded-md border border-slate-800 w-[200px] md:w-[20vw]"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFullname(e.currentTarget.value)}
-          />
-          <input
-            type="text"
-            placeholder="Enter your email"
-            name="email"
-            className="input input-bordered h-10 p-3 rounded-md border border-slate-800 w-[200px] md:w-[20vw]"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.currentTarget.value)}
-          />
-          <textarea
-            placeholder="Enter your message"
-            name="message"
-            className="peer h-3/4 min-h-[100px] w-[200px] md:w-[20vw] rounded-md border border-slate-800 input input-bordered p-3"
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setMessage(e.currentTarget.value)}
-          />
-          {/* <ReCAPTCHA sitekey={captchaKey} onChange={onRecaptchaChange} /> */}
-          <button
-            disabled={enableSubmit ? false : true}
-            className={
-              enableSubmit
-                ? "px-8 py-3 btn btn-primary text-white rounded focus:outline-none w-[200px] md:w-[20vw] hover:scale-110 bg-blue-900"
-                : "px-8 py-3 bg-slate-500 text-white rounded focus:outline-none w-[200px] md:w-[20vw]"
-            }
-            type="submit"
-          >
-            {submitButtonText}
-          </button>
-        </div>
-      </form>
-      {showSuccessMessage && (
-        <p className="text-green-500 font-semibold text-sm my-2">Thank you! Your Message has been delivered.</p>
-      )}
+      <div className="flex flex-col items-center  mt-[2%]">
+        <form
+          onSubmit={(e: React.FormEvent<HTMLFormElement>) => handleSubmit(e)}>
+          <div
+            id="info"
+            className="flex flex-col items-center justify-center gap-2">
+            {/* <h3 className="text-sm md:text-xl">Get in touch</h3> */}
+            <h3 className="dark:text-white font-extrabold lg:text-4xl text-white-900 mx-auto text-center my-5">
+              Get in touch
+            </h3>
+            <h1 className="text-xl md:text-5xl font-bold font-bai-jamjuree text=[#3F3F5F] dark:text-gray-300">
+              We&apos;d love to hear from you
+            </h1>
+          </div>
+          <div
+            id="form"
+            className="shadow-2xl w-[300px] mx-auto md:w-[30vw] bg-white rounded-[2%] p-10 mt-[4%] flex flex-col items-center justify-center gap-5 ">
+            <h3 className="text-sm md:text-xl font-bold text-blue dark:text-blue-900">
+              Feel free to reach out
+            </h3>
+            {errors.fullname && (
+              <ErrorHandler
+                showError={errors.fullname}
+                errorMsg="Name cannot be empty."
+              />
+            )}
+            {errors.email && (
+              <ErrorHandler
+                showError={errors.email}
+                errorMsg="Invalid email."
+              />
+            )}
+            {errors.message && (
+              <ErrorHandler
+                showError={errors.message}
+                errorMsg="Message cannot be empty."
+              />
+            )}
+            {errors.captcha && (
+              <ErrorHandler
+                showError={errors.captcha}
+                errorMsg="Please complet the captcha."
+              />
+            )}
+            <input
+              type="text"
+              placeholder="Enter your name"
+              name="name"
+              className="input input-bordered h-10 p-3 rounded-md border border-slate-800 w-[200px] md:w-[20vw]"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setFullname(e.currentTarget.value)
+              }
+            />
+            <input
+              type="text"
+              placeholder="Enter your email"
+              name="email"
+              className="input input-bordered h-10 p-3 rounded-md border border-slate-800 w-[200px] md:w-[20vw]"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEmail(e.currentTarget.value)
+              }
+            />
+            <textarea
+              placeholder="Enter your message"
+              name="message"
+              className="peer h-3/4 min-h-[100px] w-[200px] md:w-[20vw] rounded-md border border-slate-800 input input-bordered p-3"
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                setMessage(e.currentTarget.value)
+              }
+            />
+            {/* <ReCAPTCHA sitekey={captchaKey} onChange={onRecaptchaChange} /> */}
+            <button
+              disabled={enableSubmit ? false : true}
+              className={
+                enableSubmit
+                  ? "px-8 py-3 btn btn-primary text-white rounded focus:outline-none w-[200px] md:w-[20vw] hover:scale-110 bg-blue-900"
+                  : "px-8 py-3 bg-slate-500 text-white rounded focus:outline-none w-[200px] md:w-[20vw]"
+              }
+              type="submit">
+              {submitButtonText}
+            </button>
+          </div>
+        </form>
+        {showSuccessMessage && (
+          <p className="text-green-500 font-semibold text-sm my-2">
+            Thank you! Your Message has been delivered.
+          </p>
+        )}
 
-      {showFailureMessage && <p className="text-red-500">Oops! Something went wrong, please try again.</p>}
-    </div>
+        {showFailureMessage && (
+          <p className="text-red-500">
+            Oops! Something went wrong, please try again.
+          </p>
+        )}
+      </div>
     </Layout>
   );
 };
