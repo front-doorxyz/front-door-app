@@ -1,5 +1,6 @@
 import React from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import { useRouter } from "next/router";
 type Props = {
   title: string;
   subtitle?: string;
@@ -7,10 +8,13 @@ type Props = {
 };
 
 const Banner = ({ title, navigation, subtitle }: Props) => {
+  const router = useRouter();
   return (
     <div className="flex  justify-around bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% h-[15vh] w-full text-white">
       {navigation && (
-        <div className="flex items-center gap-4 h-[4vh]">
+        <div
+          className="flex items-center gap-4 h-[4vh]"
+          onClick={() => router.back()}>
           <ArrowLeftIcon className="h-4" />
           Back
         </div>

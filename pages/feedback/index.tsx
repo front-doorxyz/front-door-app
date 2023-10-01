@@ -19,7 +19,7 @@ const errorTemplate: IErrors = {
   captcha: false,
 };
 
-const ContactUs: NextPage = () => {
+const Feedback: NextPage = () => {
   const captchaKey = process.env.NEXT_PUBLIC_CAPTCHA_KEY;
   const emailjsKey = process.env.NEXT_PUBLIC_EMAILJS_KEY;
   const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICEID;
@@ -108,7 +108,7 @@ const ContactUs: NextPage = () => {
   };
 
   return (
-    <Layout title="Contactus">
+    <Layout title="Feedback">
       <div className="flex flex-col items-center  mt-[2%]">
         <form
           onSubmit={(e: React.FormEvent<HTMLFormElement>) => handleSubmit(e)}>
@@ -116,17 +116,17 @@ const ContactUs: NextPage = () => {
             id="info"
             className="flex flex-col items-center justify-center gap-2">
             {/* <h3 className="text-sm md:text-xl">Get in touch</h3> */}
-            <h3 className="dark:text-white font-extrabold lg:text-4xl text-white-900 mx-auto text-center my-5">
-              Get in touch
+            <h3 className="text-[#3F3F5F] font-extrabold lg:text-4xl text-white-900 mx-auto text-center my-5">
+              Leave your reviews
             </h3>
-            <h1 className="text-xl md:text-5xl font-bold font-bai-jamjuree text=[#3F3F5F] dark:text-gray-300">
-              We&apos;d love to hear from you
+            <h1 className="text-xl md:text-5xl font-bold font-bai-jamjuree text-[#3F3F5F]">
+              Help us improve by leaving your comments
             </h1>
           </div>
           <div
             id="form"
             className="shadow-2xl w-[300px] mx-auto md:w-[30vw] bg-white rounded-[2%] p-10 mt-[4%] flex flex-col items-center justify-center gap-5 ">
-            <h3 className="text-sm md:text-xl font-bold text-blue dark:text-blue-900">
+            <h3 className="text-sm md:text-xl font-bold text-[#3F007F]">
               Feel free to reach out
             </h3>
             {errors.fullname && (
@@ -184,8 +184,8 @@ const ContactUs: NextPage = () => {
               disabled={enableSubmit ? false : true}
               className={
                 enableSubmit
-                  ? "px-8 py-3 btn btn-primary text-white rounded focus:outline-none w-[200px] md:w-[20vw] hover:scale-110 bg-blue-900"
-                  : "px-8 py-3 bg-slate-500 text-white rounded focus:outline-none w-[200px] md:w-[20vw]"
+                  ? "px-8 py-3 btn btn-primary text-white rounded-md focus:outline-none w-[200px] md:w-[20vw]  bg-[#3F007F]                    "
+                  : "px-8 py-3 bg-slate-500 text-white rounded-md focus:outline-none w-[200px] md:w-[20vw]"
               }
               type="submit">
               {submitButtonText}
@@ -208,4 +208,4 @@ const ContactUs: NextPage = () => {
   );
 };
 
-export default ContactUs;
+export default Feedback;

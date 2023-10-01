@@ -41,9 +41,6 @@ const Header = () => {
       <li className="">
         <NavLink href="/faucet">Faucet</NavLink>
       </li>
-      <li className="">
-        <NavLink href="/all-jobs">All Jobs</NavLink>
-      </li>
       {address ? (
         <>
           <li>
@@ -60,7 +57,7 @@ const Header = () => {
       )}
 
       <li className="">
-        <NavLink href="/contactus">Contact us</NavLink>
+        <NavLink href="/feedback">Feedback</NavLink>
       </li>
     </>
   );
