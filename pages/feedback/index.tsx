@@ -4,6 +4,7 @@ import emailjs from "emailjs-com";
 import { NextPage } from "next";
 import { Layout } from "../../components/layout";
 import ReCAPTCHA from "react-google-recaptcha";
+import Banner from "../../components/Banner";
 
 interface IErrors {
   fullname: boolean;
@@ -109,26 +110,16 @@ const Feedback: NextPage = () => {
 
   return (
     <Layout title="Feedback">
+      <Banner
+        title="Help us improve by leaving your comments"
+        subtitle="Review and Help us grow"
+      />
       <div className="flex flex-col items-center  mt-[2%]">
         <form
           onSubmit={(e: React.FormEvent<HTMLFormElement>) => handleSubmit(e)}>
           <div
-            id="info"
-            className="flex flex-col items-center justify-center gap-2">
-            {/* <h3 className="text-sm md:text-xl">Get in touch</h3> */}
-            <h3 className="text-[#3F3F5F] font-extrabold lg:text-4xl text-white-900 mx-auto text-center my-5">
-              Leave your reviews
-            </h3>
-            <h1 className="text-xl md:text-5xl font-bold font-bai-jamjuree text-[#3F3F5F]">
-              Help us improve by leaving your comments
-            </h1>
-          </div>
-          <div
             id="form"
             className="shadow-2xl w-[300px] mx-auto md:w-[30vw] bg-white rounded-[2%] p-10 mt-[4%] flex flex-col items-center justify-center gap-5 ">
-            <h3 className="text-sm md:text-xl font-bold text-[#3F007F]">
-              Feel free to reach out
-            </h3>
             {errors.fullname && (
               <ErrorHandler
                 showError={errors.fullname}
