@@ -6,6 +6,7 @@ import { Layout } from "../../components/layout";
 import usePolybase from "../../hooks/usePolybase";
 import { Address } from "wagmi";
 import Description from "../../components/JobComponents/Description";
+import ReferJob from "../../components/JobComponents/ReferJob";
 
 const JobInfo: NextPage = () => {
   const router = useRouter();
@@ -62,8 +63,8 @@ const JobInfo: NextPage = () => {
                 bounty={jobInfo.bounty}
               />
             </div>
-            <div className="bg-white shadow-lg col-span-1 mt-[4%] h-[30vh] rounded-md">
-              hi
+            <div className="bg-white shadow-lg col-span-1 mt-[4%] h-[20vh] rounded-md">
+              <ReferJob />
             </div>
           </div>
         </Layout>
