@@ -15,9 +15,9 @@ const RegisterPage: NextPage = () => {
     }
   };
   return (
-    <Layout title="Jobs">
+    <Layout title="Register">
       <div className="pt-[1%] w-[50%]">
-        <div className="tabs tabs-boxed flex justify-center  gap-2">
+        <div className="tabs tabs-boxed flex justify-center gap-2">
           <a
             id="1"
             className={`tab tab-lg tab-lifted ${active ? "tab-active" : ""}`}

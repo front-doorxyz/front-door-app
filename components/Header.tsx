@@ -41,20 +41,17 @@ const Header = () => {
       <li className="">
         <NavLink href="/faucet">Faucet</NavLink>
       </li>
-      {address ? (
-        <>
-          <li>
-            <NavLink href="/client">Client</NavLink>
-          </li>
-          {/* <li>
+      <>
+        <li>
+          <NavLink href="/profile">Profile</NavLink>
+        </li>
+        {/* <li>
                 <NavLink href="/profile">Profile</NavLink>
               </li> */}
-        </>
-      ) : (
-        <li className="">
-          <NavLink href="/register">Register</NavLink>
-        </li>
-      )}
+      </>
+      <li className="">
+        <NavLink href="/register">Register</NavLink>
+      </li>
 
       <li className="">
         <NavLink href="/feedback">Feedback</NavLink>
