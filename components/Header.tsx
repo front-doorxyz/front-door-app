@@ -36,25 +36,20 @@ const Header = () => {
   const navLinks = (
     <>
       <li className="">
-        <NavLink href="/">Home</NavLink>
+        <NavLink href="/">Live Jobs</NavLink>
       </li>
-      <li className="">
-        <NavLink href="/faucet">Faucet</NavLink>
+      <li>
+        <NavLink href="/hiring-company">Hiring Company</NavLink>
       </li>
-      <>
-        <li>
-          <NavLink href="/profile">Profile</NavLink>
-        </li>
-        {/* <li>
-                <NavLink href="/profile">Profile</NavLink>
-              </li> */}
-      </>
       <li className="">
         <NavLink href="/register">Register</NavLink>
       </li>
 
       <li className="">
         <NavLink href="/feedback">Feedback</NavLink>
+      </li>
+      <li className="">
+        <NavLink href="/faucet">Faucet</NavLink>
       </li>
     </>
   );

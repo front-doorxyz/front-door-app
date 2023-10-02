@@ -7,7 +7,7 @@ import { Layout } from "../../components/layout";
 const Profile: NextPage = () => {
   return (
     <Layout title="Profile">
-      <Banner title="Profile" />
+      <Banner title="Hiring Company" subtitle="Add a job" />
       <div className="flex items-center justify-center mt-[2%]">
         <AddJob />
       </div>
