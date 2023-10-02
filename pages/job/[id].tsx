@@ -23,10 +23,10 @@ const JobInfo: NextPage = () => {
   }, [jobInfo, companyInfo]);
 
   useEffect(() => {
-    const { id } = router.query;
-    setJobId(id);
+    const { id } = router.query || " ";
+    setJobId(String(id));
 
-    readJobListingById(id)
+    readJobListingById(String(id))
       .then((jobListing) => {
         setJobInfo(jobListing);
         getCompanyData(jobListing.owner);
