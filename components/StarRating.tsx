@@ -5,19 +5,25 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const StarRating = ({ score }) => {
+const StarRating = ({ score, color }: any) => {
   const fullStars = Math.floor(score);
   const decimalStar = score - fullStars;
   const emptyStars = 5 - fullStars - (decimalStar > 0 ? 1 : 0);
 
   return (
-    <div className="star-rating">
+    <div className="star-rating w-24 flex">
       {[...Array(fullStars)].map((_, i) => (
-        <FontAwesomeIcon key={i} icon={solidStar} />
+        <FontAwesomeIcon key={i} icon={solidStar} color={color} />
       ))}
-      {decimalStar > 0 && <FontAwesomeIcon icon={faStarHalfAlt} />}
+      {decimalStar > 0 && (
+        <FontAwesomeIcon icon={faStarHalfAlt} color={color} />
+      )}
       {[...Array(emptyStars)].map((_, i) => (
-        <FontAwesomeIcon key={fullStars + i + 1} icon={regularStar} />
+        <FontAwesomeIcon
+          key={fullStars + i + 1}
+          icon={regularStar}
+          color={color}
+        />
       ))}
     </div>
   );

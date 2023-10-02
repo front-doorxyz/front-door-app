@@ -22,8 +22,8 @@ const NavLink = ({
       href={href}
       passHref
       className={`${
-        isActive ? "bg-secondary shadow-md uppercase" : ""
-      } hover:bg-secondary hover:shadow-md focus:bg-secondary py-1.5 px-3 text-sm rounded-full gap-2 uppercase`}>
+        isActive ? "bg-[#3F3F5F] text-slate-100 shadow-md uppercase" : ""
+      } hover:bg-slate-100 hover:shadow-md focus:bg-white py-1.5 px-3 text-sm rounded-full gap-2 uppercase`}>
       {children}
     </Link>
   );
@@ -35,38 +35,32 @@ const Header = () => {
   const burgerMenuRef = useRef<HTMLDivElement>(null);
   const navLinks = (
     <>
-      <li className="dark:text-white">
+      <li className="">
         <NavLink href="/">Home</NavLink>
       </li>
-      <li className="dark:text-white">
+      <li className="">
         <NavLink href="/faucet">Faucet</NavLink>
       </li>
-      <li className="dark:text-white">
-        <NavLink href="/all-jobs">All Jobs</NavLink>
-      </li>
-      {address ? (
-        <>
-          <li>
-            <NavLink href="/client">Client</NavLink>
-          </li>
-          {/* <li>
+      <>
+        <li>
+          <NavLink href="/profile">Profile</NavLink>
+        </li>
+        {/* <li>
                 <NavLink href="/profile">Profile</NavLink>
               </li> */}
-        </>
-      ) : (
-        <li className="dark:text-white">
-          <NavLink href="/register">Register</NavLink>
-        </li>
-      )}
+      </>
+      <li className="">
+        <NavLink href="/register">Register</NavLink>
+      </li>
 
-      <li className="dark:text-white">
-        <NavLink href="/contactus">Contact us</NavLink>
+      <li className="">
+        <NavLink href="/feedback">Feedback</NavLink>
       </li>
     </>
   );
 
   return (
-    <nav className="sticky top-0 navbar bg-base-100 min-h-0  items-center flex-shrink-0 justify-between z-20 shadow-md shadow-secondary dark:bg-slate-500 flex m-auto py-2 mb-3">
+    <nav className="sticky top-0 navbar bg-white min-h-0  items-center flex-shrink-0 justify-between z-20 shadow-md shadow-secondary flex py-2">
       <div className="navbar-start w-auto ">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <button
@@ -93,18 +87,14 @@ const Header = () => {
           <Link
             href="/"
             passHref
-            className="hidden lg:flex items-center gap-2 ml-4 mr-6 dark:text-white">
-            <div className="flex relative w-10 h-10">
+            className="hidden lg:flex items-center gap-2 ml-4 mr-6">
+            <div className="flex relative w-40 h-10">
               <Image
                 alt="frontdoor logo"
                 className="cursor-pointer"
                 fill
                 src={logo}
               />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold leading-tight">Front-Door</span>
-              <span className="text-xs flex">Open Referrals Network</span>
             </div>
           </Link>
           <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">
@@ -113,7 +103,7 @@ const Header = () => {
         </div>
       </div>
       <div className="navbar-end mr-2">
-        <ConnectButton />
+        <ConnectButton accountStatus={"avatar"} chainStatus={"icon"} />
       </div>
     </nav>
   );
