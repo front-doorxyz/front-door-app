@@ -8,7 +8,7 @@ const Job = ({
   id,
   roleTitle,
   location,
-  description,
+  description = "",
   companyName,
 }: jobProps) => {
   const router = useRouter();

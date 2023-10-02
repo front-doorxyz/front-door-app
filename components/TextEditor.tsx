@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import Slite, { Editor, Toolbar } from "react-slite";
 
 type Props = {
-  initialValue: string;
+  initialValue?: string;
   title?: string;
   readOnly: boolean;
 };
