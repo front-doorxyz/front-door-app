@@ -10,17 +10,17 @@ export default defineConfig({
     {
       name: 'FNDR_Faucet',
       abi: FNDR_FaucetABI,
-      address: '0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512',
+      address: '0x903De7b6AB3cA31C9C3b277877fC4c405FCBEdc8',
     },
     {
       name: 'Recruitment',
       abi: RecruitmentABI,
-      address: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',      
+      address: '0x8D31fD00A5D3D27FE421999f79bBD0F3aD84170b',      
     },
     {
       name:'FrontDoorToken',
       abi: FrontDoorTokenABI,
-      address: '0x5FbDB2315678afecb367f032d93F642f64180aa3'
+      address: '0x53736EdEa0B813f0E95f10bac6B91876ed8114db'
     }
   ],
   plugins: [react()],
