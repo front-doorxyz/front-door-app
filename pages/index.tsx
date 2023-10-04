@@ -20,8 +20,8 @@ const Home: NextPage = () => {
   return (
     <Layout title="Jobs">
       <Banner
-        title="Find The Best jobs"
-        subtitle="Looking for jobs? Browse our latesting job openings to view"
+        title="Refer to the best jobs"
+        subtitle="Best bounties available for referrers bringing best candidates"
       />
       <div className="flex flex-wrap items-center justify-center gap-8 mt-[2%]">
         {jobArr.map((job: any) => (

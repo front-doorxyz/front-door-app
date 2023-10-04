@@ -4,7 +4,6 @@ import TextEditor from "../TextEditor";
 type Props = {};
 
 const AddJob = (props: Props) => {
-  const [step, setStep] = useState(1);
   return (
     <div className="shadow-2xl flex flex-col justify-center gap-4 p-4">
       <label className="join flex flex-col gap-2">
@@ -71,6 +70,7 @@ const AddJob = (props: Props) => {
           name="type"
         />
       </label>
+      <button className={`btn btn-primary`}>Add Job</button>
     </div>
   );
 };
