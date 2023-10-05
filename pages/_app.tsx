@@ -7,11 +7,11 @@ import {
 } from "@rainbow-me/rainbowkit";
 import type { AppProps } from "next/app";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
-import { hardhat } from "wagmi/chains";
+import { hardhat, sepolia, goerli, linea, lineaTestnet } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [hardhat],
+  [hardhat, linea, sepolia, goerli, lineaTestnet],
   [publicProvider()]
 );
 
