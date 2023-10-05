@@ -69,12 +69,14 @@ const ClientJob = (props: jobProps) => {
 
 const ClientJobs = () => {
   const { readAllJobListingsForClient } = usePolybase();
-  const [jobArr, setJobArr] = useState([]);
+  const [jobArr, setJobArr] = useState<any>([]);
   const { address } = useAccount();
   useEffect(() => {
-    readAllJobListingsForClient(address).then((jobListing) =>
-      setJobArr([...jobListing])
-    );
+    if (address) {
+      readAllJobListingsForClient(address).then((jobListing) =>
+        setJobArr([...jobListing])
+      );
+    }
   }, []);
 
   return (

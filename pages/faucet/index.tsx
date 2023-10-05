@@ -29,7 +29,7 @@ const faucet: NextPage = () => {
     try {
       await writeAsync();
       if (isSuccess) {
-        toast.success("Tokens added", data);
+        toast.success("Tokens added");
       }
     } catch (e) {
       toast.error("Something went wrong! Try again in some time");

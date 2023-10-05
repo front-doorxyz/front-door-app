@@ -8,4 +8,5 @@ export type jobProps = {
     description?: string;
     companyName?: string;
     status?:string
+    date?:string
   };
