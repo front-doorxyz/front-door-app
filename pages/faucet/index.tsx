@@ -12,9 +12,8 @@ import { parseEther } from "viem";
 import { toast } from "react-toastify";
 import { useCopyToClipboard } from "@uidotdev/usehooks";
 import { ClipboardIcon, CheckIcon } from "@heroicons/react/24/outline";
-type Props = {};
 
-const faucet: NextPage = (props: Props) => {
+const faucet: NextPage = () => {
   const [numToMint, setNumToMint] = React.useState(0);
   const [copiedText, copyToClipboard] = useCopyToClipboard();
   const hasCopiedText = Boolean(copiedText);
@@ -30,7 +29,7 @@ const faucet: NextPage = (props: Props) => {
     try {
       await writeAsync();
       if (isSuccess) {
-        toast.success("Tokens added");
+        toast.success("Tokens added", data);
       }
     } catch (e) {
       toast.error("Something went wrong! Try again in some time");

@@ -19,7 +19,7 @@ const Profile: NextPage = () => {
 
   return (
     <Layout title="Profile">
-      <Banner title="Hiring Company" subtitle="Here from " />
+      <Banner title="Hiring Company" />
       <div className="flex flex-col items-center justify-center mt-[2%]">
         <div className="tabs tabs-boxed flex justify-center gap-2">
           <a
