@@ -7,4 +7,5 @@ export type jobProps = {
     maxSalary?: number;
     description?: string;
     companyName?: string;
+    status?:string
   };
