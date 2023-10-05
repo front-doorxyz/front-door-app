@@ -9,7 +9,8 @@ import type { AppProps } from "next/app";
 import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { hardhat, sepolia, goerli, linea, lineaTestnet } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
-
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [hardhat, linea, sepolia, goerli, lineaTestnet],
   [publicProvider()]
@@ -41,6 +42,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         })}
         chains={chains}>
         <Component {...pageProps} />
+        <ToastContainer />
       </RainbowKitProvider>
     </WagmiConfig>
   );
