@@ -5,7 +5,6 @@ import { recruitmentABI, recruitmentAddress } from "../src/generated";
 import { toast } from "react-toastify";
 import usePolybase from "../hooks/usePolybase";
 import * as eth from "@polybase/eth";
-import { Email } from "@mui/icons-material";
 
 const CompanyRegister = () => {
   const { address } = useAccount();

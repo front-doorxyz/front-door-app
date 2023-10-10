@@ -5,7 +5,7 @@ import * as eth from "@polybase/eth";
 import usePolybase from "../hooks/usePolybase";
 import { recruitmentABI, recruitmentAddress } from "../src/generated";
 import { toast } from "react-toastify";
-import { stringToBytes } from "viem";
+import { toBytes, keccak256 } from "viem";
 
 const ReferrerRegister = () => {
   const [loading, setLoading] = useState(false);
@@ -14,12 +14,14 @@ const ReferrerRegister = () => {
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState<string>("");
+  const [hashEmail, setHashEmail] = useState<string>("");
 
   const handleNameChange = (event: any) => {
     setName(event.target.value);
   };
 
   const handleEmailChange = (event: any) => {
+    setHashEmail(keccak256(toBytes(email)));
     setEmail(event.target.value);
   };
 
@@ -32,7 +34,7 @@ const ReferrerRegister = () => {
     abi: recruitmentABI,
     address: recruitmentAddress,
     functionName: "registerReferrer",
-    args: [email],
+    args: [hashEmail],
   });
 
   const registerReferrerSc = async () => {
@@ -40,6 +42,7 @@ const ReferrerRegister = () => {
       const referrerData = [address, name, email];
       await writeAsync();
       const referrer = await registerReferrer(referrerData);
+      console.log(referrer.id);
       if (isSuccess && referrer.id) {
         toast.success("Referrer Register Successful");
       }
