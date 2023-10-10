@@ -42,8 +42,9 @@ const usePolybase = () => {
     return data;
   };
 
-  const registerCompany = async (referrerData: any) => {
-    const recordData = await companiesReference.create(referrerData);
+  const registerCompany = async (companyData: any) => {
+    const recordData = await companiesReference.create(companyData);
+    console.log(recordData);
     return recordData;
   };
 
@@ -114,6 +115,7 @@ const usePolybase = () => {
   };
 
   return {
+    db,
     registerCandidate,
     readCandidateById,
     checkCandidateRegistration,
