@@ -47,7 +47,7 @@ const Description = ({
         </div>
         <div className="flex flex-wrap w-full gap-4 mt-[2%]">
           {skills.map((skill) => (
-            <div className="bg-[#5F9FFF] text-white p-2">{skill}</div>
+            <div key={skill} className="bg-[#5F9FFF] text-white p-2">{skill}</div>
           ))}
         </div>
       </div>
