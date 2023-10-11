@@ -8,10 +8,13 @@ import { toast } from "react-toastify";
 import { toBytes, keccak256 } from "viem";
 
 const ReferrerRegister = () => {
-  const [loading, setLoading] = useState(false);
-  const { db, registerReferrer } = usePolybase();
-  const { address } = useAccount();
-  const router = useRouter();
+  const { address }:any = useAccount();
+  const { registerReferrer } = usePolybase(
+    async (data: string) => {
+       const sig = await eth.sign(data, address);
+       return { h: "eth-personal-sign", sig };
+     })
+   ;;
   const [name, setName] = useState("");
   const [email, setEmail] = useState<string>("");
   const [hashEmail, setHashEmail] = useState<string>("");
@@ -25,29 +28,30 @@ const ReferrerRegister = () => {
     setEmail(event.target.value);
   };
 
-  db.signer(async (data: string) => {
-    const sig = await eth.sign(data, address);
-    return { h: "eth-personal-sign", sig };
-  });
+ 
 
   const { data, isLoading, isSuccess, writeAsync } = useContractWrite({
     abi: recruitmentABI,
     address: recruitmentAddress,
     functionName: "registerReferrer",
-    args: [hashEmail],
+    args: [String(hashEmail)],
   });
 
   const registerReferrerSc = async () => {
     try {
       const referrerData = [address, name, email];
       await writeAsync();
-      const referrer = await registerReferrer(referrerData);
-      console.log(referrer.id);
-      if (isSuccess && referrer.id) {
-        toast.success("Referrer Register Successful");
+      if (!isSuccess) {
+        toast.error("Referrer already registered");
+      }
+      else{
+        const referrer = await registerReferrer(referrerData);
+        if (isSuccess && referrer.id) {
+         toast.success(`${name} registered as Referrer!`);
+        }
       }
     } catch (e) {
-      toast.error("Referrer Register failed");
+      toast.error("Referrer Registered failed");
     }
   };
 

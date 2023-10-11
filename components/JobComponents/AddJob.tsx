@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import { gweiUnits, parseEther } from "viem";
 import { Address, useAccount, useContractWrite } from "wagmi";
 import usePolybase from "../../hooks/usePolybase";
 import { recruitmentABI, recruitmentAddress } from "../../src/generated";
@@ -14,7 +15,7 @@ const AddJob = (props: Props) => {
     description: "",
     location: "",
     roleTitle: "",
-    bounty: 0,
+    bounty: "1",
     maxSalary: 0,
     minSalary: 0,
     type: "",
@@ -25,6 +26,7 @@ const AddJob = (props: Props) => {
   ) => {
     const { name, value } = e.target;
     let parsedValue = value;
+    
 
     setJobInfo({
       ...jobInfo,
@@ -51,18 +53,18 @@ const AddJob = (props: Props) => {
     abi: recruitmentABI,
     address: recruitmentAddress,
     functionName: "registerJob",
-    args: [jobInfo.bounty],
+    args: [parseEther("10","gwei")],
   });
 
   const registerJob = async () => {
     try {
       const jobId = await writeAsync();
-      console.log(jobId);
+
       if (isSuccess) {
-        toast.success("Register Job Successful");
+        toast.success("Job Registered Successfully");
       }
     } catch (e) {
-      toast.error("Register job failed");
+      toast.error("Job Registration failed");
     }
   };
 

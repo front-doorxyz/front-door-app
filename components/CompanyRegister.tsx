@@ -7,8 +7,13 @@ import usePolybase from "../hooks/usePolybase";
 import * as eth from "@polybase/eth";
 
 const CompanyRegister = () => {
-  const { address } = useAccount();
-  const { db, registerCompany } = usePolybase();
+  const { address }:any = useAccount();
+  const { registerCompany } = usePolybase(
+   async (data: string) => {
+      const sig = await eth.sign(data, address);
+      return { h: "eth-personal-sign", sig };
+    })
+  ;
   const router = useRouter();
   const [companyName, setCompanyName] = useState("");
   const [companyDescription, setCompanyDescription] = useState("");
@@ -26,10 +31,6 @@ const CompanyRegister = () => {
     setCompanySite(event.target.value);
   };
 
-  db.signer(async (data: string) => {
-    const sig = await eth.sign(data, address);
-    return { h: "eth-personal-sign", sig };
-  });
 
   const { data, isLoading, isSuccess, writeAsync } = useContractWrite({
     abi: recruitmentABI,
@@ -47,16 +48,19 @@ const CompanyRegister = () => {
       ];
       await writeAsync();
       if (!isSuccess) {
-        toast.error("Company Register failed");
+        toast.error("Company Registration failed");
       }
-      if (isSuccess && !isLoading) {
-        const company = await registerCompany(companyData);
-        if (company.id) {
-          toast.success("Company Register Successful");
+      else{
+        if (isSuccess && !isLoading) {
+          const company = await registerCompany(companyData);
+          if (company.id) {
+            toast.success(`${companyName} Registered Successfully`);
+          }
         }
       }
+     
     } catch (e) {
-      toast.error("Company Register failed");
+     toast.error("Company Registration failed");
     }
   };
 
