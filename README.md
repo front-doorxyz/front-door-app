@@ -58,7 +58,8 @@ Once a Referrer refers a Candidate, the Candidate receives an email from Front D
 
 - Referrer Share -- 65%
 - Candidate Share -- 10%
-- Front Door Share -- 25%
+- Referrers of interiewed candidates share -- 5%
+- Front Door Share -- 20%
 
 Bounties are fairly distributed to the key stakeholders to incentivize productive behavior and encourage broad adoption.
 [Future Scope] -- We plan to introduce scoring mechanisms to increase transparency. Each persona Referrer, Company, and Candidate will have a on Chain Score. This Score can be used to verify the authenticity of stakeholders.
