@@ -1,4 +1,4 @@
-import React from "react";
+import { useState } from "react";
 import { Layout } from "../../components/layout";
 import type { NextPage } from "next";
 import Banner from "../../components/Banner";
@@ -13,8 +13,8 @@ import { toast } from "react-toastify";
 import { useCopyToClipboard } from "@uidotdev/usehooks";
 import { ClipboardIcon, CheckIcon } from "@heroicons/react/24/outline";
 
-const faucet: NextPage = () => {
-  const [numToMint, setNumToMint] = React.useState(0);
+const Faucet: NextPage = () => {
+  const [numToMint, setNumToMint] = useState(0);
   const [copiedText, copyToClipboard] = useCopyToClipboard();
   const hasCopiedText = Boolean(copiedText);
 
@@ -82,4 +82,4 @@ const faucet: NextPage = () => {
   );
 };
 
-export default faucet;
+export default Faucet;

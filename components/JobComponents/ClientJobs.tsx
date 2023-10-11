@@ -85,6 +85,7 @@ const ClientJobs = () => {
         <div className="flex flex-col flex-wrap items-center justify-center gap-8 mt-[2%]">
           {jobArr.map((job: jobProps) => (
             <ClientJob
+              key={job.id}
               id={job.id}
               location={job.location}
               status={job.status}
