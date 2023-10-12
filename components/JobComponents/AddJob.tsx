@@ -5,11 +5,19 @@ import { Address, useAccount, useContractWrite } from "wagmi";
 import usePolybase from "../../hooks/usePolybase";
 import { recruitmentABI, recruitmentAddress } from "../../src/generated";
 import TextEditor from "../TextEditor";
+import * as eth from "@polybase/eth";
 
 type Props = {};
 
 const AddJob = (props: Props) => {
-  const { readCompanyById } = usePolybase();
+  const { address }:any = useAccount();
+
+  const { readCompanyById } = usePolybase(
+    async (data: string) => {
+       const sig = await eth.sign(data, address);
+       return { h: "eth-personal-sign", sig };
+     })
+   ;;
   const [jobInfo, setJobInfo] = useState<any>({
     companyName: "",
     description: "",

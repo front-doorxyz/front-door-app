@@ -24,7 +24,7 @@ const ReferrerRegister = () => {
   };
 
   const handleEmailChange = (event: any) => {
-    setHashEmail(keccak256(toBytes(email)));
+    setHashEmail(String(keccak256(toBytes(event.target.value))));
     setEmail(event.target.value);
   };
 
@@ -34,7 +34,7 @@ const ReferrerRegister = () => {
     abi: recruitmentABI,
     address: recruitmentAddress,
     functionName: "registerReferrer",
-    args: [String(hashEmail)],
+    args: [hashEmail as `0x${string}`],
   });
 
   const registerReferrerSc = async () => {

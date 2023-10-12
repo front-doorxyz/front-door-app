@@ -5,7 +5,7 @@ type Props = {
   initialValue?: string;
   title?: string;
   readOnly: boolean;
-  handleInput: any;
+  handleInput?: any;
 };
 
 const TextEditor = ({ initialValue, title, readOnly, handleInput }: Props) => {
