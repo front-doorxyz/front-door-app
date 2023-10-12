@@ -90,7 +90,7 @@ const ReferJob = ({jobId}: Props) => {
           onChange={handleEmailChange}
         />
         <div className="flex justify-end w-full">
-          <button className="px-6 py-2 rounded-[5px] bg-[#3F007F] text-sm md:text-md  text-white">
+          <button className="px-6 py-2 rounded-[5px] bg-[#3F007F] text-sm md:text-md  text-white" onClick={registerReferralSC}>
             Refer
           </button>
         </div>
