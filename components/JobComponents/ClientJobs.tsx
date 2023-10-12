@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Chip from "../Chip";
-
 import { useAccount } from "wagmi";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import { truncateDescription } from "../../helpers";
@@ -68,9 +67,10 @@ const ClientJob = (props: jobProps) => {
 };
 
 const ClientJobs = () => {
-  const { readAllJobListingsForClient } = usePolybase();
+  const { address }:any = useAccount();
+  const { readAllJobListingsForClient } = usePolybase()
   const [jobArr, setJobArr] = useState<any>([]);
-  const { address } = useAccount();
+  
   useEffect(() => {
     if (address) {
       readAllJobListingsForClient(address).then((jobListing) =>

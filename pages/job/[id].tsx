@@ -64,7 +64,7 @@ const JobInfo: NextPage = () => {
               />
             </div>
             <div className="bg-white shadow-lg col-span-1 mt-[4%] h-[20vh] rounded-md">
-              <ReferJob />
+              <ReferJob jobId={jobId} />
             </div>
           </div>
         </Layout>
