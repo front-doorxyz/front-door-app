@@ -4,19 +4,13 @@ import React, { useEffect, useState } from "react";
 import Banner from "../../components/Banner";
 import { Layout } from "../../components/layout";
 import usePolybase from "../../hooks/usePolybase";
-import { Address, useAccount } from "wagmi";
+import { Address } from "wagmi";
 import Description from "../../components/JobComponents/Description";
 import ReferJob from "../../components/JobComponents/ReferJob";
-import * as eth from "@polybase/eth";
 
 const JobInfo: NextPage = () => {
   const router = useRouter();
-  const { address }:any = useAccount()
-  const { readCompanyById, readJobListingById } = usePolybase(
-    async (data: string) => {
-       const sig = await eth.sign(data, address);
-       return { h: "eth-personal-sign", sig };
-     });
+  const { readCompanyById, readJobListingById } = usePolybase();
   const [jobId, setJobId] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [jobInfo, setJobInfo] = useState<any>({});
@@ -70,7 +64,7 @@ const JobInfo: NextPage = () => {
               />
             </div>
             <div className="bg-white shadow-lg col-span-1 mt-[4%] h-[20vh] rounded-md">
-              <ReferJob />
+              <ReferJob jobId={jobId} />
             </div>
           </div>
         </Layout>

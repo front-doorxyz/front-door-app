@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Chip from "../Chip";
-import * as eth from "@polybase/eth";
 import { useAccount } from "wagmi";
 import { MapPinIcon } from "@heroicons/react/24/outline";
 import { truncateDescription } from "../../helpers";
@@ -69,12 +68,7 @@ const ClientJob = (props: jobProps) => {
 
 const ClientJobs = () => {
   const { address }:any = useAccount();
-  const { readAllJobListingsForClient } = usePolybase(
-    async (data: string) => {
-       const sig = await eth.sign(data, address);
-       return { h: "eth-personal-sign", sig };
-     })
-   ;;
+  const { readAllJobListingsForClient } = usePolybase()
   const [jobArr, setJobArr] = useState<any>([]);
   
   useEffect(() => {

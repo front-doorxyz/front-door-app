@@ -1,23 +1,16 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { gweiUnits, parseEther } from "viem";
+import {parseEther } from "viem";
 import { Address, useAccount, useContractWrite } from "wagmi";
 import usePolybase from "../../hooks/usePolybase";
 import { recruitmentABI, recruitmentAddress } from "../../src/generated";
 import TextEditor from "../TextEditor";
-import * as eth from "@polybase/eth";
+
 
 type Props = {};
 
 const AddJob = (props: Props) => {
-  const { address }:any = useAccount();
-
-  const { readCompanyById } = usePolybase(
-    async (data: string) => {
-       const sig = await eth.sign(data, address);
-       return { h: "eth-personal-sign", sig };
-     })
-   ;;
+  const { readCompanyById } = usePolybase()
   const [jobInfo, setJobInfo] = useState<any>({
     companyName: "",
     description: "",
@@ -61,7 +54,7 @@ const AddJob = (props: Props) => {
     abi: recruitmentABI,
     address: recruitmentAddress,
     functionName: "registerJob",
-    args: [parseEther("10","gwei")],
+    args: [BigInt(jobInfo.bounty)],
   });
 
   const registerJob = async () => {

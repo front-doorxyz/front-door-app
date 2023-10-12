@@ -17,14 +17,14 @@ const ReferrerRegister = () => {
    ;;
   const [name, setName] = useState("");
   const [email, setEmail] = useState<string>("");
-  const [hashEmail, setHashEmail] = useState<string>("");
+  const [hashEmail, setHashEmail] = useState<`0x${string}`>("0x");
 
   const handleNameChange = (event: any) => {
     setName(event.target.value);
   };
 
   const handleEmailChange = (event: any) => {
-    setHashEmail(String(keccak256(toBytes(event.target.value))));
+    setHashEmail(keccak256(toBytes(event.target.value)));
     setEmail(event.target.value);
   };
 
@@ -34,13 +34,19 @@ const ReferrerRegister = () => {
     abi: recruitmentABI,
     address: recruitmentAddress,
     functionName: "registerReferrer",
-    args: [hashEmail as `0x${string}`],
   });
 
   const registerReferrerSc = async () => {
     try {
       const referrerData = [address, name, email];
-      await writeAsync();
+      if(hashEmail) {
+        await writeAsync({
+          args: [hashEmail]
+        });
+      } else {
+        toast.error("No email supplied");
+        return;
+      }
       if (!isSuccess) {
         toast.error("Referrer already registered");
       }

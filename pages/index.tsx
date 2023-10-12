@@ -4,16 +4,10 @@ import { Layout } from "../components/layout";
 import usePolybase from "../hooks/usePolybase";
 import Banner from "../components/Banner";
 import Job from "../components/JobComponents/Job";
-import * as eth from "@polybase/eth";
-import { useAccount } from "wagmi";
+
 
 const Home: NextPage = () => {
-  const { address }:any = useAccount()
-  const { readAllJobListings } = usePolybase(
-    async (data: string) => {
-       const sig = await eth.sign(data, address);
-       return { h: "eth-personal-sign", sig };
-     })
+  const { readAllJobListings } = usePolybase()
   const [jobArr, setJobArr] = useState<any>([]);
 
   useEffect(() => {
