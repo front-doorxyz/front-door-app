@@ -9,6 +9,18 @@ export const truncateDescription = (text: string, maxWords: number): string => {
     return text;
   };
 
+
+ export const getDate = () => {
+    let currentDate = new Date();
+    let cDay = currentDate.getDate();
+    let cMonth = currentDate.getMonth() + 1;
+    let cYear = currentDate.getFullYear();
+    let date = cDay + "/" + cMonth + "/" + cYear;
+    return date;
+};
+
+
+
  export const isValidURL = (url: string) => {
     try {
       new URL(url);
