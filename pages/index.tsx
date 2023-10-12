@@ -5,13 +5,14 @@ import usePolybase from "../hooks/usePolybase";
 import Banner from "../components/Banner";
 import Job from "../components/JobComponents/Job";
 
+
 const Home: NextPage = () => {
-  const { readAllJobListings } = usePolybase();
+  const { readAllJobListings } = usePolybase()
   const [jobArr, setJobArr] = useState<any>([]);
 
   useEffect(() => {
     readAllJobListings()
-      .then((jobListings) => setJobArr(jobListings))
+      .then((jobListings) => setJobArr(jobListings)) 
       .catch((error) => {
         console.log(error);
       });

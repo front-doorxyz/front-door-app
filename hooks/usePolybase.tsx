@@ -1,13 +1,13 @@
-import { Polybase } from "@polybase/client";
+import { Polybase, Signer } from "@polybase/client";
 import { Address } from "wagmi";
-const usePolybase = () => {
+const usePolybase = (signer?:Signer) => {
   const dbNameSpace =
     "pk/0xbaeff2028f7c15332ab23549f09c33eee5cb9231559067afe56f975ea6a4b660b1e32eead19b6a8bd48d8347fa3753c8749d43b9a8716905c0fc8a3c70e3e9b1/navh-final";
 
   const db = new Polybase({
-    defaultNamespace: dbNameSpace,
+      defaultNamespace: dbNameSpace,
+      signer,
   });
-
   const jobsReference = db.collection("Jobs");
   const referrersReference = db.collection("Referrers");
   const companiesReference = db.collection("Companies");
@@ -27,7 +27,6 @@ const usePolybase = () => {
   const checkCandidateRegistration = async (id: string) => {
     const record = await candidatesReference.record(id).get();
     const exists = record?.exists() || false;
-    console.log(exists);
     return exists;
   };
 
@@ -42,15 +41,14 @@ const usePolybase = () => {
     return data;
   };
 
-  const registerCompany = async (referrerData: any) => {
-    const recordData = await companiesReference.create(referrerData);
+  const registerCompany = async (companyData: any) => {
+    const recordData = await companiesReference.create(companyData);
     return recordData;
   };
 
   const readCompanyById = async (id: string) => {
     const record = await companiesReference.record(id).get();
     const { data } = record;
-
     return data;
   };
 
@@ -75,14 +73,12 @@ const usePolybase = () => {
   const checkCompanyRegistration = async (id: string) => {
     const record = await companiesReference.record(id).get();
     const exists = record?.exists() || false;
-    console.log(exists);
     return exists;
   };
 
   const checkReferrerRegistration = async (id: string) => {
     const record = await referrersReference.record(id).get();
     const exists = record?.exists() || false;
-    console.log(exists);
     return exists;
   };
 

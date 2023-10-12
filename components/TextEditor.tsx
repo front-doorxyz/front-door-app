@@ -5,15 +5,16 @@ type Props = {
   initialValue?: string;
   title?: string;
   readOnly: boolean;
+  handleInput?: any;
 };
 
-const TextEditor = ({ initialValue, title, readOnly }: Props) => {
+const TextEditor = ({ initialValue, title, readOnly, handleInput }: Props) => {
   return (
     <div>
       <Slite
         initialValue={initialValue}
         readOnly={readOnly}
-        onChange={() => console.log("hi")}>
+        onChange={handleInput}>
         {title && (
           <div className="bg-white text-xl uppercase font-semibold">
             {title}
