@@ -1,5 +1,12 @@
 import { useRouter } from "next/router";
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { useAccount, useContractWrite } from "wagmi";
+import usePolybase from "../../hooks/usePolybase";
+import * as eth from "@polybase/eth";
+import { recruitmentABI, recruitmentAddress } from "../../src/generated";
+import { keccak256, toBytes } from "viem";
+import emailjs from "emailjs-com";
 
 type Props = {};
 const emailjsKey = process.env.NEXT_PUBLIC_EMAILJS_KEY;
@@ -7,9 +14,62 @@ const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICEID;
 
 const ReferJob = (props: Props) => {
   const router = useRouter();
-  const [refereeMail, setRefereeMail] = useState("");
-  const [loading, setLoading] = useState(false);
+  const { address }:any = useAccount();
+  const { checkReferrerRegistration } = usePolybase(
+    async (data: string) => {
+       const sig = await eth.sign(data, address);
+       return { h: "eth-personal-sign", sig };
+     })
+   ;;
+  const [refereeMail, setRefereeMail] = useState<string>("");
+  const [hashEmail, setHashEmail] = useState<`0x${string}`>("0x");
 
+
+  const handleEmailChange = (event:React.ChangeEvent<HTMLInputElement>) => {
+    setHashEmail(keccak256(toBytes(event.target.value)));
+   setRefereeMail(event.target.value);
+  };
+
+  const { data, isLoading, isSuccess, writeAsync } = useContractWrite({
+    abi: recruitmentABI,
+    address: recruitmentAddress,
+    functionName: "registerReferral",
+  });
+
+
+  const registerReferralSC = async () => {
+    let referrerExists:boolean;
+    try {
+      referrerExists = await checkReferrerRegistration(address);
+    } catch (e) {
+      referrerExists = false;
+    }
+    if (!referrerExists) {
+      toast.warning("Register as a referrer");
+      router.push("/register");
+      return;
+    }
+    else{
+      if(hashEmail){
+        const refId = await writeAsync({
+          args: [BigInt(jobId),hashEmail],
+        });
+        const emailArgs = { to: refereeMail, refId: refId, jobId: Number(jobId) };
+        try {
+          emailjs.send("service_gb5wvzu", "template_mc7f9wm", emailArgs, "vmYs4tBmmwGXZk563").then(
+            (result: { text: string }) => {
+              toast.success("Referral sent successfully");
+            },
+            (error: { text: string }) => {
+              toast.error("Referral failed");
+            },
+          );
+    } catch (e) {
+      console.log(e);
+    }
+    }
+    }
+}
   return (
     <div className="flex flex-col p-2 w-full">
       <div className="border-b-2">
