@@ -12,7 +12,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     readAllJobListings()
-      .then((jobListings) => setJobArr(jobListings))
+      .then((jobListings) => setJobArr(jobListings)) 
       .catch((error) => {
         console.log(error);
       });

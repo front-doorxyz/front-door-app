@@ -6,7 +6,7 @@ import usePolybase from "../../hooks/usePolybase";
 import * as eth from "@polybase/eth";
 import { recruitmentABI, recruitmentAddress } from "../../src/generated";
 import { keccak256, toBytes } from "viem";
-
+import emailjs from "emailjs-com";
 
 const emailjsKey = process.env.NEXT_PUBLIC_EMAILJS_KEY;
 const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICEID;
@@ -38,12 +38,11 @@ const ReferJob = ({jobId}: Props) => {
     abi: recruitmentABI,
     address: recruitmentAddress,
     functionName: "registerReferral",
-    args: [BigInt(jobId),hashEmail],
   });
 
 
   const registerReferralSC = async () => {
-    let referrerExists;
+    let referrerExists:boolean;
     try {
       referrerExists = await checkReferrerRegistration(address);
     } catch (e) {
@@ -54,7 +53,27 @@ const ReferJob = ({jobId}: Props) => {
       router.push("/register");
       return;
     }
-  }
+    else{
+      if(hashEmail){
+        const refId = await writeAsync({
+          args: [BigInt(jobId),hashEmail],
+        });
+        const emailArgs = { to: refereeMail, refId: refId, jobId: Number(jobId) };
+        try {
+          emailjs.send("service_gb5wvzu", "template_mc7f9wm", emailArgs, "vmYs4tBmmwGXZk563").then(
+            (result: { text: string }) => {
+              toast.success("Referral sent successfully");
+            },
+            (error: { text: string }) => {
+              toast.error("Referral failed");
+            },
+          );
+    } catch (e) {
+      console.log(e);
+    }
+    }
+    }
+}
   return (
     <div className="flex flex-col p-2 w-full">
       <div className="border-b-2">
@@ -71,7 +90,7 @@ const ReferJob = ({jobId}: Props) => {
           onChange={handleEmailChange}
         />
         <div className="flex justify-end w-full">
-          <button className="px-6 py-2 rounded-[5px] bg-[#3F007F] text-sm md:text-md  text-white">
+          <button className="px-6 py-2 rounded-[5px] bg-[#3F007F] text-sm md:text-md  text-white" onClick={registerReferralSC}>
             Refer
           </button>
         </div>
