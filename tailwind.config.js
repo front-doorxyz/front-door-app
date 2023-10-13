@@ -1,42 +1,36 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-
-    // Or if using `src` directory:
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    './pages/**/*.{ts,tsx}',
+    './components/**/*.{ts,tsx}',
+    './app/**/*.{ts,tsx}',
+    './src/**/*.{ts,tsx}',
   ],
-  daisyui: {
-    themes: [],
-  },
   theme: {
-    // Extend Tailwind classes (e.g. font-bai-jamjuree, animate-grow)
-    extend: {
-      fontFamily: {
-        "bai-jamjuree": ["Bai Jamjuree", "sans-serif"],
+    container: {
+      center: true,
+      padding: '3rem',
+      screens: {
+        '2xl': '1400px',
       },
+    },
+    extend: {
       keyframes: {
-        grow: {
-          "0%": {
-            width: "0%",
-          },
-          "100%": {
-            width: "100%",
-          },
+        'accordion-down': {
+          from: { height: 0 },
+          to: { height: 'var(--radix-accordion-content-height)' },
         },
-        zoom: {
-          "0%, 100%": { transform: "scale(1, 1)" },
-          "50%": { transform: "scale(1.1, 1.1)" },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: 0 },
         },
       },
       animation: {
-        grow: "grow 5s linear infinite",
-        "pulse-fast": "pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        zoom: "zoom 1s ease infinite",
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
     },
   },
-  plugins: [require("daisyui")],
+  darkMode: ['class'],
+  plugins: [require('tailwindcss-animate'), require('daisyui')],
 };
