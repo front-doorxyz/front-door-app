@@ -16,6 +16,8 @@ module.exports = {
     extend: {
       fontFamily: {
         "bai-jamjuree": ["Bai Jamjuree", "sans-serif"],
+        'roboto': ['Roboto', 'sans'],
+        'sans': ['Proxima Nova'],
       },
       keyframes: {
         grow: {

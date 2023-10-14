@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
+
 type Props = {
   title: string;
   subtitle?: string;
@@ -14,14 +15,17 @@ const Banner = ({ title, navigation, subtitle }: Props) => {
       {navigation && (
         <div
           className="flex items-center gap-4 h-[4vh]"
-          onClick={() => router.back()}>
+          onClick={() => router.back()}
+        >
           <ArrowLeftIcon className="h-4" />
           Back
         </div>
       )}
       <div className="flex flex-col items-center justify-center h-full gap-2">
-        <div className="text-2xl uppercase">{title}</div>
-        <div>{subtitle}</div>
+        <div className="text-2xl uppercase font-roboto">
+          {title}
+        </div>
+        <div className="font-roboto">{subtitle}</div>
       </div>
     </div>
   );

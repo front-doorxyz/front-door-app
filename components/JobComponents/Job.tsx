@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import StarRating from "../StarRating";
-import { truncateDescription } from "../../helpers";
 import { jobProps } from "../../types";
 
 const Job = ({
@@ -12,36 +11,60 @@ const Job = ({
   companyName,
 }: jobProps) => {
   const router = useRouter();
+  const [showDescription, setShowDescription] = useState(false);
+
+  const toggleDescription = () => {
+    setShowDescription(!showDescription);
+  };
+
   return (
     <div
       id={id}
-      className="shadow-xl w-[300px] h-[200px] md:w-[450px] md:h-[300px] rounded-2xl transition-all duration-300">
-      <div className="flex flex-col justify-between h-[100%]">
-        <div className="bg-[#3F3F5F] text-white h-[20%] rounded-t-2xl flex items-center justify-around gap-2 border-b-2">
-          <div className="flex  gap-2 ml-[2%] ">
-            <div className="text-sm md:text-xl ">{companyName}</div>
-          </div>
-          <StarRating score={4.5} color="white" />
+      className="bg-blue-50 shadow-lg rounded-lg p-4 hover:shadow-2xl transition-transform duration-300 transform hover:scale-105 cursor-pointer"
+      style={{
+        maxWidth: "300px",
+      }}
+    >
+      <div
+        className="bg-blue-500 text-slate-100 py-3 rounded-t-lg"
+        style={{ fontSize: "1rem", fontWeight: "bold", textAlign: "left",  padding: "10px 10px"}}
+      >
+        <span
+          className="font-bold text-lg"
+          style={{
+            textTransform: "uppercase",
+            fontSize: "0.9rem",
+          }}
+        >
+          {companyName}
+        </span>
+        <StarRating score={4.5} color="gold" />
+      </div>
+      <div className="p-4 flex flex-col">
+        <div className="font-bold text-lg text-black-500" style={{ textTransform: "uppercase", marginBottom: "5px" }}>
+          {roleTitle}
         </div>
-        <div className="p-2 h-[60%]">
-          <div className="flex flex-col gap-4 text-sm md:text-lg">
-            <div className="flex w-full items-center justify-between border-b-2 ">
-              <div className="uppercase">{roleTitle}</div>
-              <div className="flex items-center ">{location}</div>
-            </div>
-            <div className="flex flex-col w-full justify-center">
-              <div className="">{truncateDescription(description, 24)}</div>
-            </div>
-            <div></div>
-          </div>
+        <div className="font-bold text-sm mt-1 text-black-500">
+          {location}
         </div>
-        <div className="flex items-center justify-end h-[20%] gap-4 mr-[2%]">
-          <button
-            className="px-6 py-2 rounded-[5px] bg-[#3F007F] text-sm md:text-md  text-white"
-            onClick={() => router.push(`/job/${id}`)}>
-            View
-          </button>
+        <div className="text-sm" style={{ color: "#007BFF", cursor: "pointer" }} onClick={toggleDescription}>
+          {showDescription ? "Hide JD" : "Job Description"}
         </div>
+        <div
+          className="text-black-500 text-sm mb-4"
+          style={{ maxHeight: showDescription ? "none" : "60px", overflow: "hidden", display: showDescription ? "block" : "none" }}
+        >
+          {description}
+        </div>
+      </div>
+      <div className="flex justify-end mt-4">
+        <button
+          className="px-4 py-2 rounded-lg bg-purple-950 text-white text-sm hover:bg-purple-800 transition-colors duration-300"
+          style={{ cursor: "pointer" }}
+          onClick={() => router.push(`/job/${id}`)}
+        >
+          View More
+        </button>
       </div>
     </div>
   );
