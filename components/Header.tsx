@@ -51,6 +51,9 @@ const Header = () => {
       <li className="">
         <NavLink href="/faucet">Faucet</NavLink>
       </li>
+      <li className="">
+        <NavLink href="/referrer-dashboard">Referrer Dashboard</NavLink>
+      </li>
     </>
   );
 
