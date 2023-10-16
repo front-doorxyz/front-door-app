@@ -1,18 +1,21 @@
 import { NextPage } from 'next';
-import React, { useState } from 'react';
-import CompanyRegister from '../../components/CompanyRegister';
-import ReferrerRegister from '../../components/ReferrerRegister';
-import { Layout } from '../../components/layout';
-const RegisterPage: NextPage = () => {
-  const [active, setActive] = useState<boolean>(true);
+import React, { useEffect, useState } from 'react';
+import { Layout } from '@/components/layout';
+import CompanyRegister from '@/components/CompanyRegister';
+import ReferrerRegister from '@/components/ReferrerRegister';
+import CandidateRegister from '@/components/CandidateRegister';
+import { useRouter } from 'next/router';
 
-  const activeTab = (e: any) => {
-    const id = e.target.id;
-    if (id === '1') {
-      setActive(true);
-    } else {
-      setActive(false);
-    }
+const RegisterPage: NextPage = () => {
+  const router = useRouter();
+  const [active, setActive] = useState<number>(1);
+
+  useEffect(() => {
+    const id = router.query.id;
+  }, [router]);
+
+  const activeTab = (id: number) => {
+    setActive(id);
   };
   return (
     <Layout title='Register'>
@@ -20,21 +23,36 @@ const RegisterPage: NextPage = () => {
         <div className='tabs-boxed tabs flex justify-center gap-2'>
           <a
             id='1'
-            className={`tab tab-lifted tab-lg ${active ? 'tab-active' : ''}`}
-            onClick={activeTab}
+            className={`tab tab-lifted tab-lg ${
+              active === 1 ? 'tab-active' : ''
+            }`}
+            onClick={() => activeTab(1)}
           >
             Company Register
           </a>
           <a
             id='2'
-            className={`tab tab-lifted tab-lg ${!active ? 'tab-active' : ''}`}
-            onClick={activeTab}
+            className={`tab tab-lifted tab-lg ${
+              active === 2 ? 'tab-active' : ''
+            }`}
+            onClick={() => activeTab(2)}
           >
             Referrer Register
           </a>
+          <a
+            id='3'
+            className={`tab tab-lifted tab-lg ${
+              active === 3 ? 'tab-active' : ''
+            }`}
+            onClick={() => activeTab(3)}
+          >
+            Candidate Register
+          </a>
         </div>
         <div className='flex justify-center'>
-          {active ? <CompanyRegister /> : <ReferrerRegister />}
+          {active === 1 && <CompanyRegister />}
+          {active === 2 && <ReferrerRegister />}
+          {active === 3 && <CandidateRegister />}
         </div>
       </div>
     </Layout>

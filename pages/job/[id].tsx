@@ -12,6 +12,7 @@ const JobInfo: NextPage = () => {
   const router = useRouter();
   const { readCompanyById, readJobListingById } = usePolybase();
   const [jobId, setJobId] = useState<string>('');
+  const [refId, setRefId] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [jobInfo, setJobInfo] = useState<any>({});
   const [companyInfo, setCompanyInfo] = useState<any>({});
@@ -23,8 +24,12 @@ const JobInfo: NextPage = () => {
   }, [jobInfo, companyInfo]);
 
   useEffect(() => {
-    const { id } = router.query || ' ';
+    console.log(router);
+    const { id, refId } = router.query || ' ';
     setJobId(String(id));
+    if (refId) {
+      setRefId(refId);
+    }
 
     readJobListingById(String(id))
       .then((jobListing) => {
@@ -63,7 +68,7 @@ const JobInfo: NextPage = () => {
               />
             </div>
             <div className='col-span-1 mt-[4%] h-[15vh] rounded-md bg-white shadow-lg'>
-              <ReferJob jobId={jobId} />
+              <ReferJob jobId={jobId} refId={refId} />
             </div>
           </div>
         </Layout>
