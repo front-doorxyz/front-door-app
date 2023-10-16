@@ -25,10 +25,10 @@ const JobInfo: NextPage = () => {
 
   useEffect(() => {
     console.log(router);
-    const { id, refId } = router.query || ' ';
+    const { id, refId }: any = router.query || {};
     setJobId(String(id));
     if (refId) {
-      setRefId(refId);
+      setRefId(String(refId));
     }
 
     readJobListingById(String(id))
