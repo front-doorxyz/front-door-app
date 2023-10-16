@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import * as eth from '@polybase/eth';
 import { Address, useAccount, useContractWrite } from 'wagmi';
@@ -6,6 +6,7 @@ import { getDate } from '../../helpers';
 import usePolybase from '../../hooks/usePolybase';
 import { recruitmentABI, recruitmentAddress } from '../../src/generated';
 import TextEditor from '../TextEditor';
+import { Badge } from '../ui/badge';
 
 type Props = {};
 
@@ -23,9 +24,7 @@ const AddJob = (props: Props) => {
     location: '',
     roleTitle: '',
     bounty: '1',
-    maxSalary: 0,
-    minSalary: 0,
-    type: '',
+    salary: 0,
     experience: '',
     skills: '',
     langaugeSpoken: '',
@@ -52,11 +51,19 @@ const AddJob = (props: Props) => {
 
   const getCompanyData = async (address: Address) => {
     const data = await readCompanyById(address);
-    setJobInfo({
-      ...jobInfo,
-      companyName: data.companyName,
-    });
+    if (data) {
+      setJobInfo({
+        ...jobInfo,
+        companyName: data.companyName,
+      });
+    }
   };
+
+  useEffect(() => {
+    if (address) {
+      getCompanyData(address);
+    }
+  }, []);
 
   const { data, isLoading, isSuccess, writeAsync } = useContractWrite({
     abi: recruitmentABI,
@@ -67,20 +74,21 @@ const AddJob = (props: Props) => {
 
   const registerJob = async () => {
     try {
-      const jobId = await writeAsync();
+      const jobId = 'test';
       if (jobId) {
         const date = getDate();
         const jobData = [
           String(jobId),
+          jobInfo.companyName,
           jobInfo.roleTitle,
           jobInfo.description,
           jobInfo.location,
-          Number(jobInfo.maxSalary),
-          Number(jobInfo.minSalary),
+          jobInfo.skills,
+          jobInfo.experience,
+          Number(jobInfo.salary),
           jobInfo.bounty,
-          jobInfo.companyName,
+          jobInfo.langaugeSpoken,
           address,
-          jobInfo.type,
           date,
         ];
         const data = await createJobListing(jobData);
@@ -96,7 +104,27 @@ const AddJob = (props: Props) => {
   return (
     <div className='flex flex-col justify-center gap-4 p-4 shadow-2xl'>
       <label className='join flex flex-col gap-2'>
-        <span className='badge indicator-item badge-primary'>Location</span>
+        <label className='join flex flex-col gap-2'>
+          <Badge className='w-[15%] bg-[#3F3F5F]'>Role Title</Badge>
+          <input
+            type='text'
+            placeholder='Type here'
+            className='input input-bordered w-[50vw]'
+            name='roleTitle'
+            value={jobInfo.roleTitle}
+            onChange={handleChange}
+          />
+        </label>
+        <label className='join mb-[-2%] flex flex-col gap-2'>
+          <Badge className='w-[15%] bg-[#3F3F5F]'>Description</Badge>
+
+          <TextEditor
+            readOnly={false}
+            initialValue={jobInfo.description}
+            handleInput={handleDescriptionChange}
+          />
+        </label>
+        <Badge className='w-[15%] bg-[#3F3F5F]'>Location</Badge>
         <input
           type='text'
           placeholder='Type here'
@@ -106,30 +134,31 @@ const AddJob = (props: Props) => {
           onChange={handleChange}
         />
       </label>
-      <label className='join mb-[-2%] flex flex-col gap-2'>
-        <span className='badge indicator-item badge-primary'>
-          Job Description
-        </span>
-      </label>
-      <TextEditor
-        readOnly={false}
-        initialValue={jobInfo.description}
-        handleInput={handleDescriptionChange}
-      />
+
       <label className='join flex flex-col gap-2'>
-        <span className='badge indicator-item badge-primary'>Role Title</span>
+        <Badge className='w-[15%] bg-[#3F3F5F]'>Skills</Badge>
         <input
           type='text'
           placeholder='Type here'
           className='input input-bordered w-[50vw]'
-          name='roleTitle'
-          value={jobInfo.roleTitle}
+          name='skills'
+          value={jobInfo.skills}
           onChange={handleChange}
         />
       </label>
-
       <label className='join flex flex-col gap-2'>
-        <span className='badge indicator-item badge-primary'> Bounty</span>
+        <Badge className='w-[15%] bg-[#3F3F5F]'>Experience Required</Badge>
+        <input
+          type='text'
+          placeholder='Type here'
+          className='input input-bordered w-[50vw]'
+          name='experience'
+          value={jobInfo.experience}
+          onChange={handleChange}
+        />
+      </label>
+      <label className='join flex flex-col gap-2'>
+        <Badge className='w-[15%] bg-[#3F3F5F]'>Bounty</Badge>
         <input
           type='number'
           step='any'
@@ -143,40 +172,32 @@ const AddJob = (props: Props) => {
       </label>
 
       <label className='join flex flex-col gap-2'>
-        <span className='badge indicator-item badge-primary'>Max Salary</span>
+        <Badge className='w-[15%] bg-[#3F3F5F]'>Salary</Badge>
         <input
           type='number'
           placeholder='Type here'
           className='input input-bordered w-[50vw]'
-          name='maxSalary'
-          value={jobInfo.maxSalary}
+          name='salary'
+          value={jobInfo.salary}
           onChange={handleChange}
         />
       </label>
       <label className='join flex flex-col gap-2'>
-        <span className='badge indicator-item badge-primary'>Min Salary</span>
-        <input
-          type='number'
-          placeholder='Type here'
-          className='input input-bordered w-[50vw]'
-          name='minSalary'
-          value={jobInfo.minSalary}
-          onChange={handleChange}
-        />
-      </label>
-      <label className='join flex flex-col gap-2'>
-        <span className='badge indicator-item badge-primary'>Type of job</span>
+        <Badge className='w-[15%] bg-[#3F3F5F]'>Spoken Langauge</Badge>
         <input
           type='text'
           placeholder='Type here'
           className='input input-bordered w-[50vw]'
-          name='type'
-          value={jobInfo.type}
+          name='langaugeSpoken'
+          value={jobInfo.langaugeSpoken}
           onChange={handleChange}
         />
       </label>
-      <button className={`btn btn-primary`} onClick={registerJob}>
-        Add Job
+      <button
+        className='md:text-md rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  uppercase text-white'
+        onClick={registerJob}
+      >
+        Register Job
       </button>
     </div>
   );

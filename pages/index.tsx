@@ -25,7 +25,7 @@ const Home: NextPage = () => {
 
   return (
     <Layout title='Home'>
-      <h1 className='mx-auto mb-6 pt-8 flex max-w-[80%] md:max-w-[300px] justify-center text-center text-2xl font-bold md:max-w-[600px] md:text-4xl md:mb-8 md:pt-24'>
+      <h1 className='mx-auto mb-6 flex max-w-[80%] justify-center pt-8 text-center text-2xl font-bold md:mb-8 md:max-w-[300px] md:max-w-[600px] md:pt-24 md:text-4xl'>
         The #1 platform for building transparent futures
       </h1>
       <div className=' mb-12 flex flex-row items-center justify-center sm:mx-auto sm:px-6 md:mb-16'>
@@ -45,8 +45,7 @@ const Home: NextPage = () => {
               companyName={job.companyName}
               roleTitle={job.roleTitle}
               location={job.location}
-              minSalary={job.minSalary}
-              maxSalary={job.maxSalary}
+              salary={job.salary}
               bounty={job.bounty}
             />
           ))}

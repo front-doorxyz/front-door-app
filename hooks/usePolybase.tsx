@@ -1,17 +1,17 @@
-import { Polybase, Signer } from "@polybase/client";
-import { Address } from "wagmi";
-const usePolybase = (signer?:Signer) => {
+import { Polybase, Signer } from '@polybase/client';
+import { Address } from 'wagmi';
+const usePolybase = (signer?: Signer) => {
   const dbNameSpace =
-    "pk/0xbaeff2028f7c15332ab23549f09c33eee5cb9231559067afe56f975ea6a4b660b1e32eead19b6a8bd48d8347fa3753c8749d43b9a8716905c0fc8a3c70e3e9b1/navh-final";
+    'pk/0xbaeff2028f7c15332ab23549f09c33eee5cb9231559067afe56f975ea6a4b660b1e32eead19b6a8bd48d8347fa3753c8749d43b9a8716905c0fc8a3c70e3e9b1/test';
 
   const db = new Polybase({
-      defaultNamespace: dbNameSpace,
-      signer,
+    defaultNamespace: dbNameSpace,
+    signer,
   });
-  const jobsReference = db.collection("Jobs");
-  const referrersReference = db.collection("Referrers");
-  const companiesReference = db.collection("Companies");
-  const candidatesReference = db.collection("Candidates");
+  const jobsReference = db.collection('Jobs');
+  const referrersReference = db.collection('Referrers');
+  const companiesReference = db.collection('Companies');
+  const candidatesReference = db.collection('Candidates');
 
   const registerCandidate = async (candidateData: any) => {
     const recordData = await candidatesReference.create(candidateData);
@@ -60,7 +60,7 @@ const usePolybase = (signer?:Signer) => {
   const applyforJob = async (jobId: string, candidateId: string) => {
     const recordData = await jobsReference
       .record(jobId)
-      .call("applyCandidate", [candidateId]);
+      .call('applyCandidate', [candidateId]);
     return recordData;
   };
 
@@ -92,7 +92,7 @@ const usePolybase = (signer?:Signer) => {
   };
 
   const readAllJobListingsForClient = async (address: Address) => {
-    const records = await jobsReference.where("owner", "==", address).get();
+    const records = await jobsReference.where('owner', '==', address).get();
     let jobListings: any = [];
     records.data.map((record) => {
       jobListings.push(record.data);
@@ -105,7 +105,7 @@ const usePolybase = (signer?:Signer) => {
     // .create(functionName, args) args array is defined by the updateName fn in collection schema
     const recordData = await jobsReference
       .record(id)
-      .call("updateJob", jobData);
+      .call('updateJob', jobData);
     return recordData.data;
   };
 

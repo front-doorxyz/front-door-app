@@ -1,23 +1,23 @@
-import React, { useContext, useState } from "react";
-import { useRouter } from "next/router";
-import { useAccount, useContractWrite } from "wagmi";
-import * as eth from "@polybase/eth";
-import usePolybase from "../hooks/usePolybase";
-import { recruitmentABI, recruitmentAddress } from "../src/generated";
-import { toast } from "react-toastify";
-import { toBytes, keccak256 } from "viem";
+import React, { useState } from 'react';
+import { useRouter } from 'next/router';
+import { useAccount, useContractWrite } from 'wagmi';
+import * as eth from '@polybase/eth';
+import usePolybase from '../hooks/usePolybase';
+import { recruitmentABI, recruitmentAddress } from '../src/generated';
+import { toast } from 'react-toastify';
+import { toBytes, keccak256 } from 'viem';
+import { Badge } from './ui/badge';
 
 const ReferrerRegister = () => {
-  const { address }:any = useAccount();
-  const { registerReferrer } = usePolybase(
-    async (data: string) => {
-       const sig = await eth.sign(data, address);
-       return { h: "eth-personal-sign", sig };
-     })
-   ;;
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState<string>("");
-  const [hashEmail, setHashEmail] = useState<`0x${string}`>("0x");
+  const router = useRouter();
+  const { address }: any = useAccount();
+  const { registerReferrer } = usePolybase(async (data: string) => {
+    const sig = await eth.sign(data, address);
+    return { h: 'eth-personal-sign', sig };
+  });
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState<string>('');
+  const [hashEmail, setHashEmail] = useState<`0x${string}`>('0x');
 
   const handleNameChange = (event: any) => {
     setName(event.target.value);
@@ -28,74 +28,69 @@ const ReferrerRegister = () => {
     setEmail(event.target.value);
   };
 
- 
-
   const { data, isLoading, isSuccess, writeAsync } = useContractWrite({
     abi: recruitmentABI,
     address: recruitmentAddress,
-    functionName: "registerReferrer",
+    functionName: 'registerReferrer',
   });
 
   const registerReferrerSc = async () => {
     try {
       const referrerData = [address, name, email];
-      if(hashEmail) {
+      if (hashEmail) {
         await writeAsync({
-          args: [hashEmail]
+          args: [hashEmail],
         });
       } else {
-        toast.error("No email supplied");
+        toast.error('No email supplied');
         return;
       }
       if (!isSuccess) {
-        toast.error("Referrer already registered");
-      }
-      else{
+        toast.error('Referrer already registered');
+      } else {
         const referrer = await registerReferrer(referrerData);
         if (isSuccess && referrer.id) {
-         toast.success(`${name} registered as Referrer!`);
+          toast.success(`${name} registered as Referrer!`);
+          router.push('/');
         }
       }
     } catch (e) {
-      toast.error("Referrer Registered failed");
+      toast.error('Referrer Registered failed');
     }
   };
 
   return (
     <>
       <div
-        id="form"
-        className="bg-blue-50 w-[300px] md:w-[30vw]  h-[50vh] p-2  flex flex-col items-center justify-center gap-4 shadow-2xl mt-[2%]">
-        <div className="flex flex-col gap-2">
-          <span className="w-1/5 bg-blue-100 text-white text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-white-900">
-            Name
-          </span>
+        id='form'
+        className='mt-[2%] flex h-[50vh]  w-[300px] flex-col  items-center justify-center gap-4 bg-blue-50 p-2 shadow-2xl md:w-[30vw]'
+      >
+        <div className='flex flex-col gap-2'>
+          <Badge className='w-[30%] bg-[#3F3F5F]'>Name</Badge>
 
           <input
-            type="text"
+            type='text'
             value={name}
             onChange={handleNameChange}
-            className="border border-slate-500 rounded-lg h-[50px] w-[200px] md:w-[20vw]"
+            className='h-[50px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
           />
         </div>
-        <div className="flex flex-col gap-2">
-          <span className="w-1/5 bg-blue-100 text-white text-sm font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-white-900">
-            Email
-          </span>
-
+        <div className='flex flex-col gap-2'>
+          <Badge className='w-[30%] bg-[#3F3F5F]'>Email</Badge>
           <input
-            type="text"
+            type='text'
             value={email}
             onChange={handleEmailChange}
-            className="border border-slate-500 rounded-lg h-[50px] w-[200px] md:w-[20vw]"
+            className='h-[50px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
           />
         </div>
 
         <button
-          type="button"
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 w-[210px] md:w-[20vw]"
+          type='button'
+          className='btn btn-primary w-[70%]'
           onClick={registerReferrerSc}
-          disabled={isLoading}>
+          disabled={isLoading}
+        >
           Register
         </button>
       </div>

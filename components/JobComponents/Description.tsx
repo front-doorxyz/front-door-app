@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   FireIcon,
   LinkIcon,
@@ -8,76 +8,84 @@ import {
   BuildingOfficeIcon,
   AcademicCapIcon,
   BanknotesIcon,
-} from "@heroicons/react/24/outline";
-import TextEditor from "../TextEditor";
-import { jobProps } from "../../types";
+} from '@heroicons/react/24/outline';
+import TextEditor from '../TextEditor';
+import { jobProps } from '../../types';
+import { Badge } from '../ui/badge';
 
 const Description = ({
   roleTitle,
   description,
   location,
-  maxSalary,
-  minSalary,
+  salary,
   bounty,
+  experience,
+  languageSpoken,
 }: jobProps) => {
-  const skills = ["React", "Python", "Nodejs", "Golang", "Solidity"];
+  const skills = ['React', 'Python', 'Nodejs', 'Golang', 'Solidity'];
   return (
-    <div className="flex flex-col items-start gap-4">
-      <div className="flex items-center justify-between w-full">
-        <div className="bg-[#3F3F5F] p-2 gap-2 text-white flex items-center justify-around">
-          <FireIcon className="h-4" />
+    <div className='flex flex-col items-start gap-4'>
+      <div className='flex w-full items-center justify-between'>
+        <Badge className='text-md gap-2 bg-[#ED7014]'>
+          <FireIcon className='h-6' />
           Hot Position
-        </div>
-        <div className="flex items-center justify-center gap-4">
-          <LinkIcon className="h-6 w-6" />
+        </Badge>
+        <div className='flex items-center justify-center gap-4'>
+          <LinkIcon className='h-6 w-6' />
         </div>
       </div>
-      <div className="text-3xl tracking-wide font-semibold uppercase">
+      <div className='text-3xl font-semibold uppercase tracking-wide text-black'>
         {roleTitle}
       </div>
-      <div className="flex items-center w-full gap-4 border-b-2 pb-4">
-        <div>Bounty - {bounty}</div>
+      <div className='flex w-full items-center gap-4 border-b-2 pb-4'>
+        <Badge className='self-start bg-[#5F9FFF]'>
+          {'Bounty: ' + '$' + Math.floor(100 + Math.random() * 900)}
+        </Badge>
+        {/* <Bag>Bounty - {bounty}</Bag> */}
       </div>
-      <div className="flex flex-col w-full">
-        <TextEditor readOnly initialValue={description} title="Description" />
+      <div className='flex w-full flex-col'>
+        <TextEditor readOnly initialValue={description} title='Description' />
       </div>
-      <div className="flex flex-col w-full border-b-2 pb-4">
-        <div className="bg-white text-xl uppercase font-semibold">
+      <div className='flex w-full flex-col border-b-2 pb-4'>
+        <div className='bg-white text-xl font-semibold uppercase text-black'>
           Required Skills
         </div>
-        <div className="flex flex-wrap w-full gap-4 mt-[2%]">
+        <div className='mt-[2%] flex w-full flex-wrap gap-4'>
           {skills.map((skill) => (
-            <div key={skill} className="bg-[#5F9FFF] text-white p-2">{skill}</div>
+            <div key={skill} className='bg-[#5F9FFF] p-2 text-white'>
+              {skill}
+            </div>
           ))}
         </div>
       </div>
-      <div className="flex flex-col w-full">
-        <div className="bg-white text-xl uppercase font-semibold">
+      <div className='flex w-full flex-col'>
+        <div className='bg-white text-xl font-semibold uppercase text-black'>
           Job Details
         </div>
-        <div className="grid grid-cols-2 grid-rows-1 mt-[1%] gap-6  text-white">
-          <div className="flex  items-center gap-2 bg-[#3F3F5F] p-2">
-            <ClockIcon className="h-6" />
-            Start time
+        <div className='mt-[1%] grid grid-cols-2 grid-rows-1 gap-6  text-white'>
+          <div className='flex  items-center gap-2 bg-[#3F3F5F] p-2'>
+            <ClockIcon className='h-6' />
+            Experience
           </div>
-          <div className=" flex  items-center gap-2 bg-[#3F3F5F] p-2">
-            <ShoppingBagIcon className="h-6" />
-            Occupation
+          <div className=' flex  items-center gap-2 bg-[#3F3F5F] p-2'>
+            <ShoppingBagIcon className='h-6' />
+            Role Title
           </div>
-          <div className="flex  items-center gap-2 bg-[#3F3F5F] p-2">
-            <LanguageIcon className="h-6" />
+          <div className='flex  items-center gap-2 bg-[#3F3F5F] p-2'>
+            <LanguageIcon className='h-6' />
             Langauge
           </div>
-          <div className="flex  items-center gap-2 bg-[#3F3F5F] p-2">
-            <BuildingOfficeIcon className="h-6" />
+          <div className='flex  items-center gap-2 bg-[#3F3F5F] p-2'>
+            <BuildingOfficeIcon className='h-6' />
             Work Type
           </div>
-          <div className="flex  items-center gap-2 bg-[#3F3F5F] p-2">
-            <AcademicCapIcon className="h-6" />
+          <div className='flex  items-center gap-2 bg-[#3F3F5F] p-2'>
+            <AcademicCapIcon className='h-6' />
             Contract
           </div>
-          <div className="flex  items-center gap-2 bg-[#3F3F5F] p-2">
-            <BanknotesIcon className="h-6" />${minSalary} - {maxSalary}k +
+          <div className='flex  items-center gap-2 bg-[#3F3F5F] p-2'>
+            <BanknotesIcon className='h-6' />
+            {salary}
             benefits
           </div>
         </div>
