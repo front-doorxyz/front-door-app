@@ -55,7 +55,7 @@ const ReferrerRegister = () => {
         }
       }
     } catch (e) {
-      toast.error('Referrer Registeration failed');
+      toast.error('Referrer Registration failed');
     }
   };
 
