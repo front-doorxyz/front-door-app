@@ -24,7 +24,6 @@ const JobInfo: NextPage = () => {
   }, [jobInfo, companyInfo]);
 
   useEffect(() => {
-    console.log(router);
     const { id, refId }: any = router.query || {};
     setJobId(String(id));
     if (refId) {

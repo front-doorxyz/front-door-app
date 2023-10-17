@@ -6,12 +6,19 @@ import ReferrerRegister from '@/components/ReferrerRegister';
 import CandidateRegister from '@/components/CandidateRegister';
 import { useRouter } from 'next/router';
 
+type Props = {
+  tab: number;
+};
+
 const RegisterPage: NextPage = () => {
   const router = useRouter();
   const [active, setActive] = useState<number>(1);
 
   useEffect(() => {
-    const id = router.query.id;
+    if (router.query?.tab) {
+      const tab = router.query.tab;
+      setActive(Number(tab));
+    }
   }, [router]);
 
   const activeTab = (id: number) => {

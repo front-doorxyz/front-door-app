@@ -64,13 +64,20 @@ const ReferJob = ({ jobId, refId }: Props) => {
     }
     if (!referrerExists) {
       toast.warning('Register as a referrer');
-      router.push('/register');
+      router.push(
+        {
+          pathname: `/register`,
+          query: { tab: 2 },
+        },
+        `/register`
+      );
       return;
     } else {
       if (hashEmail) {
         const refId = await registerReferral({
           args: [BigInt(jobId), hashEmail],
         });
+        console.log(refId);
         const emailArgs = {
           to: refereeMail,
           refId: refId,
@@ -108,7 +115,13 @@ const ReferJob = ({ jobId, refId }: Props) => {
     }
     if (!candidateExists) {
       toast.warning('Register as a candidate!');
-      router.push('/register');
+      router.push(
+        {
+          pathname: `/register`,
+          query: { tab: 3 },
+        },
+        `/register`
+      );
       return;
     } else {
       if (refId) {

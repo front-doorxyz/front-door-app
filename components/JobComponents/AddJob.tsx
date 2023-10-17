@@ -103,7 +103,13 @@ const AddJob = (props: Props) => {
       }
     } else {
       toast.error('Please Register as a company');
-      router.push('/register');
+      router.push(
+        {
+          pathname: `/register`,
+          query: { tab: 1 },
+        },
+        `/register`
+      );
     }
   };
 
