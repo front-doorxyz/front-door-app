@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { useAccount, useContractWrite } from 'wagmi';
+import { useAccount, useContractWrite, useWaitForTransaction } from 'wagmi';
 import usePolybase from '../../hooks/usePolybase';
 import * as eth from '@polybase/eth';
 import { recruitmentABI, recruitmentAddress } from '../../src/generated';
@@ -77,7 +77,8 @@ const ReferJob = ({ jobId, refId }: Props) => {
         const refId = await registerReferral({
           args: [BigInt(jobId), hashEmail],
         });
-        console.log(refId);
+        console.log(variables);
+        // console.log(refId);
         const emailArgs = {
           to: refereeMail,
           refId: refId,

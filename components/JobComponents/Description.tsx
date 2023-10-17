@@ -65,28 +65,19 @@ const Description = ({
         <div className='mt-[1%] grid grid-cols-2 grid-rows-1 gap-6  text-white'>
           <div className='flex  items-center gap-2 bg-[#3F3F5F] p-2'>
             <ClockIcon className='h-6' />
-            Experience
-          </div>
-          <div className=' flex  items-center gap-2 bg-[#3F3F5F] p-2'>
-            <ShoppingBagIcon className='h-6' />
-            Role Title
+            {experience}
           </div>
           <div className='flex  items-center gap-2 bg-[#3F3F5F] p-2'>
             <LanguageIcon className='h-6' />
-            Langauge
+            {languageSpoken}
           </div>
           <div className='flex  items-center gap-2 bg-[#3F3F5F] p-2'>
             <BuildingOfficeIcon className='h-6' />
-            Work Type
-          </div>
-          <div className='flex  items-center gap-2 bg-[#3F3F5F] p-2'>
-            <AcademicCapIcon className='h-6' />
-            Contract
+            {location}
           </div>
           <div className='flex  items-center gap-2 bg-[#3F3F5F] p-2'>
             <BanknotesIcon className='h-6' />
-            {salary}
-            benefits
+            {salary} + benefits
           </div>
         </div>
       </div>

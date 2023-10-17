@@ -8,6 +8,7 @@ import { recruitmentABI, recruitmentAddress } from '../../src/generated';
 import TextEditor from '../TextEditor';
 import { Badge } from '../ui/badge';
 import { useRouter } from 'next/router';
+import JobModal from '../JobModal';
 
 type Props = {};
 
@@ -19,6 +20,7 @@ const AddJob = (props: Props) => {
       const sig = await eth.sign(data, address);
       return { h: 'eth-personal-sign', sig };
     });
+  const [jobModal, setJobModal] = useState<boolean>(false);
   const [jobInfo, setJobInfo] = useState<any>({
     companyName: '',
     description: '',
@@ -73,34 +75,38 @@ const AddJob = (props: Props) => {
     args: [BigInt(jobInfo.bounty)],
   });
 
+  const addJob = async () => {
+    try {
+      const jobId = await writeAsync();
+      if (jobId) {
+        const date = getDate();
+        const jobData = [
+          String(jobId),
+          jobInfo.companyName,
+          jobInfo.roleTitle,
+          jobInfo.description,
+          jobInfo.location,
+          jobInfo.skills,
+          jobInfo.experience,
+          Number(jobInfo.salary),
+          jobInfo.bounty,
+          jobInfo.langaugeSpoken,
+          address,
+          date,
+        ];
+        const data = await createJobListing(jobData);
+        if (data.id && isSuccess) {
+          toast.success('Job Registered Successfully');
+        }
+      }
+    } catch (e) {
+      toast.error('Job Registration failed');
+    }
+  };
+
   const registerJob = async () => {
     if (await checkCompanyRegistration(address)) {
-      try {
-        const jobId = await writeAsync();
-        if (jobId) {
-          const date = getDate();
-          const jobData = [
-            String(jobId),
-            jobInfo.companyName,
-            jobInfo.roleTitle,
-            jobInfo.description,
-            jobInfo.location,
-            jobInfo.skills,
-            jobInfo.experience,
-            Number(jobInfo.salary),
-            jobInfo.bounty,
-            jobInfo.langaugeSpoken,
-            address,
-            date,
-          ];
-          const data = await createJobListing(jobData);
-          if (data.id && isSuccess) {
-            toast.success('Job Registered Successfully');
-          }
-        }
-      } catch (e) {
-        toast.error('Job Registration failed');
-      }
+      setJobModal(true);
     } else {
       toast.error('Please Register as a company');
       router.push(
@@ -123,6 +129,7 @@ const AddJob = (props: Props) => {
         name='roleTitle'
         value={jobInfo.roleTitle}
         onChange={handleChange}
+        required
       />
       <div id='unique'>
         <Badge className='w-[15%] bg-[#3F3F5F]'>Description</Badge>
@@ -199,6 +206,13 @@ const AddJob = (props: Props) => {
       >
         Register Job
       </button>
+      {jobModal && (
+        <JobModal
+          setModal={() => setJobModal(false)}
+          addJob={addJob}
+          jobInfo={jobInfo}
+        />
+      )}
     </div>
   );
 };

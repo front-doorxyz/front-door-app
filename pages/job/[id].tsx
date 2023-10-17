@@ -64,6 +64,8 @@ const JobInfo: NextPage = () => {
                 location={jobInfo.location}
                 salary={jobInfo.salary}
                 bounty={jobInfo.bounty}
+                languageSpoken={jobInfo.langaugeSpoken}
+                experience={jobInfo.experience}
               />
             </div>
             <div className='col-span-1 mt-[4%] h-[15vh] rounded-md bg-white shadow-lg'>
