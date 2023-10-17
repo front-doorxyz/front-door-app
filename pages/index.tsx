@@ -4,6 +4,9 @@ import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { Layout } from '../components/layout';
 import usePolybase from '../hooks/usePolybase';
+import { Button } from '@/components/ui/button';
+import { db } from '@/lib/db';
+import { jobOnSkills, jobs, skills } from '@/lib/db/schemas/jobs';
 
 const stats = [
   { name: 'New Jobs', value: 200 },
@@ -15,19 +18,69 @@ const Home: NextPage = () => {
   const { readAllJobListings } = usePolybase();
   const [jobArr, setJobArr] = useState<any>([]);
 
-  useEffect(() => {
-    readAllJobListings()
-      .then((jobListings) => setJobArr(jobListings))
-      .catch((error) => {
-        console.log(error);
+  const seed = async () => {
+    const skill = await db
+      .insert(skills)
+      .values({ id: 1, name: 'JAVA' })
+      .execute();
+  };
+
+  const handleAddJob = async () => {
+    try {
+      await db.insert(jobs).values({
+        companyName: 'Sample Company 2 ',
+        description: 'This is a sample job description. 2',
+        location: 'Sample City 2',
+        roleTitle: 'Software Developer',
+        bounty: 5000,
+        maxSalary: 80000,
+        minSalary: 60000,
+        type: 'Full-time',
+        experience: '2-4 years',
+        langaugeSpoken: 'English',
       });
+      const response = await db
+        .insert(jobOnSkills)
+        .values({ jobId: 4, skillId: 1 })
+        .execute();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    db.query.jobs
+      .findMany({
+        with: {
+          postSkills: {
+            with: {
+              skill: {
+                columns: {
+                  name: true,
+                },
+              },
+            },
+          },
+        },
+      })
+      .then((result) => {
+        console.log(result);
+        setJobArr(result);
+      });
+    // readAllJobListings()
+    //   .then((jobListings) => setJobArr(jobListings))
+    //   .catch((error) => {
+    //     console.log(error);
+    //   });
   }, []);
 
   return (
     <Layout title='Home'>
-      <h1 className='mx-auto mb-6 pt-8 flex max-w-[80%] md:max-w-[300px] justify-center text-center text-2xl font-bold md:max-w-[600px] md:text-4xl md:mb-8 md:pt-24'>
+      <h1 className='mx-auto mb-6 flex max-w-[80%] justify-center pt-8 text-center text-2xl font-bold md:mb-8 md:max-w-[300px] md:max-w-[600px] md:pt-24 md:text-4xl'>
         The #1 platform for building transparent futures
       </h1>
+      <Button onClick={seed}>Seed</Button>
+      <Button onClick={handleAddJob}>Add Job</Button>
       <div className=' mb-12 flex flex-row items-center justify-center sm:mx-auto sm:px-6 md:mb-16'>
         <Stats stats={stats} />
       </div>
