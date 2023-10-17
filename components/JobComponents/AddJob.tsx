@@ -9,6 +9,7 @@ import TextEditor from '../TextEditor';
 import { Badge } from '../ui/badge';
 import { useRouter } from 'next/router';
 import JobModal from '../JobModal';
+import { waitForTransaction } from 'wagmi/actions';
 
 type Props = {};
 
@@ -77,7 +78,9 @@ const AddJob = (props: Props) => {
 
   const addJob = async () => {
     try {
-      const jobId = await writeAsync();
+      const { hash } = await writeAsync();
+      const receipt = await waitForTransaction({ hash });
+      const jobId = Number(receipt?.logs[0].data);
       if (jobId) {
         const date = getDate();
         const jobData = [

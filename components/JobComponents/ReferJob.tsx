@@ -1,12 +1,13 @@
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { useAccount, useContractWrite, useWaitForTransaction } from 'wagmi';
+import { useAccount, useContractWrite } from 'wagmi';
 import usePolybase from '../../hooks/usePolybase';
 import * as eth from '@polybase/eth';
 import { recruitmentABI, recruitmentAddress } from '../../src/generated';
 import { keccak256, toBytes } from 'viem';
 import emailjs from 'emailjs-com';
+import { waitForTransaction } from 'wagmi/actions';
 
 const emailjsKey = process.env.NEXT_PUBLIC_EMAILJS_KEY;
 const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICEID;
@@ -74,11 +75,11 @@ const ReferJob = ({ jobId, refId }: Props) => {
       return;
     } else {
       if (hashEmail) {
-        const refId = await registerReferral({
+        const { hash } = await registerReferral({
           args: [BigInt(jobId), hashEmail],
         });
-        console.log(variables);
-        // console.log(refId);
+        const receipt = await waitForTransaction({ hash });
+        const refId = Number(receipt?.logs[0].data);
         const emailArgs = {
           to: refereeMail,
           refId: refId,
