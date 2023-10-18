@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { JobProps } from '@/types';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { jobProps } from '@/types';
+import { useEffect, useState } from 'react';
 
 type Props = {
   setModal: (value: boolean) => void;
   addJob: () => void;
-  jobInfo: jobProps;
+  jobInfo: JobProps;
 };
 
 const JobModal = ({ addJob, jobInfo, setModal }: Props) => {

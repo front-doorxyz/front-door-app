@@ -1,10 +1,10 @@
+import { truncateDescription } from '@/helpers';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { jobProps } from '../../types';
+import { JobProps } from '../../types';
+import StarRating from '../StarRating';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
-import StarRating from '../StarRating';
-import { truncateDescription } from '@/helpers';
 
 const JobCard = ({
   id,
@@ -13,7 +13,7 @@ const JobCard = ({
   description = '',
   companyName,
   bounty,
-}: jobProps) => {
+}: Partial<JobProps>) => {
   const router = useRouter();
 
   return (
@@ -21,15 +21,7 @@ const JobCard = ({
       <div className='flex flex-col justify-start'>
         <div className='mb-4 flex justify-between'>
           <div className='relative flex h-14 w-14 overflow-hidden rounded-md shadow-sm'>
-            <Image
-              alt='Company logo'
-              className='cursor-pointer'
-              fill
-              src={`https://picsum.photos/id/${Math.pow(
-                parseInt(id),
-                3
-              )}/200/200`}
-            />
+            <div className='bacground-pattern'></div>
           </div>
           <Badge className='self-start bg-[#5F9FFF]'>
             {'Bounty: ' + '$' + Math.floor(100 + Math.random() * 900)}
@@ -39,7 +31,7 @@ const JobCard = ({
         <h1 className='mb-0 text-lg font-bold text-gray-900'>{roleTitle}</h1>
         <p className='mb-1 mt-0 text-sm text-gray-700'>{companyName}</p>
         <div className='mb-3 w-20'>
-          <StarRating score={4.5} color='#ffa41c' />
+          <StarRating score={4.5} color='#f7cd53' />
         </div>
 
         <div className='mb-5 h-[60px]'>

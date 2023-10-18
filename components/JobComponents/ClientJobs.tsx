@@ -1,15 +1,29 @@
-import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import Chip from '../Chip';
-import { useAccount } from 'wagmi';
 import { MapPinIcon } from '@heroicons/react/24/outline';
-import { truncateDescription } from '../../helpers';
-import { jobProps } from '../../types';
-import usePolybase from '../../hooks/usePolybase';
-import { Badge } from '../ui/badge';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import { useAccount } from 'wagmi';
+import { truncateDescription } from '../../helpers';
+import usePolybase from '../../hooks/usePolybase';
+import { JobProps } from '../../types';
+import { Badge } from '../ui/badge';
 
-const ClientJob = (props: jobProps) => {
+type ClientJobProps = {
+  id: string;
+  roleTitle?: string;
+  location?: string;
+  bounty?: string;
+  salary?: number;
+  description?: string;
+  companyName?: string;
+  status?: string;
+  date?: string;
+  experience?: string;
+  langaugeSpoken?: string;
+  skills?: string;
+};
+
+const ClientJob = (props: ClientJobProps) => {
   const {
     id,
     location,
@@ -87,7 +101,7 @@ const ClientJobs = () => {
     <div className='flex flex-col items-center justify-center'>
       <div className='flex flex-col  gap-2'>
         <div className='mt-[2%] flex flex-col flex-wrap items-center justify-center gap-8'>
-          {jobArr.map((job: jobProps) => (
+          {jobArr.map((job: JobProps) => (
             <ClientJob
               key={job.id}
               id={job.id}

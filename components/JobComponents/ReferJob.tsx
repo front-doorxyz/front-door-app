@@ -1,31 +1,30 @@
+import * as eth from '@polybase/eth';
+import emailjs from 'emailjs-com';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { useAccount, useContractWrite } from 'wagmi';
-import usePolybase from '../../hooks/usePolybase';
-import * as eth from '@polybase/eth';
-import { recruitmentABI, recruitmentAddress } from '../../src/generated';
 import { keccak256, toBytes } from 'viem';
-import emailjs from 'emailjs-com';
+import { useAccount, useContractWrite } from 'wagmi';
 import { waitForTransaction } from 'wagmi/actions';
+import usePolybase from '../../hooks/usePolybase';
+import { recruitmentABI, recruitmentAddress } from '../../src/generated';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 
 const emailjsKey = process.env.NEXT_PUBLIC_EMAILJS_KEY;
 const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICEID;
 
 type Props = {
   jobId: string;
-  refId?: string;
 };
 
-const ReferJob = ({ jobId, refId }: Props) => {
+const ReferJob = ({ jobId }: Props) => {
   const router = useRouter();
   const { address }: any = useAccount();
-  const { checkReferrerRegistration, checkCandidateRegistration } = usePolybase(
-    async (data: string) => {
-      const sig = await eth.sign(data, address);
-      return { h: 'eth-personal-sign', sig };
-    }
-  );
+  const { checkReferrerRegistration } = usePolybase(async (data: string) => {
+    const sig = await eth.sign(data, address);
+    return { h: 'eth-personal-sign', sig };
+  });
   const [refereeMail, setRefereeMail] = useState<string>('');
   const [hashEmail, setHashEmail] = useState<`0x${string}`>('0x');
 
@@ -43,17 +42,6 @@ const ReferJob = ({ jobId, refId }: Props) => {
     abi: recruitmentABI,
     address: recruitmentAddress,
     functionName: 'registerReferral',
-  });
-
-  const {
-    data: confirmData,
-    isLoading: confirmLoading,
-    isSuccess: confirmSuccess,
-    writeAsync: confirmReferral,
-  } = useContractWrite({
-    abi: recruitmentABI,
-    address: recruitmentAddress,
-    functionName: 'confirmReferral',
   });
 
   const registerReferralSC = async () => {
@@ -107,78 +95,28 @@ const ReferJob = ({ jobId, refId }: Props) => {
       }
     }
   };
-
-  const confirmReferralSC = async () => {
-    let candidateExists: boolean;
-    try {
-      candidateExists = await checkCandidateRegistration(address);
-    } catch (e) {
-      candidateExists = false;
-    }
-    if (!candidateExists) {
-      toast.warning('Register as a candidate!');
-      router.push(
-        {
-          pathname: `/register`,
-          query: { tab: 3 },
-        },
-        `/register`
-      );
-      return;
-    } else {
-      if (refId) {
-        try {
-          await confirmReferral({
-            args: [BigInt(refId), BigInt(jobId)],
-          });
-          if (confirmSuccess) {
-            toast.success('Candidate Application Completed');
-          }
-        } catch (e) {
-          toast.error('Candidate Application Failed');
-        }
-      }
-    }
-  };
+  
   return (
-    <div className='flex w-full flex-col p-2'>
-      <div className='flex w-full flex-col gap-2 pt-2'>
-        {!refId ? (
-          <>
-            <div className='uppercase text-black'>Refer suitable candidate</div>
-            <input
-              type='text'
-              placeholder='Candidate email'
-              name='name'
-              className='input input-bordered h-10 rounded-md border border-slate-800 p-3'
-              onChange={handleEmailChange}
-            />
-            <div className='flex w-full justify-end'>
-              <button
-                className='md:text-md rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  text-white'
-                disabled={isLoading}
-                onClick={registerReferralSC}
-              >
-                Refer
-              </button>
-            </div>
-          </>
-        ) : (
-          <div className='flex h-full flex-col items-center justify-center gap-2'>
-            <div className='uppercase text-black'>
-              Congrats! You have been referred
-            </div>
-            <div className='text-black'>Complete Application</div>
-            <button
-              className='md:text-md rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  text-white'
-              disabled={confirmLoading}
-              onClick={confirmReferralSC}
-            >
-              Apply
-            </button>
-          </div>
-        )}
-      </div>
+    <div className=''>
+      <h1 className='text-xl font-semibold md:mb-6'>
+        Refer a suitable candidate
+      </h1>
+
+      <Input
+        type='text'
+        placeholder='Candidate email'
+        name='name'
+        className=' mb-4  p-3'
+        onChange={handleEmailChange}
+      />
+
+      <Button
+        className='md:text-md w-full rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  text-white'
+        onClick={registerReferralSC}
+        disabled={isLoading}
+      >
+        Refer
+      </Button>
     </div>
   );
 };
