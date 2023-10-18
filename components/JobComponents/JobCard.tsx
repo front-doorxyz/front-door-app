@@ -4,6 +4,7 @@ import { jobProps } from '../../types';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 import StarRating from '../StarRating';
+import { truncateDescription } from '@/helpers';
 
 const JobCard = ({
   id,
@@ -18,7 +19,7 @@ const JobCard = ({
   return (
     <div className=' h-[360px] w-[300px] cursor-pointer rounded-lg bg-white px-5 py-5 shadow-md '>
       <div className='flex flex-col justify-start'>
-        <div className='flex justify-between mb-4'>
+        <div className='mb-4 flex justify-between'>
           <div className='relative flex h-14 w-14 overflow-hidden rounded-md shadow-sm'>
             <Image
               alt='Company logo'
@@ -35,14 +36,16 @@ const JobCard = ({
           </Badge>
         </div>
 
-        <h1 className='mb-0 font-bold text-gray-900 text-lg'>{roleTitle}</h1>
+        <h1 className='mb-0 text-lg font-bold text-gray-900'>{roleTitle}</h1>
         <p className='mb-1 mt-0 text-sm text-gray-700'>{companyName}</p>
         <div className='mb-3 w-20'>
           <StarRating score={4.5} color='#ffa41c' />
         </div>
 
         <div className='mb-5 h-[60px]'>
-          <p className='line-clamp-3 text-sm text-gray-400'>{description}</p>
+          <p className='line-clamp-3 text-sm text-gray-400'>
+            {truncateDescription(description, 20)}
+          </p>
         </div>
 
         <div className='mb-7 flex justify-start gap-2'>
