@@ -18,6 +18,15 @@ const usePolybase = (signer?: Signer) => {
     return recordData;
   };
 
+  const readCandidateData = async () => {
+    const records = await candidatesReference.get();
+    let candidateList: any = [];
+    records.data.map((record) => {
+      candidateList.push(record.data);
+    });
+    return candidateList;
+  };
+
   const readCandidateById = async (id: string) => {
     const record = await candidatesReference.record(id).get();
     const { data } = record;
@@ -112,6 +121,7 @@ const usePolybase = (signer?: Signer) => {
   return {
     registerCandidate,
     readCandidateById,
+    readCandidateData,
     checkCandidateRegistration,
     registerReferrer,
     readReferrerById,
