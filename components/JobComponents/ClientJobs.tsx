@@ -37,7 +37,7 @@ const ClientJob = (props: ClientJobProps) => {
   const router = useRouter();
   const viewCandidates = () => {
     // toast.warning('Coming Soon!');
-    router.push(`/candidates/${id}`); //TODO: uncomment once pages built
+    router.push(`/candidate-management/${id}`); //TODO: uncomment once pages built
   };
 
   const handleEditJob = () => {
