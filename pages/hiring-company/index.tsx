@@ -19,14 +19,6 @@ const Profile: NextPage = () => {
   return (
     <Layout title='Profile'>
       <Banner title='Hiring Company' />
-      <div className='mr-[2%] flex h-[20%] items-center justify-end gap-4 pt-5'>
-        <button
-          className='md:text-md rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  text-white'
-          onClick={() => router.push(`/candidate-management`)}
-        >
-          Manage Candidates
-        </button>
-      </div>
       <div className='mt-[2%] flex flex-col items-center justify-center'>
         <div className='tabs-boxed tabs flex justify-center gap-2'>
           <a
