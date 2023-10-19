@@ -5,9 +5,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function convert(val: number, threshoold= 9999) {
-  if(val <= threshoold){
-    return val
+export function convert(val: number, threshoold = 9999) {
+  if (val <= threshoold) {
+    return val;
   }
   // Thousands, millions, billions etc..
   let s = ['', 'k', 'm', 'b', 't'];
@@ -26,4 +26,13 @@ export function convert(val: number, threshoold= 9999) {
 
   // Appending the letter to precised val.
   return sVal + s[sNum];
+}
+
+export function formatDaysAgo(value: string, locale?: string) {
+  const [day, month, year] = value.split('/');
+
+  const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+  const deltaDays = (date.getTime() - Date.now()) / (1000 * 3600 * 24);
+  const formatter = new Intl.RelativeTimeFormat(locale);
+  return formatter.format(Math.round(deltaDays), 'days');
 }

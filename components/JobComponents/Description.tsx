@@ -1,85 +1,108 @@
-import React from "react";
-import {
-  FireIcon,
-  LinkIcon,
-  ClockIcon,
-  LanguageIcon,
-  ShoppingBagIcon,
-  BuildingOfficeIcon,
-  AcademicCapIcon,
-  BanknotesIcon,
-} from "@heroicons/react/24/outline";
-import TextEditor from "../TextEditor";
-import { jobProps } from "../../types";
+import { formatDaysAgo } from '@/lib/utils';
+import { JobProps } from '@/types';
+import Image from 'next/image';
+import StarRating from '../StarRating';
+import TextEditor from '../TextEditor';
 
 const Description = ({
+  id,
   roleTitle,
   description,
   location,
-  maxSalary,
-  minSalary,
+  salary,
   bounty,
-}: jobProps) => {
-  const skills = ["React", "Python", "Nodejs", "Golang", "Solidity"];
+  companyName,
+  experience,
+  date,
+  company,
+}: JobProps) => {
   return (
-    <div className="flex flex-col items-start gap-4">
-      <div className="flex items-center justify-between w-full">
-        <div className="bg-[#3F3F5F] p-2 gap-2 text-white flex items-center justify-around">
-          <FireIcon className="h-4" />
-          Hot Position
-        </div>
-        <div className="flex items-center justify-center gap-4">
-          <LinkIcon className="h-6 w-6" />
-        </div>
-      </div>
-      <div className="text-3xl tracking-wide font-semibold uppercase">
-        {roleTitle}
-      </div>
-      <div className="flex items-center w-full gap-4 border-b-2 pb-4">
-        <div>Bounty - {bounty}</div>
-      </div>
-      <div className="flex flex-col w-full">
-        <TextEditor readOnly initialValue={description} title="Description" />
-      </div>
-      <div className="flex flex-col w-full border-b-2 pb-4">
-        <div className="bg-white text-xl uppercase font-semibold">
-          Required Skills
-        </div>
-        <div className="flex flex-wrap w-full gap-4 mt-[2%]">
-          {skills.map((skill) => (
-            <div key={skill} className="bg-[#5F9FFF] text-white p-2">{skill}</div>
-          ))}
+    <div className='mb-24'>
+      <div className='relative mb-16 flex h-[250px] w-full md:h-[300px]'>
+        <Image
+          alt='Company logo'
+          className='mb-10 cursor-pointer object-cover'
+          fill
+          src={
+            company.logoUrl
+              ? company.logoUrl
+              : `https://picsum.photos/id/${Math.pow(parseInt(id), 3)}/1600/900`
+          }
+        />
+        <div className=' absolute -bottom-12 left-6 flex h-24 w-24 overflow-hidden rounded-lg border-4 border-white shadow-sm md:left-12'>
+          {company.logoUrl ? (
+            <Image
+              alt='Company logo'
+              className='cursor-pointer'
+              fill
+              src={company.logoUrl}
+            />
+          ) : (
+            <div className='bacground-pattern'></div>
+          )}
         </div>
       </div>
-      <div className="flex flex-col w-full">
-        <div className="bg-white text-xl uppercase font-semibold">
-          Job Details
+      <div className='mx-6 md:mx-12'>
+        <div className='mb-12 grid md:grid-cols-2'>
+          <div>
+            <h1 className='mb-0 text-xl font-bold text-gray-900'>
+              {roleTitle}
+            </h1>
+            <p className='mb-1 mt-0 text-sm text-gray-600'>{companyName}</p>
+            <div className='flex items-center gap-3'>
+              <span className='rounded bg-yellow-400 px-2 py-1 text-xs text-white'>
+                4.5
+              </span>{' '}
+              <div className='w-15'>
+                <StarRating score={4.5} color='#f7cd53' />
+              </div>
+            </div>
+          </div>
+          <div className='self-end text-right'>
+            <div>Bounty: {bounty}</div>
+            <div className='text-sm text-gray-600'>
+              {date ? (
+                <>
+                  Posted
+                  <span className='font-semibold'>
+                    {' ' + formatDaysAgo(date)}
+                  </span>
+                </>
+              ) : (
+                '...'
+              )}
+            </div>
+          </div>
         </div>
-        <div className="grid grid-cols-2 grid-rows-1 mt-[1%] gap-6  text-white">
-          <div className="flex  items-center gap-2 bg-[#3F3F5F] p-2">
-            <ClockIcon className="h-6" />
-            Start time
+        <div className='mb-12 grid w-full grid-cols-4 justify-center rounded-md border border-gray-200'>
+          <div className='width-full col-span-4 border-b border-gray-200 py-4 text-center lg:col-span-1 lg:border-b-0 lg:border-r'>
+            <div className='text-gray-600'>Experience</div>
+            <div className='text-sm font-semibold text-gray-900'>
+              {experience ? experience : '...'}
+            </div>
           </div>
-          <div className=" flex  items-center gap-2 bg-[#3F3F5F] p-2">
-            <ShoppingBagIcon className="h-6" />
-            Occupation
+          <div className='width-full col-span-4 border-b border-gray-200 py-4 text-center lg:col-span-1 lg:border-b-0  lg:border-r'>
+            <div className='text-sm text-gray-600'>Work Level</div>
+            <div className='font-semibold text-gray-900'>{'...'}</div>
           </div>
-          <div className="flex  items-center gap-2 bg-[#3F3F5F] p-2">
-            <LanguageIcon className="h-6" />
-            Langauge
+          <div className='width-full col-span-4 border-b border-gray-200 py-4 text-center lg:col-span-1  lg:border-b-0 lg:border-r'>
+            <div className='text-sm text-gray-600'>Location</div>
+            <div className='font-semibold text-gray-900'>
+              {location ? location : '...'}
+            </div>
           </div>
-          <div className="flex  items-center gap-2 bg-[#3F3F5F] p-2">
-            <BuildingOfficeIcon className="h-6" />
-            Work Type
+          <div className='width-full col-span-4 border-b border-gray-200 py-4 text-center lg:col-span-1 lg:border-b-0  lg:border-r'>
+            <div className='text-sm text-gray-600'>Offer Salary</div>
+            <div className='font-semibold text-gray-900'>
+              {' '}
+              {salary ? salary + ' + benefits' : '...'}{' '}
+            </div>
           </div>
-          <div className="flex  items-center gap-2 bg-[#3F3F5F] p-2">
-            <AcademicCapIcon className="h-6" />
-            Contract
-          </div>
-          <div className="flex  items-center gap-2 bg-[#3F3F5F] p-2">
-            <BanknotesIcon className="h-6" />${minSalary} - {maxSalary}k +
-            benefits
-          </div>
+        </div>
+      </div>
+      <div className='mx-6 md:mx-12'>
+        <div className='text-gray-900'>
+          <TextEditor readOnly initialValue={description} title='Description' />
         </div>
       </div>
     </div>

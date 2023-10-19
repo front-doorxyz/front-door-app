@@ -8,54 +8,39 @@ import { toast } from 'react-toastify';
 import { toBytes, keccak256 } from 'viem';
 import { Badge } from './ui/badge';
 
-const ReferrerRegister = () => {
+const CandidateRegister = () => {
   const router = useRouter();
   const { address }: any = useAccount();
-  const { registerReferrer } = usePolybase(async (data: string) => {
+  const { registerCandidate } = usePolybase(async (data: string) => {
     const sig = await eth.sign(data, address);
     return { h: 'eth-personal-sign', sig };
   });
   const [name, setName] = useState('');
   const [email, setEmail] = useState<string>('');
-  const [hashEmail, setHashEmail] = useState<`0x${string}`>('0x');
+  const [site, setSite] = useState('');
 
   const handleNameChange = (event: any) => {
     setName(event.target.value);
   };
 
+  const handleSiteChange = (event: any) => {
+    setSite(event.target.value);
+  };
+
   const handleEmailChange = (event: any) => {
-    setHashEmail(keccak256(toBytes(event.target.value)));
     setEmail(event.target.value);
   };
 
-  const { data, isLoading, isSuccess, writeAsync } = useContractWrite({
-    abi: recruitmentABI,
-    address: recruitmentAddress,
-    functionName: 'registerReferrer',
-  });
-
-  const registerReferrerSc = async () => {
+  const registerCandidateDB = async () => {
     try {
-      const referrerData = [address, name, email];
-      if (hashEmail) {
-        await writeAsync({
-          args: [hashEmail],
-        });
-      } else {
-        toast.error('No email supplied');
-        return;
-      }
-      if (!isSuccess) {
-        toast.error('Referrer already registered');
-      } else {
-        const referrer = await registerReferrer(referrerData);
-        if (isSuccess && referrer.id) {
-          toast.success(`${name} registered as Referrer!`);
-          router.push('/');
-        }
+      const candidateData = [address, name, email, site];
+      const candidate = await registerCandidate(candidateData);
+      if (candidate.id) {
+        toast.success(`${name} registered as Candidate!`);
+        router.push('/');
       }
     } catch (e) {
-      toast.error('Referrer Registration failed');
+      toast.error('Candidate Registeration failed');
     }
   };
 
@@ -67,7 +52,6 @@ const ReferrerRegister = () => {
       >
         <div className='flex flex-col gap-2'>
           <Badge className='w-[30%] bg-[#3F3F5F]'>Name</Badge>
-
           <input
             type='text'
             value={name}
@@ -84,12 +68,20 @@ const ReferrerRegister = () => {
             className='h-[50px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
           />
         </div>
+        <div className='flex flex-col gap-2'>
+          <Badge className='w-[30%] bg-[#3F3F5F]'>Site/Portfolio</Badge>
+          <input
+            type='text'
+            value={site}
+            onChange={handleSiteChange}
+            className='h-[50px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
+          />
+        </div>
 
         <button
           type='button'
           className='btn btn-primary w-[70%]'
-          onClick={registerReferrerSc}
-          disabled={isLoading}
+          onClick={registerCandidateDB}
         >
           Register
         </button>
@@ -98,4 +90,4 @@ const ReferrerRegister = () => {
   );
 };
 
-export default ReferrerRegister;
+export default CandidateRegister;

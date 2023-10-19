@@ -1,12 +1,21 @@
-export type jobProps = {
+export type JobProps = {
+  id: string;
+  roleTitle?: string;
+  location?: string;
+  bounty?: string;
+  salary?: number;
+  description?: string;
+  companyName?: string;
+  status?: string;
+  date?: string;
+  experience?: string;
+  langaugeSpoken?: string;
+  skills?: string;
+  company: {
     id: string;
-    roleTitle?: string;
-    location?: string;
-    minSalary?: number;
-    bounty?: string;
-    maxSalary?: number;
-    description?: string;
-    companyName?: string;
-    status?:string
-    date?:string
+    name: string;
+    description: string;
+    logoUrl: string;
+    coverUrl: string;
   };
+};

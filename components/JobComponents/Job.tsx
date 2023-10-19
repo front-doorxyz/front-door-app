@@ -2,7 +2,7 @@ import React from "react";
 import { useRouter } from "next/router";
 import StarRating from "../StarRating";
 import { truncateDescription } from "../../helpers";
-import { jobProps } from "../../types";
+import { JobProps } from "../../types";
 
 const Job = ({
   id,
@@ -10,7 +10,7 @@ const Job = ({
   location,
   description = "",
   companyName,
-}: jobProps) => {
+}: JobProps) => {
   const router = useRouter();
   return (
     <div
