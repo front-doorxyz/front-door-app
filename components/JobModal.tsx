@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react';
 
 type Props = {
   setModal: (value: boolean) => void;
-  addJob: () => void;
+  approveJob: () => void;
   jobInfo: JobProps;
+  loading: boolean;
 };
 
-const JobModal = ({ addJob, jobInfo, setModal }: Props) => {
+const JobModal = ({ approveJob, jobInfo, setModal, loading }: Props) => {
   const [referrerShare, setRefferrerScore] = useState(0);
   const [candidateShare, setCandidateScore] = useState(0);
   const [frontDoorShare, setFrontDoorShare] = useState(0);
@@ -77,8 +78,12 @@ const JobModal = ({ addJob, jobInfo, setModal }: Props) => {
             id='confirm'
             className='mt-[1%] flex flex-col items-center gap-2'
           >
-            <button className={`btn btn-primary`} onClick={addJob}>
-              Confirm Job
+            <button
+              className={`btn btn-primary`}
+              disabled={loading}
+              onClick={approveJob}
+            >
+              {!loading ? 'Confirm Job' : 'Loading'}
             </button>
           </div>
         </div>
