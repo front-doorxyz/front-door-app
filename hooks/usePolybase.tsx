@@ -18,6 +18,12 @@ const usePolybase = (signer?: Signer) => {
     return recordData;
   };
 
+  const readJobListingById = async (id: string) => {
+    const record = await jobsReference.record(id).get();
+    const { data } = record;
+    return data;
+  };
+
   const readCandidateData = async () => {
     const records = await candidatesReference.get();
     let candidateList: any = [];
@@ -27,6 +33,20 @@ const usePolybase = (signer?: Signer) => {
     return candidateList;
   };
 
+  const readCandidateDataForJob = async (jobId: string) => {
+    const jobListing = await readJobListingById(jobId);
+    const records = jobListing?.candidates;
+    const candidateListForJob: any[] = [];
+
+    await Promise.all(
+      records.map(async (record: any) => {
+        const candidate = await readCandidateById(record);
+        candidateListForJob.push(candidate);
+      })
+    );
+
+    return candidateListForJob;
+  };
   const readCandidateById = async (id: string) => {
     const record = await candidatesReference.record(id).get();
     const { data } = record;
@@ -71,12 +91,6 @@ const usePolybase = (signer?: Signer) => {
       .record(jobId)
       .call('applyCandidate', [candidateId]);
     return recordData;
-  };
-
-  const readJobListingById = async (id: string) => {
-    const record = await jobsReference.record(id).get();
-    const { data } = record;
-    return data;
   };
 
   const checkCompanyRegistration = async (id: string) => {
@@ -135,6 +149,7 @@ const usePolybase = (signer?: Signer) => {
     readAllJobListings,
     readAllJobListingsForClient,
     updateJobListing,
+    readCandidateDataForJob,
   };
 };
 

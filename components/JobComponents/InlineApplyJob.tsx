@@ -17,10 +17,12 @@ type Props = {
 const InlineApply = ({ referalId, jobId }: Props) => {
   const router = useRouter();
   const { address }: any = useAccount();
-  const { checkCandidateRegistration } = usePolybase(async (data: string) => {
-    const sig = await eth.sign(data, address);
-    return { h: 'eth-personal-sign', sig };
-  });
+  const { checkCandidateRegistration, applyforJob } = usePolybase(
+    async (data: string) => {
+      const sig = await eth.sign(data, address);
+      return { h: 'eth-personal-sign', sig };
+    }
+  );
 
   const {
     data: confirmData,
@@ -56,6 +58,7 @@ const InlineApply = ({ referalId, jobId }: Props) => {
           await confirmReferral({
             args: [BigInt(referalId), BigInt(jobId)],
           });
+          await applyforJob(String(jobId), address);
           if (confirmSuccess) {
             toast.success('Candidate Application Completed');
           }
