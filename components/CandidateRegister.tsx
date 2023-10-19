@@ -11,10 +11,12 @@ import { Badge } from './ui/badge';
 const CandidateRegister = () => {
   const router = useRouter();
   const { address }: any = useAccount();
-  const { registerCandidate } = usePolybase(async (data: string) => {
-    const sig = await eth.sign(data, address);
-    return { h: 'eth-personal-sign', sig };
-  });
+  const { registerCandidate, checkCandidateRegistration } = usePolybase(
+    async (data: string) => {
+      const sig = await eth.sign(data, address);
+      return { h: 'eth-personal-sign', sig };
+    }
+  );
   const [name, setName] = useState('');
   const [email, setEmail] = useState<string>('');
   const [site, setSite] = useState('');
@@ -32,6 +34,17 @@ const CandidateRegister = () => {
   };
 
   const registerCandidateDB = async () => {
+    let CandidateExists: boolean;
+    try {
+      CandidateExists = await checkCandidateRegistration(address);
+    } catch (e) {
+      CandidateExists = false;
+    }
+    if (CandidateExists) {
+      toast.success('Already Registered!');
+      router.push('/');
+      return;
+    }
     try {
       const candidateData = [address, name, email, site];
       const candidate = await registerCandidate(candidateData);

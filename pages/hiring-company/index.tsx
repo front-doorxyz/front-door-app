@@ -22,7 +22,7 @@ const Profile: NextPage = () => {
       <div className='mr-[2%] flex h-[20%] items-center justify-end gap-4 pt-5'>
         <button
           className='md:text-md rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  text-white'
-          onClick={() => router.push(`/candidates`)}
+          onClick={() => router.push(`/candidate-management`)}
         >
           Manage Candidates
         </button>

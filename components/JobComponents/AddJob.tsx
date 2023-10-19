@@ -4,7 +4,13 @@ import * as eth from '@polybase/eth';
 import { Address, useAccount, useContractWrite } from 'wagmi';
 import { getDate } from '../../helpers';
 import usePolybase from '../../hooks/usePolybase';
-import { recruitmentABI, recruitmentAddress } from '../../src/generated';
+import {
+  frontDoorTokenABI,
+  frontDoorTokenAddress,
+  recruitmentABI,
+  recruitmentAddress,
+  useFrontDoorTokenAllowance,
+} from '../../src/generated';
 import TextEditor from '../TextEditor';
 import { Badge } from '../ui/badge';
 import { useRouter } from 'next/router';
@@ -73,12 +79,34 @@ const AddJob = (props: Props) => {
     abi: recruitmentABI,
     address: recruitmentAddress,
     functionName: 'registerJob',
-    args: [BigInt(jobInfo.bounty)],
   });
 
+  const {
+    data: approval,
+    isLoading: loading,
+    isSuccess: success,
+    writeAsync: approvalFunc,
+  } = useContractWrite({
+    abi: frontDoorTokenABI,
+    address: frontDoorTokenAddress,
+    functionName: 'approve',
+  });
+
+  const approveTokenUsage = async () => {
+    try {
+      await approvalFunc({
+        args: [recruitmentAddress, BigInt(jobInfo.bounty)],
+      });
+    } catch (approvalError: any) {
+      toast.error('Approval Error: ' + approvalError.message);
+      return;
+    }
+  };
   const addJob = async () => {
     try {
-      const { hash } = await writeAsync();
+      const { hash } = await writeAsync({
+        args: [BigInt(jobInfo.bounty)],
+      });
       const receipt = await waitForTransaction({ hash });
       const jobId = Number(receipt?.logs[0].data);
       if (jobId) {
@@ -100,10 +128,12 @@ const AddJob = (props: Props) => {
         const data = await createJobListing(jobData);
         if (data.id && isSuccess) {
           toast.success('Job Registered Successfully');
+          router.push('/');
         }
       }
-    } catch (e) {
-      toast.error('Job Registration failed');
+    } catch (writeError: any) {
+      toast.error('Write Error: ' + writeError.message);
+      return;
     }
   };
 
@@ -121,6 +151,12 @@ const AddJob = (props: Props) => {
       );
     }
   };
+
+  useEffect(() => {
+    if (success) {
+      addJob();
+    }
+  }, [success]);
 
   return (
     <div className='flex flex-col justify-center gap-4 p-4 shadow-2xl'>
@@ -212,8 +248,9 @@ const AddJob = (props: Props) => {
       {jobModal && (
         <JobModal
           setModal={() => setJobModal(false)}
-          addJob={addJob}
+          approveJob={approveTokenUsage}
           jobInfo={jobInfo}
+          loading={isLoading}
         />
       )}
     </div>
