@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAccount, useContractWrite } from 'wagmi';
 import { recruitmentABI, recruitmentAddress } from '../src/generated';
@@ -9,10 +9,12 @@ import { Badge } from './ui/badge';
 
 const CompanyRegister = () => {
   const { address }: any = useAccount();
-  const { registerCompany } = usePolybase(async (data: string) => {
-    const sig = await eth.sign(data, address);
-    return { h: 'eth-personal-sign', sig };
-  });
+  const { registerCompany, checkCompanyRegistration } = usePolybase(
+    async (data: string) => {
+      const sig = await eth.sign(data, address);
+      return { h: 'eth-personal-sign', sig };
+    }
+  );
   const router = useRouter();
   const [companyName, setCompanyName] = useState('');
   const [companyEmail, setCompanyEmail] = useState('');
@@ -37,24 +39,38 @@ const CompanyRegister = () => {
   });
 
   const registerCompanySc = async () => {
+    let CompanyExists: boolean;
     try {
-      const companyData = [address, companyName, companyEmail, companySite];
+      CompanyExists = await checkCompanyRegistration(address);
+    } catch (e) {
+      CompanyExists = false;
+    }
+    if (CompanyExists) {
+      toast.success('Already Registered!');
+      router.push('/');
+      return;
+    }
+    try {
       await writeAsync();
-      if (!isSuccess) {
-        toast.error('Company Registration failed');
-      } else {
-        if (isSuccess && !isLoading) {
-          const company = await registerCompany(companyData);
-          if (company.id) {
-            toast.success(`${companyName} Registered Successfully`);
-            router.push('/');
-          }
-        }
-      }
     } catch (e) {
       toast.error('Company Registration failed');
     }
   };
+
+  const registerCompanyPolybase = async () => {
+    const companyData = [address, companyName, companyEmail, companySite];
+    const company = await registerCompany(companyData);
+    if (company.id) {
+      toast.success(`${companyName} Registered Successfully`);
+      router.push('/');
+    }
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      registerCompanyPolybase();
+    }
+  }, [isSuccess]);
 
   return (
     <>

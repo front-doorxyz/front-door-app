@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { useAccount, useContractWrite } from 'wagmi';
 import * as eth from '@polybase/eth';
@@ -11,10 +11,12 @@ import { Badge } from './ui/badge';
 const ReferrerRegister = () => {
   const router = useRouter();
   const { address }: any = useAccount();
-  const { registerReferrer } = usePolybase(async (data: string) => {
-    const sig = await eth.sign(data, address);
-    return { h: 'eth-personal-sign', sig };
-  });
+  const { registerReferrer, checkReferrerRegistration } = usePolybase(
+    async (data: string) => {
+      const sig = await eth.sign(data, address);
+      return { h: 'eth-personal-sign', sig };
+    }
+  );
   const [name, setName] = useState('');
   const [email, setEmail] = useState<string>('');
   const [hashEmail, setHashEmail] = useState<`0x${string}`>('0x');
@@ -35,8 +37,18 @@ const ReferrerRegister = () => {
   });
 
   const registerReferrerSc = async () => {
+    let referrerExists: boolean;
     try {
-      const referrerData = [address, name, email];
+      referrerExists = await checkReferrerRegistration(address);
+    } catch (e) {
+      referrerExists = false;
+    }
+    if (referrerExists) {
+      toast.success('Already Registered!');
+      router.push('/');
+      return;
+    }
+    try {
       if (hashEmail) {
         await writeAsync({
           args: [hashEmail],
@@ -45,19 +57,25 @@ const ReferrerRegister = () => {
         toast.error('No email supplied');
         return;
       }
-      if (!isSuccess) {
-        toast.error('Referrer already registered');
-      } else {
-        const referrer = await registerReferrer(referrerData);
-        if (isSuccess && referrer.id) {
-          toast.success(`${name} registered as Referrer!`);
-          router.push('/');
-        }
-      }
     } catch (e) {
       toast.error('Referrer Registration failed');
     }
   };
+
+  const registerReferrerPolybase = async () => {
+    const referrerData = [address, name, email];
+    const referrer = await registerReferrer(referrerData);
+    if (isSuccess && referrer.id) {
+      toast.success(`${name} registered as Referrer!`);
+      router.push('/');
+    }
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      registerReferrerPolybase();
+    }
+  }, [isSuccess]);
 
   return (
     <>
