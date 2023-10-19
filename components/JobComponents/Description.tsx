@@ -26,7 +26,7 @@ const Description = ({
           src={
             company.logoUrl
               ? company.logoUrl
-              : `https://picsum.photos/id/${Math.pow(parseInt(id), 3)}/1600/900`
+              : `https://picsum.photos/id/1/1600/900`
           }
         />
         <div className=' absolute -bottom-12 left-6 flex h-24 w-24 overflow-hidden rounded-lg border-4 border-white shadow-sm md:left-12'>
