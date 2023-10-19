@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import candidates from '../assets/candidates.jpeg';
 import { Layout } from '../components/layout';
 import JobCard from '@/components/JobComponents/JobCard';
 import Stats from '@/components/ui/stats';
@@ -16,143 +14,108 @@ const stats = [
 const Home: NextPage = () => {
   const { readAllJobListings } = usePolybase();
   const [jobArr, setJobArr] = useState<any>([]);
-  const [titleInput, setTitleInput] = useState(''); 
-  const [locationInput, setLocationInput] = useState(''); 
+  const [titleInput, setTitleInput] = useState('');
+  const [locationInput, setLocationInput] = useState('');
   const [filteredJobs, setFilteredJobs] = useState<any>([]);
+  const [searchError, setSearchError] = useState<string>('');
 
   useEffect(() => {
     readAllJobListings()
-      .then((jobListings) => setJobArr(jobListings))
+      .then((jobListings) => {
+        setJobArr(jobListings);
+        setFilteredJobs(jobListings); 
+      })
       .catch((error) => {
         console.log(error);
       });
   }, []);
 
-  const handleTitleInputChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setTitleInput(e.target.value);
+  const handleTitleInputChange = (e: React.FormEvent<HTMLInputElement>) => {
+    setTitleInput(e.currentTarget.value);
   };
 
-  const handleLocationInputChange = (e: { target: { value: React.SetStateAction<string>; }; }) => {
-    setLocationInput(e.target.value);
+  const handleLocationInputChange = (e: React.FormEvent<HTMLInputElement>) => {
+    setLocationInput(e.currentTarget.value);
   };
 
-  const handleSearch = (e: { preventDefault: () => void; }) => {
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const filteredJobs = jobArr.filter((job: { roleTitle: string; location: string; }) =>
-      job.roleTitle.toLowerCase().includes(titleInput.toLowerCase()) &&
-      job.location.toLowerCase().includes(locationInput.toLowerCase())
+    if (!titleInput && !locationInput) {
+      setSearchError('Please provide a job title and/or location');
+      return;
+    } else {
+      setSearchError(''); 
+    }
+
+    const filteredJobs = jobArr.filter(
+      (job: { roleTitle: string; location: string }) =>
+        job.roleTitle.toLowerCase().includes(titleInput.toLowerCase()) &&
+        job.location.toLowerCase().includes(locationInput.toLowerCase())
     );
 
     setFilteredJobs(filteredJobs);
   };
 
   return (
-    <Layout title="Home">
-      <div
-        style={{
-          position: 'relative',
-          margin: 'auto',
-          padding: '100px',
-        }}
-      >
-        <Image
-          src={candidates}
-          alt="Background Image"
-          layout="fill"
-          objectFit="cover"
-          quality={100}
-        />
-        <div
-          style={{
-            position: 'relative',
-            backgroundColor: 'rgba(244, 244, 244, 0.7)',
-            margin: 'auto',
-          }}
-        >
-          <p className="bg-purple-200 pl-10 text-left font-bold text-gray-700">
-            Find the best job
-          </p>
-          <form
-            style={{
-              position: 'relative',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '1rem',
-              padding: '1rem',
-            }}
-            onSubmit={handleSearch} 
-          >
-            <div style={{ flex: '1' }}>
-              <input
-                type="text"
-                placeholder="Job Title"
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  border: '1px solid #E5E7EB',
-                  borderRadius: '0.375rem',
-                  outline: 'none',
-                }}
-                value={titleInput}
-                onChange={handleTitleInputChange}
-              />
-            </div>
-            <div style={{ flex: '1' }}>
-              <input
-                type="text"
-                placeholder="Location"
-                style={{
-                  width: '100%',
-                  padding: '0.5rem',
-                  border: '1px solid #E5E7EB',
-                  borderRadius: '0.375rem',
-                  outline: 'none',
-                }}
-                value={locationInput}
-                onChange={handleLocationInputChange}
-              />
-            </div>
-            <button
-              type="submit"
-              style={{
-                backgroundColor: '#3B82F6',
-                color: 'white',
-                padding: '0.5rem 1rem',
-                borderRadius: '0.375rem',
-                cursor: 'pointer',
-              }}
-            >
-              Search
-            </button>
-          </form>
-        </div>
-      </div>
-      <h1 className="mx-auto mb-6 flex max-w-[80%] justify-center text-center text-2xl font-bold md:mb-8 md:max-w-[300px] md:max-w-[600px] md:pt-24 md:text-4xl">
+    <Layout title='Home'>
+      <h1 className='mx-auto mb-6 flex max-w-[80%] justify-center text-center text-2xl font-bold md:mb-8 md:max-w-[300px] md:max-w-[600px] md:pt-24 md:text-4xl'>
         The #1 platform for building transparent futures
       </h1>
-      <div className=" mb-12 flex flex-row items-center justify-center sm:mx-auto sm:px-6 md:mb-16">
+      <div className='mb-12 flex flex-row items-center justify-center sm:mx-auto sm:px-6 md:mb-16'>
         <Stats stats={stats} />
       </div>
 
-      <div className="container">
-        <div className="text-2xl font-semibold">
-          Showing {filteredJobs.length || jobArr.length} Job(s)
+      <div className='mx-auto w-3/4'>
+        <form
+          className='flex items-center justify-between rounded bg-white p-2 shadow'
+          onSubmit={handleSearch}
+        >
+          <input
+            type='text'
+            placeholder='Job Title'
+            className='text-white-100 mr-2 w-3/4 flex-1 px-4 py-2 outline-none focus:outline-none'
+            value={titleInput}
+            onChange={handleTitleInputChange}
+          />
+          <input
+            type='text'
+            placeholder='Location'
+            className='text-white-900 w-2/3 flex-1 px-4 py-2 outline-none focus:outline-none'
+            value={locationInput}
+            onChange={handleLocationInputChange}
+          />
+          <button
+            className='ml-2 rounded bg-purple-900 px-4 py-2 text-white'
+            type='submit'
+          >
+            Search
+          </button>
+        </form>
+        {searchError && <p className="text-red-500">{searchError}</p>}
+      </div>
+
+      <div className='container'>
+        <div className='text-2xl font-semibold'>
+          {filteredJobs.length === 0 ? 'No results found' : `Showing ${filteredJobs.length} Job(s)`}
         </div>
-        <div className="mt-[2%] flex flex-wrap justify-center gap-5 md:justify-start md:gap-7">
-          {(filteredJobs.length > 0 ? filteredJobs : jobArr).map((job: any) => (
-            <JobCard
-              key={job.id}
-              id={job.id}
-              description={job.description}
-              companyName={job.companyName}
-              roleTitle={job.roleTitle}
-              location={job.location}
-              salary={job.salary}
-              bounty={job.bounty}
-            />
-          ))}
+        <div className='mt-[2%] flex flex-wrap justify-center gap-5 md:justify-start md:gap-7'>
+          {filteredJobs.length > 0 ? (
+            filteredJobs.map((job: any) => (
+              <JobCard
+                key={job.id}
+                id={job.id}
+                description={job.description}
+                companyName={job.companyName}
+                roleTitle={job.roleTitle}
+                location={job.location}
+                salary={job.salary}
+                bounty={job.bounty}
+              />
+            ))
+          ) : (
+            <p className='text-gray-500'>No job listings match your criteria.</p>
+          )}
         </div>
       </div>
     </Layout>
