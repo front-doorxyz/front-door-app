@@ -16,7 +16,7 @@ import { Badge } from '../ui/badge';
 import { useRouter } from 'next/router';
 import JobModal from '../JobModal';
 import { waitForTransaction } from 'wagmi/actions';
-
+import { parseEther } from 'viem';
 type Props = {};
 
 const AddJob = (props: Props) => {
@@ -95,7 +95,7 @@ const AddJob = (props: Props) => {
   const approveTokenUsage = async () => {
     try {
       await approvalFunc({
-        args: [recruitmentAddress, BigInt(jobInfo.bounty)],
+        args: [recruitmentAddress, parseEther(jobInfo.bounty)],
       });
     } catch (approvalError: any) {
       toast.error('Approval Error: ' + approvalError.message);
@@ -105,10 +105,11 @@ const AddJob = (props: Props) => {
   const addJob = async () => {
     try {
       const { hash } = await writeAsync({
-        args: [BigInt(jobInfo.bounty)],
+        args: [parseEther(jobInfo.bounty)],
       });
       const receipt = await waitForTransaction({ hash });
-      const jobId = Number(receipt?.logs[0].data);
+      const jobId = Number(receipt?.logs[1].data);
+
       if (jobId) {
         const date = getDate();
         const jobData = [
