@@ -221,7 +221,12 @@ const Apply = () => {
         </Layout>
       ) : (
         <div className='flex h-[100vh] w-full items-center justify-center'>
-          <ReactLoading type='bubbles' color='white' />
+          <ReactLoading
+            type='bubbles'
+            color='#0080FB'
+            height={'30%'}
+            width={'15%'}
+          />
         </div>
       )}
     </>
