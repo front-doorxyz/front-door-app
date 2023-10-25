@@ -16,11 +16,10 @@ import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import ConfettiExplosion from 'react-confetti-explosion';
 import { Address } from 'wagmi';
-import Description from '../../components/JobComponents/Description';
-import ReferJob from '../../components/JobComponents/ReferJob';
-import { Layout } from '../../components/layout';
-import usePolybase from '../../hooks/usePolybase';
-import ReactLoading from 'react-loading';
+import Description from '@/components/JobComponents/Description';
+import ReferJob from '@/components/JobComponents/ReferJob';
+import { Layout } from '@/components/layout';
+import usePolybase from '@/hooks/usePolybase';
 
 const JobInfo: NextPage = () => {
   const router = useRouter();
@@ -167,9 +166,7 @@ const JobInfo: NextPage = () => {
           ) : null}
         </Layout>
       ) : (
-        <div className='flex h-screen items-center justify-center'>
-          <ReactLoading type={'balls'} height={'20%'} width={'20%'} />
-        </div>
+        <div>Loading...</div>
       )}
     </>
   );

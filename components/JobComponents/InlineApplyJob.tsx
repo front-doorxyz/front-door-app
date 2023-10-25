@@ -78,14 +78,60 @@ const InlineApply = ({ referalId, jobId }: Props) => {
       <h1 className='text-center text-xl font-semibold md:mb-6'>
         You have been referred!
       </h1>
-
-      <Button
-        className='md:text-md w-full rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  text-white'
-        disabled={confirmLoading}
-        onClick={confirmReferralSC}
-      >
-        Apply
-      </Button>
+      <div className='flex flex-col gap-2'>
+        <input
+          type='text'
+          placeholder='CV Link'
+          className='input input-bordered w-full'
+          name='roleTitle'
+          // value={jobInfo.roleTitle}
+          // onChange={handleChange}
+          required
+        />{' '}
+        <input
+          type='text'
+          placeholder='Location / VISA'
+          className='input input-bordered w-full'
+          name='roleTitle'
+          // value={jobInfo.roleTitle}
+          // onChange={handleChange}
+          required
+        />
+        <input
+          type='text'
+          placeholder='Notice Period'
+          className='input input-bordered w-full'
+          name='roleTitle'
+          // value={jobInfo.roleTitle}
+          // onChange={handleChange}
+          required
+        />
+        <input
+          type='text'
+          placeholder='Preferred Salary'
+          className='input input-bordered w-full'
+          name='roleTitle'
+          // value={jobInfo.roleTitle}
+          // onChange={handleChange}
+          required
+        />
+        <input
+          type='text'
+          placeholder='What makes you the best candidate for the role?'
+          className='input input-bordered w-full'
+          name='roleTitle'
+          // value={jobInfo.roleTitle}
+          // onChange={handleChange}
+          required
+        />
+        <Button
+          className='md:text-md w-full rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  text-white'
+          disabled={confirmLoading}
+          onClick={confirmReferralSC}
+        >
+          Apply
+        </Button>
+      </div>
     </div>
   );
 };

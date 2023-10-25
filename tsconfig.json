@@ -19,6 +19,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/feedback/index.tsx_"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/feedback/index.tsx_", "pages/job/[id]"],
   "exclude": ["node_modules"]
 }
