@@ -3,7 +3,7 @@ import emailjs from 'emailjs-com';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { keccak256, toBytes } from 'viem';
+import { keccak256, toBytes, toHex } from 'viem';
 import { useAccount, useContractWrite } from 'wagmi';
 import { waitForTransaction } from 'wagmi/actions';
 import usePolybase from '../../hooks/usePolybase';
@@ -47,7 +47,7 @@ const ReferJob = ({ jobId }: Props) => {
     functionName: 'registerReferral',
   });
 
-  const { data: data2, isLoading: isLoading2, isSuccess: isSuccess2, writeAsync } = useRecruitmentRegisterReferral();
+ 
 
 
   const registerReferralSC = async () => {
@@ -70,11 +70,12 @@ const ReferJob = ({ jobId }: Props) => {
     } else {
       if (hashEmail) {
         const referralId: string = uuidv4().replaceAll("-", "");
-        const referralIdBytes  = toBytes(referralId);
+        const referralIdBytes : Uint8Array = toBytes(referralId);
+        const referralHex = toHex(referralIdBytes);
 
 
-        const { hash } = await writeAsync({
-          args: [BigInt(jobId), hashEmail, referralIdBytes],
+        const { hash } = await registerReferral({
+          args: [BigInt(jobId), hashEmail, referralHex],
         });
         const receipt = await waitForTransaction({ hash });
         const refId = Number(receipt?.logs[0].data);
