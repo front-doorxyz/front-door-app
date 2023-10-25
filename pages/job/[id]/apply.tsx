@@ -19,12 +19,35 @@ const apply = () => {
   const [jobInfo, setJobInfo] = useState<any>();
   const [loading, setLoading] = useState<boolean>(true);
   const { address }: any = useAccount();
-  const [candidateApplication, setCandidateApplication] = useState<any>({});
-  const { checkCandidateRegistration, applyforJob, readJobListingById } =
-    usePolybase(async (data: string) => {
-      const sig = await eth.sign(data, address);
-      return { h: 'eth-personal-sign', sig };
+  const [candidateApplication, setCandidateApplication] = useState<any>({
+    cvLink: '',
+    location: '',
+    noticePeriod: '',
+    preferredSalary: '',
+    description: '',
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    let parsedValue = value;
+
+    setCandidateApplication({
+      ...candidateApplication,
+      [name]: parsedValue,
     });
+  };
+
+  const {
+    checkCandidateRegistration,
+    applyforJob,
+    readJobListingById,
+    registerJobApplication,
+  } = usePolybase(async (data: string) => {
+    const sig = await eth.sign(data, address);
+    return { h: 'eth-personal-sign', sig };
+  });
 
   useEffect(() => {
     const { id, refId }: any = router.query || {};
@@ -84,16 +107,37 @@ const apply = () => {
           await confirmReferral({
             args: [BigInt(refId), BigInt(jobId)],
           });
-          await applyforJob(String(jobId), address);
-          if (confirmSuccess) {
-            toast.success('Candidate Application Completed');
-          }
         } catch (e) {
           toast.error('Candidate Application Failed');
         }
       }
     }
   };
+
+  const jobApplicationPolybase = async () => {
+    const jobApplicationData = [
+      String(refId),
+      String(jobId),
+      candidateApplication.cvLink,
+      candidateApplication.location,
+      candidateApplication.noticePeriod,
+      candidateApplication.preferredSalary,
+      candidateApplication.description,
+    ];
+
+    const jobApplication = await registerJobApplication(jobApplicationData);
+    const applyData = await applyforJob(String(jobId), address);
+    if (jobApplication.id && applyData.id) {
+      toast.success(`Applied For Job Successfully!`);
+      router.push('/');
+    }
+  };
+
+  useEffect(() => {
+    if (confirmSuccess) {
+      jobApplicationPolybase();
+    }
+  }, [confirmSuccess]);
 
   return (
     <>
@@ -111,44 +155,44 @@ const apply = () => {
                     type='text'
                     placeholder='CV Link'
                     className='input input-bordered'
-                    name='roleTitle'
-                    // value={jobInfo.roleTitle}
-                    // onChange={handleChange}
+                    name='cvLink'
+                    value={candidateApplication.cvLink}
+                    onChange={handleChange}
                     required
                   />{' '}
                   <input
                     type='text'
                     placeholder='Location / VISA'
                     className='input input-bordered'
-                    name='roleTitle'
-                    // value={jobInfo.roleTitle}
-                    // onChange={handleChange}
+                    name='location'
+                    value={candidateApplication.location}
+                    onChange={handleChange}
                     required
                   />
                   <input
                     type='text'
                     placeholder='Notice Period'
                     className='input input-bordered'
-                    name='roleTitle'
-                    // value={jobInfo.roleTitle}
-                    // onChange={handleChange}
+                    name='noticePeriod'
+                    value={candidateApplication.noticePeriod}
+                    onChange={handleChange}
                     required
                   />
                   <input
                     type='text'
                     placeholder='Preferred Salary'
                     className='input input-bordered'
-                    name='roleTitle'
-                    // value={jobInfo.roleTitle}
-                    // onChange={handleChange}
+                    name='preferredSalary'
+                    value={candidateApplication.preferredSalary}
+                    onChange={handleChange}
                     required
                   />
                   <textarea
                     placeholder='What makes you the best candidate for the role?'
                     className='textarea textarea-bordered'
-                    name='roleTitle'
-                    // value={jobInfo.roleTitle}
-                    // onChange={handleChange}
+                    name='description'
+                    value={candidateApplication.description}
+                    onChange={handleChange}
                     required
                   />
                   <Button
