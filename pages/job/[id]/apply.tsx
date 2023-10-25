@@ -12,7 +12,7 @@ import JobOverview from '@/components/JobComponents/JobOverview';
 import { getSummaryItems } from '@/helpers';
 import ReactLoading from 'react-loading';
 
-const apply = () => {
+const Apply = () => {
   const router = useRouter();
   const [jobId, setJobId] = useState<string>('');
   const [refId, setRefId] = useState<string>();
@@ -228,4 +228,4 @@ const apply = () => {
   );
 };
 
-export default apply;
+export default Apply;
