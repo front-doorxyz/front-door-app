@@ -5,6 +5,7 @@ import { Layout } from '../../components/layout';
 import usePolybase from '@/hooks/usePolybase';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import emailjs from 'emailjs-com';
 
 type Candidate = {
   id: string;
@@ -14,26 +15,26 @@ type Candidate = {
   site: string;
 };
 
-const sendEmail = async (candidateEmail: string, message: string) => {
+// const serviceID = process.env.NEXT_PUBLIC_EMAILJS_SERVICEID;
+// const templateID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE;
+// const emailjsKey = process.env.NEXT_PUBLIC_EMAILJS_KEY;
+
+const sendEmail = (to: string, message: string, subject: string) => {
   try {
-    console.log('Sending email to:', candidateEmail);
-    console.log('Email message:', message);
-
-    const response = await fetch('http://localhost:3001/api/send-email', {
-      method: 'POST',
-      body: JSON.stringify({ to: candidateEmail, message }), 
-      headers: {
-        'Content-Type': 'application/json',
+    emailjs.send(
+      'service_ice9ede', 
+      'template_de5afvu', 
+      {
+      subject: subject,
+      from_name: "FrontDoor",
+      to_email: to,
+      message: message,
       },
-    });
-
-    if (response.status === 200) {
-      console.log('Email sent successfully');
+      '3o_Hy1tLrPJLDn0GA' 
+    ).then((response) => {
+      console.log('Email sent successfully', response);
       toast.success('Email sent successfully!', { autoClose: 3000 });
-    } else {
-      console.error('Email sending failed');
-      toast.error('Email sending failed');
-    }
+    });
   } catch (error) {
     const errorObject = error as Error;
     console.error('Error sending email:', errorObject);
@@ -41,10 +42,13 @@ const sendEmail = async (candidateEmail: string, message: string) => {
   }
 };
 
+
 const CandidateManagement: NextPage = () => {
   const { readCandidateData } = usePolybase();
   const [candidateArr, setCandidateArr] = useState<Candidate[]>([]);
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(null);
+  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
+    null
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const openModal = (candidate: Candidate) => {
@@ -74,7 +78,7 @@ const CandidateManagement: NextPage = () => {
 Your profile has been received by the hiring manager 
 and you will receive an automatic update when they review your profile, accept or reject your application.
 
-If they accept your application they will be in touch directly to setup an interview.
+If they accept your application, they will be in touch directly to set up an interview.
 
 Regards.
 
@@ -124,28 +128,31 @@ Front Door`);
 
   const handleContact = () => {
     if (!selectedCandidate) {
-      return; 
+      return;
     }
 
-    sendEmail(selectedCandidate.email, contactMessage);
+    const subject = "Update";
+    sendEmail(selectedCandidate.email, contactMessage, subject);
     setIsContactDialogOpen(false);
   };
 
   const handleReject = () => {
     if (!selectedCandidate) {
-      return; 
+      return;
     }
 
-    sendEmail(selectedCandidate.email, rejectReason);
+    const subject = "Reject Mail";
+    sendEmail(selectedCandidate.email, rejectReason, subject);
     setIsRejectDialogOpen(false);
   };
 
   const handleHire = () => {
     if (!selectedCandidate) {
-      return; 
+      return;
     }
 
-    sendEmail(selectedCandidate.email, hireMessage);
+    const subject = "Update";
+    sendEmail(selectedCandidate.email, hireMessage, subject);
     setIsHireDialogOpen(false);
   };
 
@@ -158,52 +165,63 @@ Front Door`);
   }, []);
 
   return (
-    <Layout title="Candidate Management">
-      <Banner title="Candidate Management" />
-      <div className="flex flex-col items-center justify-center mt-[2%] pl-3 pr-3">
-        <table className="w-full border-collapse border border-blue-500">
+    <Layout title='Candidate Management'>
+      <Banner title='Candidate Management' />
+      <div className='mt-[2%] flex flex-col items-center justify-center pl-3 pr-3'>
+        <table className='w-full border-collapse border border-blue-500'>
           <thead>
-            <tr className="bg-blue-500 text-white">
-              <th className="border border-blue-500 p-2">Candidate Wallet Address</th>
-              <th className="border border-blue-500 p-2">Referrer Feedback Score</th>
-              <th className="border border-blue-500 p-2">Attached Profile Link</th>
-              <th className="border border-blue-500 p-2">Contact Candidate</th>
-              <th className="border border-blue-500 p-2">Reject Candidate</th>
-              <th className="border border-blue-500 p-2">Hire Candidate</th>
+            <tr className='bg-blue-500 text-white'>
+              <th className='border border-blue-500 p-2'>
+                Candidate Wallet Address
+              </th>
+              <th className='border border-blue-500 p-2'>
+                Referrer Feedback Score
+              </th>
+              <th className='border border-blue-500 p-2'>
+                Attached Profile Link
+              </th>
+              <th className='border border-blue-500 p-2'>Contact Candidate</th>
+              <th className='border border-blue-500 p-2'>Reject Candidate</th>
+              <th className='border border-blue-500 p-2'>Hire Candidate</th>
             </tr>
           </thead>
           <tbody>
             {candidateArr.map((candidate, index) => (
-              <tr key={candidate.id} className={index % 2 === 0 ? 'bg-blue-200' : 'bg-blue-100'}>
-                <td className="border border-blue-500 p-2">{candidate.id}</td>
-                <td className="border border-blue-500 p-2">{candidate.score}</td>
-                <td className="border border-blue-500 p-2">
+              <tr
+                key={candidate.id}
+                className={index % 2 === 0 ? 'bg-blue-200' : 'bg-blue-100'}
+              >
+                <td className='border border-blue-500 p-2'>{candidate.id}</td>
+                <td className='border border-blue-500 p-2'>
+                  {candidate.score}
+                </td>
+                <td className='border border-blue-500 p-2'>
                   <button
-                    className="rounded bg-blue-500 px-2 py-1 text-white"
+                    className='rounded bg-blue-500 px-2 py-1 text-white'
                     onClick={() => openModal(candidate)}
                   >
                     View Profile
                   </button>
                 </td>
-                <td className="border border-blue-500 p-2">
+                <td className='border border-blue-500 p-2'>
                   <button
-                    className="rounded bg-blue-500 px-2 py-1 text-white"
-                    onClick={() => openContactDialog(candidate)
-                  }>
+                    className='rounded bg-blue-500 px-2 py-1 text-white'
+                    onClick={() => openContactDialog(candidate)}
+                  >
                     Contact
                   </button>
                 </td>
-                <td className="border border-blue-500 p-2">
+                <td className='border border-blue-500 p-2'>
                   <button
-                    className="rounded bg-blue-500 px-2 py-1 text-white"
+                    className='rounded bg-blue-500 px-2 py-1 text-white'
                     onClick={() => openRejectDialog(candidate)}
                   >
                     Reject
                   </button>
                 </td>
-                <td className="border border-blue-500 p-2">
+                <td className='border border-blue-500 p-2'>
                   <button
-                    className="rounded bg-blue-500 px-2 py-1 text-white"
+                    className='rounded bg-blue-500 px-2 py-1 text-white'
                     onClick={() => openHireDialog(candidate)}
                   >
                     Hire
@@ -215,24 +233,35 @@ Front Door`);
         </table>
       </div>
       {selectedCandidate && (
-        <div className={`${isModalOpen ? 'block' : 'hidden'} fixed inset-0 flex items-center justify-center z-50`}>
-          <div className="fixed bg-white text-black-300 w-1/2 p-4 shadow-lg rounded-lg">
-            <div className="modal-content">
-              <h2 className="text-2xl font-bold mb-2">Candidate Profile</h2>
+        <div
+          className={`${
+            isModalOpen ? 'block' : 'hidden'
+          } fixed inset-0 z-50 flex items-center justify-center`}
+        >
+          <div className='text-black-300 fixed w-1/2 rounded-lg bg-white p-4 shadow-lg'>
+            <div className='modal-content'>
+              <h2 className='mb-2 text-2xl font-bold'>Candidate Profile</h2>
               <p>
-              <span className="font-bold">Name:</span> {selectedCandidate.name}
+                <span className='font-bold'>Name:</span>{' '}
+                {selectedCandidate.name}
               </p>
               <p>
-                <span className="font-bold">Email:</span> {selectedCandidate.email}
+                <span className='font-bold'>Email:</span>{' '}
+                {selectedCandidate.email}
               </p>
               <p>
-              <span className="font-bold">Address:</span> {selectedCandidate.id}
+                <span className='font-bold'>Address:</span>{' '}
+                {selectedCandidate.id}
               </p>
               <p>
-                <span className="font-bold">Website:</span> {selectedCandidate.site}
+                <span className='font-bold'>Website:</span>{' '}
+                {selectedCandidate.site}
               </p>
             </div>
-            <button className="bg-blue-500 px-2 py-1 text-white" onClick={closeModal}>
+            <button
+              className='bg-blue-500 px-2 py-1 text-white'
+              onClick={closeModal}
+            >
               Close
             </button>
           </div>
@@ -240,20 +269,26 @@ Front Door`);
       )}
 
       {isContactDialogOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="fixed bg-white w-1/2 p-4 shadow-lg rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Contact Candidate</h2>
+        <div className='fixed inset-0 z-50 flex items-center justify-center'>
+          <div className='fixed w-1/2 rounded-lg bg-white p-4 shadow-lg'>
+            <h2 className='mb-4 text-2xl font-bold'>Contact Candidate</h2>
             <textarea
-              className="w-full h-32 border border-gray-400 p-2 rounded-md focus:outline-none"
-              placeholder="Enter reason for rejection..."
+              className='h-32 w-full rounded-md border border-gray-400 p-2 focus:outline-none'
+              placeholder='Enter reason for rejection...'
               value={contactMessage}
               onChange={(e) => setContactMessage(e.target.value)}
             ></textarea>
-            <div className="flex justify-end mt-2">
-              <button className="bg-blue-500 text-white py-2 px-4 rounded-md" onClick={handleContact}>
+            <div className='mt-2 flex justify-end'>
+              <button
+                className='rounded-md bg-blue-500 px-4 py-2 text-white'
+                onClick={handleContact}
+              >
                 Contact
               </button>
-              <button className="bg-gray-300 text-black py-2 px-4 rounded-md ml-2" onClick={closeContactDialog}>
+              <button
+                className='ml-2 rounded-md bg-gray-300 px-4 py-2 text-black'
+                onClick={closeContactDialog}
+              >
                 Cancel
               </button>
             </div>
@@ -262,20 +297,26 @@ Front Door`);
       )}
 
       {isRejectDialogOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="fixed bg-white w-1/2 p-4 shadow-lg rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Reject Candidate</h2>
+        <div className='fixed inset-0 z-50 flex items-center justify-center'>
+          <div className='fixed w-1/2 rounded-lg bg-white p-4 shadow-lg'>
+            <h2 className='mb-4 text-2xl font-bold'>Reject Candidate</h2>
             <textarea
-              className="w-full h-32 border border-gray-400 p-2 rounded-md focus:outline-none"
-              placeholder="Enter reason for rejection..."
+              className='h-32 w-full rounded-md border border-gray-400 p-2 focus:outline-none'
+              placeholder='Enter reason for rejection...'
               value={rejectReason}
               onChange={(e) => setRejectReason(e.target.value)}
             ></textarea>
-            <div className="flex justify-end mt-2">
-              <button className="bg-blue-500 text-white py-2 px-4 rounded-md" onClick={handleReject}>
+            <div className='mt-2 flex justify-end'>
+              <button
+                className='rounded-md bg-blue-500 px-4 py-2 text-white'
+                onClick={handleReject}
+              >
                 Reject
               </button>
-              <button className="bg-gray-300 text-black py-2 px-4 rounded-md ml-2" onClick={closeRejectDialog}>
+              <button
+                className='ml-2 rounded-md bg-gray-300 px-4 py-2 text-black'
+                onClick={closeRejectDialog}
+              >
                 Cancel
               </button>
             </div>
@@ -284,20 +325,26 @@ Front Door`);
       )}
 
       {isHireDialogOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <div className="fixed bg-white w-1/2 p-4 shadow-lg rounded-lg">
-            <h2 className="text-2xl font-bold mb-4">Hire Candidate</h2>
+        <div className='fixed inset-0 z-50 flex items-center justify-center'>
+          <div className='fixed w-1/2 rounded-lg bg-white p-4 shadow-lg'>
+            <h2 className='mb-4 text-2xl font-bold'>Hire Candidate</h2>
             <textarea
-              className="w-full h-32 border border-gray-400 p-2 rounded-md focus:outline-none"
-              placeholder="Enter message for hiring..."
+              className='h-32 w-full rounded-md border border-gray-400 p-2 focus:outline-none'
+              placeholder='Enter message for hiring...'
               value={hireMessage}
               onChange={(e) => setHireMessage(e.target.value)}
             ></textarea>
-            <div className="flex justify-end mt-2">
-              <button className="bg-blue-500 text-white py-2 px-4 rounded-md" onClick={handleHire}>
+            <div className='mt-2 flex justify-end'>
+              <button
+                className='rounded-md bg-blue-500 px-4 py-2 text-white'
+                onClick={handleHire}
+              >
                 Hire
               </button>
-              <button className="bg-gray-300 text-black py-2 px-4 rounded-md ml-2" onClick={closeHireDialog}>
+              <button
+                className='ml-2 rounded-md bg-gray-300 px-4 py-2 text-black'
+                onClick={closeHireDialog}
+              >
                 Cancel
               </button>
             </div>
