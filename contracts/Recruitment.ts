@@ -336,6 +336,25 @@ export const abi = [
   {
     "inputs": [
       {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "name": "JobIdtoTeferralCodeList",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "",
         "type": "address"
@@ -670,6 +689,11 @@ export const abi = [
         "internalType": "uint256",
         "name": "_jobId",
         "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_referralCode",
+        "type": "bytes32"
       }
     ],
     "name": "confirmReferral",
@@ -1267,6 +1291,54 @@ export const abi = [
   {
     "inputs": [
       {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "referralCodeList",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "code",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint16",
+        "name": "expirationDate",
+        "type": "uint16"
+      },
+      {
+        "internalType": "bool",
+        "name": "isUsed",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "referralCodeToJobId",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "",
         "type": "address"
@@ -1420,6 +1492,11 @@ export const abi = [
         "type": "tuple"
       },
       {
+        "internalType": "bytes32",
+        "name": "referralCode",
+        "type": "bytes32"
+      },
+      {
         "internalType": "uint40",
         "name": "timeAtWhichReferralStarted",
         "type": "uint40"
@@ -1437,11 +1514,6 @@ export const abi = [
       {
         "internalType": "bool",
         "name": "isConfirmed",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "confirmed",
         "type": "bool"
       }
     ],
@@ -1547,6 +1619,11 @@ export const abi = [
       {
         "internalType": "bytes32",
         "name": "refereeMail",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "referralCode",
         "type": "bytes32"
       }
     ],
