@@ -7,9 +7,12 @@ import { keccak256, toBytes } from 'viem';
 import { useAccount, useContractWrite } from 'wagmi';
 import { waitForTransaction } from 'wagmi/actions';
 import usePolybase from '../../hooks/usePolybase';
-import { recruitmentABI, recruitmentAddress } from '../../src/generated';
+import { recruitmentABI, recruitmentAddress, useRecruitmentRegisterReferral } from '../../src/generated';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+import { write } from 'fs';
+
+const { v4: uuidv4 } = require('uuid');
 
 const emailjsKey = process.env.NEXT_PUBLIC_EMAILJS_KEY;
 const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICEID;
@@ -44,6 +47,9 @@ const ReferJob = ({ jobId }: Props) => {
     functionName: 'registerReferral',
   });
 
+  const { data: data2, isLoading: isLoading2, isSuccess: isSuccess2, writeAsync } = useRecruitmentRegisterReferral();
+
+
   const registerReferralSC = async () => {
     let referrerExists: boolean;
     try {
@@ -63,8 +69,12 @@ const ReferJob = ({ jobId }: Props) => {
       return;
     } else {
       if (hashEmail) {
-        const { hash } = await registerReferral({
-          args: [BigInt(jobId), hashEmail],
+        const referralId: string = uuidv4().replaceAll("-", "");
+        const referralIdBytes  = toBytes(referralId);
+
+
+        const { hash } = await writeAsync({
+          args: [BigInt(jobId), hashEmail, referralIdBytes],
         });
         const receipt = await waitForTransaction({ hash });
         const refId = Number(receipt?.logs[0].data);
@@ -95,7 +105,7 @@ const ReferJob = ({ jobId }: Props) => {
       }
     }
   };
-  
+
   return (
     <div className=''>
       <h1 className='text-xl font-semibold md:mb-6'>
