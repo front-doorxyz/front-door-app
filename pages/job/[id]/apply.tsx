@@ -8,29 +8,45 @@ import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useAccount, useContractWrite } from 'wagmi';
 import { Button } from '@/components/ui/button';
+import JobOverview from '@/components/JobComponents/JobOverview';
+import { getSummaryItems } from '@/helpers';
+import ReactLoading from 'react-loading';
 
 const apply = () => {
   const router = useRouter();
   const [jobId, setJobId] = useState<string>('');
   const [refId, setRefId] = useState<string>();
+  const [jobInfo, setJobInfo] = useState<any>();
+  const [loading, setLoading] = useState<boolean>(true);
   const { address }: any = useAccount();
-  const { checkCandidateRegistration, applyforJob } = usePolybase(
-    async (data: string) => {
+  const [candidateApplication, setCandidateApplication] = useState<any>({});
+  const { checkCandidateRegistration, applyforJob, readJobListingById } =
+    usePolybase(async (data: string) => {
       const sig = await eth.sign(data, address);
       return { h: 'eth-personal-sign', sig };
-    }
-  );
+    });
 
   useEffect(() => {
     const { id, refId }: any = router.query || {};
 
-    if (!id) {
+    if (!!id) {
       const jobId = String(id);
       setJobId(jobId);
 
       if (refId) {
         setRefId(String(refId));
       }
+
+      readJobListingById(jobId)
+        .then((jobListing) => {
+          setJobInfo(jobListing);
+        })
+        .catch((error) => {
+          //  Handle the error appropriately
+        })
+        .finally(() => {
+          setLoading(false);
+        });
     }
   }, [router]);
 
@@ -78,66 +94,93 @@ const apply = () => {
       }
     }
   };
+
   return (
-    <Layout title='Profile'>
-      <Banner title='Candidate Application' />
-      <div className='mt-[2%] flex flex-col items-center justify-center'>
-        <div className='flex flex-col gap-2'>
-          <input
-            type='text'
-            placeholder='CV Link'
-            className='input input-bordered w-full'
-            name='roleTitle'
-            // value={jobInfo.roleTitle}
-            // onChange={handleChange}
-            required
-          />{' '}
-          <input
-            type='text'
-            placeholder='Location / VISA'
-            className='input input-bordered w-full'
-            name='roleTitle'
-            // value={jobInfo.roleTitle}
-            // onChange={handleChange}
-            required
+    <>
+      {!loading ? (
+        <Layout title='Profile'>
+          <Banner
+            title='Job Application'
+            subtitle='Complete your application and show your best side'
           />
-          <input
-            type='text'
-            placeholder='Notice Period'
-            className='input input-bordered w-full'
-            name='roleTitle'
-            // value={jobInfo.roleTitle}
-            // onChange={handleChange}
-            required
-          />
-          <input
-            type='text'
-            placeholder='Preferred Salary'
-            className='input input-bordered w-full'
-            name='roleTitle'
-            // value={jobInfo.roleTitle}
-            // onChange={handleChange}
-            required
-          />
-          <input
-            type='text'
-            placeholder='What makes you the best candidate for the role?'
-            className='input input-bordered w-full'
-            name='roleTitle'
-            // value={jobInfo.roleTitle}
-            // onChange={handleChange}
-            required
-          />
-          <Button
-            className='md:text-md w-full rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  text-white'
-            disabled={confirmLoading}
-            onClick={confirmReferralSC}
-          >
-            Apply
-          </Button>
+          <div className='lg:grid-c-1fr-auto grid gap-4 px-2 pt-3 md:container  md:pt-14'>
+            <div className='overflow-hidden rounded-lg bg-white shadow-sm'>
+              <div className='flex h-[70%] flex-col items-center justify-center'>
+                <div className='flex w-[70%] flex-col gap-2'>
+                  <input
+                    type='text'
+                    placeholder='CV Link'
+                    className='input input-bordered'
+                    name='roleTitle'
+                    // value={jobInfo.roleTitle}
+                    // onChange={handleChange}
+                    required
+                  />{' '}
+                  <input
+                    type='text'
+                    placeholder='Location / VISA'
+                    className='input input-bordered'
+                    name='roleTitle'
+                    // value={jobInfo.roleTitle}
+                    // onChange={handleChange}
+                    required
+                  />
+                  <input
+                    type='text'
+                    placeholder='Notice Period'
+                    className='input input-bordered'
+                    name='roleTitle'
+                    // value={jobInfo.roleTitle}
+                    // onChange={handleChange}
+                    required
+                  />
+                  <input
+                    type='text'
+                    placeholder='Preferred Salary'
+                    className='input input-bordered'
+                    name='roleTitle'
+                    // value={jobInfo.roleTitle}
+                    // onChange={handleChange}
+                    required
+                  />
+                  <textarea
+                    placeholder='What makes you the best candidate for the role?'
+                    className='textarea textarea-bordered'
+                    name='roleTitle'
+                    // value={jobInfo.roleTitle}
+                    // onChange={handleChange}
+                    required
+                  />
+                  <Button
+                    className='md:text-md w-full rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  uppercase text-white'
+                    disabled={confirmLoading}
+                    onClick={confirmReferralSC}
+                  >
+                    Apply
+                  </Button>
+                </div>
+              </div>
+            </div>
+            <div className='flex flex-col flex-wrap gap-4 '>
+              <aside className='flex flex-col rounded-lg bg-white p-3 shadow-sm md:px-8 md:py-6'>
+                <JobOverview
+                  skills={
+                    jobInfo?.skills ?? '' !== ''
+                      ? jobInfo.skills.split(',')
+                      : []
+                  }
+                  summary={getSummaryItems(jobInfo)}
+                />
+              </aside>
+            </div>
+          </div>
+        </Layout>
+      ) : (
+        <div className='flex h-[100vh] w-full items-center justify-center'>
+          <ReactLoading type='bubbles' color='white' />
         </div>
-      </div>
-    </Layout>
+      )}
+    </>
   );
 };
 

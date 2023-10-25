@@ -1,16 +1,6 @@
 import InlineApply from '@/components/JobComponents/InlineApplyJob';
 import JobOverview from '@/components/JobComponents/JobOverview';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import { OptionalKeys } from '@/lib/utils.types';
-import { JobProps } from '@/types';
-import { LanguageIcon } from '@heroicons/react/24/outline';
-import {
-  ClockIcon,
-  DollarSignIcon,
-  GraduationCapIcon,
-  MapPinIcon,
-  User2Icon,
-} from 'lucide-react';
 import { NextPage } from 'next';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
@@ -20,6 +10,8 @@ import Description from '@/components/JobComponents/Description';
 import ReferJob from '@/components/JobComponents/ReferJob';
 import { Layout } from '@/components/layout';
 import usePolybase from '@/hooks/usePolybase';
+import { getSummaryItems } from '@/helpers';
+import ReactLoading from 'react-loading';
 
 const JobInfo: NextPage = () => {
   const router = useRouter();
@@ -34,7 +26,7 @@ const JobInfo: NextPage = () => {
   useEffect(() => {
     const { id, refId }: any = router.query || {};
 
-    if (!id) {
+    if (!!id) {
       const jobId = String(id);
       setJobId(jobId);
 
@@ -67,53 +59,6 @@ const JobInfo: NextPage = () => {
     if (refDialogOpen) {
       setRefDialogOpen(false);
     }
-  };
-
-  const getSummaryItems = (jobInfo: any) => {
-    const wantedKeys: OptionalKeys<JobProps, any> = {
-      roleTitle: {
-        displayName: 'Job Title',
-        value: null,
-        icon: <User2Icon className='h-6 text-purple-900' />,
-      },
-      date: {
-        displayName: 'Posted',
-        value: null,
-        icon: <ClockIcon className='h-6 text-purple-900' />,
-      },
-      salary: {
-        displayName: 'Salary',
-        value: null,
-        icon: <DollarSignIcon className='h-6 text-purple-900' />,
-      },
-      experience: {
-        displayName: 'Experience',
-        value: null,
-        icon: <GraduationCapIcon className='h-6 text-purple-900' />,
-      },
-      langaugeSpoken: {
-        displayName: 'Language',
-        value: null,
-        icon: <LanguageIcon className='h-6 text-purple-900' />,
-      },
-      location: {
-        displayName: 'Location',
-        value: null,
-        icon: <MapPinIcon className='h-6 text-purple-900' />,
-      },
-      bounty: {
-        displayName: 'Bounty',
-        value: null,
-        icon: <DollarSignIcon className='h-6 text-purple-900' />,
-      },
-    };
-
-    for (const [key, value] of Object.entries(jobInfo)) {
-      if (wantedKeys[key as keyof JobProps]) {
-        wantedKeys[key as keyof JobProps].value = value;
-      }
-    }
-    return wantedKeys;
   };
 
   return (
@@ -151,7 +96,7 @@ const JobInfo: NextPage = () => {
                   </div>
                 ) : null}
                 <div className=' rounded-lg bg-white px-3 pb-3 pt-2 shadow-sm md:p-7'>
-                  {/* <ReferJob jobId={jobId} /> */}
+                  <ReferJob jobId={jobId} />
                 </div>
               </div>
             </div>
@@ -166,7 +111,9 @@ const JobInfo: NextPage = () => {
           ) : null}
         </Layout>
       ) : (
-        <div>Loading...</div>
+        <div className='flex h-[100vh] w-full items-center justify-center'>
+          <ReactLoading type='bubbles' color='white' />
+        </div>
       )}
     </>
   );
