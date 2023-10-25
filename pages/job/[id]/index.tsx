@@ -34,7 +34,7 @@ const JobInfo: NextPage = () => {
   useEffect(() => {
     const { id, refId }: any = router.query || {};
 
-    if (!!id) {
+    if (!id) {
       const jobId = String(id);
       setJobId(jobId);
 
@@ -151,7 +151,7 @@ const JobInfo: NextPage = () => {
                   </div>
                 ) : null}
                 <div className=' rounded-lg bg-white px-3 pb-3 pt-2 shadow-sm md:p-7'>
-                  <ReferJob jobId={jobId} />
+                  {/* <ReferJob jobId={jobId} /> */}
                 </div>
               </div>
             </div>
