@@ -12,9 +12,10 @@ const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICEID;
 type Props = {
   referalId: string;
   jobId: string;
+  refCode: string;
 };
 
-const InlineApply = ({ referalId, jobId }: Props) => {
+const InlineApply = ({ referalId, jobId, refCode }: Props) => {
   const router = useRouter();
   const { address }: any = useAccount();
   const { checkCandidateRegistration, applyforJob } = usePolybase(
@@ -34,7 +35,7 @@ const InlineApply = ({ referalId, jobId }: Props) => {
     address: recruitmentAddress,
     functionName: 'confirmReferral',
   });
-
+  console.log("refcode" , refCode);
   const confirmReferralSC = async () => {
     let candidateExists: boolean;
     try {
@@ -56,7 +57,7 @@ const InlineApply = ({ referalId, jobId }: Props) => {
       if (referalId) {
         try {
           await confirmReferral({
-            args: [BigInt(referalId), BigInt(jobId)],
+            args: [BigInt(referalId), BigInt(jobId), refCode as `0x${string}`],
           });
           await applyforJob(String(jobId), address);
           if (confirmSuccess) {

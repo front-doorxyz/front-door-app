@@ -70,9 +70,6 @@ const ReferJob = ({ jobId }: Props) => {
     } else {
       if (hashEmail) {
         const refcode: `0x${string}` = stringToHex(uuidv4().replaceAll("-", ""),{size: 32});
-
-
-
         const { hash } = await registerReferral({
           args: [BigInt(jobId), hashEmail, refcode],
         });

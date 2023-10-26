@@ -15,7 +15,7 @@ export default defineConfig({
     {
       name: 'Recruitment',
       abi: RecruitmentABI,
-      address: '0xF630015C5b44C416FF6e9f8A76A61b85e95B23B1',      
+      address: '0x97aF0EA692194f634d44C311288b172DFa8742A8',      
     },
     {
       name:'FrontDoorToken',

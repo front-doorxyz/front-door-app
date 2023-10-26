@@ -26,13 +26,14 @@ const JobInfo: NextPage = () => {
   const { readCompanyById, readJobListingById } = usePolybase();
   const [jobId, setJobId] = useState<string>('');
   const [refId, setRefId] = useState<string>();
+  const [refCode, setRefCode] = useState<string>();
   const [loading, setLoading] = useState<boolean>(true);
   const [jobInfo, setJobInfo] = useState<any>();
   const [refDialogOpen, setRefDialogOpen] = useState<boolean>(false);
   const [companyInfo, setCompanyInfo] = useState<any>({});
 
   useEffect(() => {
-    const { id, refId }: any = router.query || {};
+    const { id, refId, refCode }: any = router.query || {};
 
     if (!!id) {
       const jobId = String(id);
@@ -42,6 +43,11 @@ const JobInfo: NextPage = () => {
         setRefId(String(refId));
         setRefDialogOpen(true);
       }
+
+      if (refCode) {
+        setRefCode(String(refCode));
+      }
+
 
       readJobListingById(jobId)
         .then((jobListing) => {
@@ -147,7 +153,7 @@ const JobInfo: NextPage = () => {
               <div className='flex flex-col flex-wrap gap-4'>
                 {refId ? (
                   <div className=' rounded-lg bg-white p-3 shadow-sm md:p-7'>
-                    <InlineApply referalId={refId} jobId={jobId} />
+                    <InlineApply referalId={refId} jobId={jobId} refCode={refCode}/>
                   </div>
                 ) : null}
                 <div className=' rounded-lg bg-white px-3 pb-3 pt-2 shadow-sm md:p-7'>
