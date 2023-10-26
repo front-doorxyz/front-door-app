@@ -397,9 +397,9 @@ export const abi = [
         "type": "address"
       },
       {
-        "internalType": "uint40",
+        "internalType": "uint256",
         "name": "timeOfHiring",
-        "type": "uint40"
+        "type": "uint256"
       },
       {
         "internalType": "uint16",
@@ -456,9 +456,9 @@ export const abi = [
         "type": "address"
       },
       {
-        "internalType": "uint40",
+        "internalType": "uint256",
         "name": "timeOfHiring",
-        "type": "uint40"
+        "type": "uint256"
       },
       {
         "internalType": "uint16",
@@ -750,9 +750,9 @@ export const abi = [
             "type": "uint256"
           },
           {
-            "internalType": "uint40",
+            "internalType": "uint256",
             "name": "timeAtWhichJobCreated",
-            "type": "uint40"
+            "type": "uint256"
           },
           {
             "internalType": "uint16",
@@ -816,9 +816,9 @@ export const abi = [
             "type": "address"
           },
           {
-            "internalType": "uint40",
+            "internalType": "uint256",
             "name": "timeOfHiring",
-            "type": "uint40"
+            "type": "uint256"
           },
           {
             "internalType": "uint16",
@@ -877,9 +877,9 @@ export const abi = [
             "type": "address"
           },
           {
-            "internalType": "uint40",
+            "internalType": "uint256",
             "name": "timeOfHiring",
-            "type": "uint40"
+            "type": "uint256"
           },
           {
             "internalType": "uint16",
@@ -938,9 +938,9 @@ export const abi = [
             "type": "address"
           },
           {
-            "internalType": "uint40",
+            "internalType": "uint256",
             "name": "timeOfHiring",
-            "type": "uint40"
+            "type": "uint256"
           },
           {
             "internalType": "uint16",
@@ -1193,9 +1193,9 @@ export const abi = [
         "type": "address"
       },
       {
-        "internalType": "uint40",
+        "internalType": "uint256",
         "name": "timeOfHiring",
-        "type": "uint40"
+        "type": "uint256"
       },
       {
         "internalType": "uint16",
@@ -1242,9 +1242,9 @@ export const abi = [
         "type": "uint256"
       },
       {
-        "internalType": "uint40",
+        "internalType": "uint256",
         "name": "timeAtWhichJobCreated",
-        "type": "uint40"
+        "type": "uint256"
       },
       {
         "internalType": "uint16",
@@ -1304,9 +1304,9 @@ export const abi = [
         "type": "bytes32"
       },
       {
-        "internalType": "uint16",
+        "internalType": "uint256",
         "name": "expirationDate",
-        "type": "uint16"
+        "type": "uint256"
       },
       {
         "internalType": "bool",
@@ -1415,9 +1415,9 @@ export const abi = [
             "type": "address"
           },
           {
-            "internalType": "uint40",
+            "internalType": "uint256",
             "name": "timeOfHiring",
-            "type": "uint40"
+            "type": "uint256"
           },
           {
             "internalType": "uint16",
@@ -1457,9 +1457,9 @@ export const abi = [
             "type": "uint256"
           },
           {
-            "internalType": "uint40",
+            "internalType": "uint256",
             "name": "timeAtWhichJobCreated",
-            "type": "uint40"
+            "type": "uint256"
           },
           {
             "internalType": "uint16",
@@ -1497,14 +1497,14 @@ export const abi = [
         "type": "bytes32"
       },
       {
-        "internalType": "uint40",
+        "internalType": "uint256",
         "name": "timeAtWhichReferralStarted",
-        "type": "uint40"
+        "type": "uint256"
       },
       {
-        "internalType": "uint40",
+        "internalType": "uint256",
         "name": "referralEnd",
-        "type": "uint40"
+        "type": "uint256"
       },
       {
         "internalType": "uint16",

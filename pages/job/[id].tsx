@@ -151,7 +151,7 @@ const JobInfo: NextPage = () => {
                 />
               </aside>
               <div className='flex flex-col flex-wrap gap-4'>
-                {refId ? (
+                {(refId && refCode)  ? (
                   <div className=' rounded-lg bg-white p-3 shadow-sm md:p-7'>
                     <InlineApply referalId={refId} jobId={jobId} refCode={refCode}/>
                   </div>
@@ -163,10 +163,10 @@ const JobInfo: NextPage = () => {
             </div>
           </div>
 
-          {refId ? (
+          {(refId && refCode) ? (
             <Dialog open={refDialogOpen} onOpenChange={handleDialogClose}>
               <DialogContent className='sm:max-w-[425px]'>
-                <InlineApply jobId={jobId} referalId={refId} />
+                <InlineApply jobId={jobId} referalId={refId} refCode={refCode} />
               </DialogContent>
             </Dialog>
           ) : null}

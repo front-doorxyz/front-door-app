@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 import { toast } from 'react-toastify';
 import { useAccount, useContractWrite } from 'wagmi';
 import usePolybase from '../../hooks/usePolybase';
-import { recruitmentABI, recruitmentAddress } from '../../src/generated';
+import { recruitmentABI, recruitmentAddress, useRecruitmentConfirmReferral } from '../../src/generated';
 import { Button } from '../ui/button';
 
 const emailjsKey = process.env.NEXT_PUBLIC_EMAILJS_KEY;
@@ -30,10 +30,9 @@ const InlineApply = ({ referalId, jobId, refCode }: Props) => {
     isLoading: confirmLoading,
     isSuccess: confirmSuccess,
     writeAsync: confirmReferral,
-  } = useContractWrite({
-    abi: recruitmentABI,
+  } = useRecruitmentConfirmReferral({
     address: recruitmentAddress,
-    functionName: 'confirmReferral',
+      
   });
   console.log("refcode" , refCode);
   const confirmReferralSC = async () => {
