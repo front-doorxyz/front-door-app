@@ -12,6 +12,7 @@ const usePolybase = (signer?: Signer) => {
   const referrersReference = db.collection('Referrers');
   const companiesReference = db.collection('Companies');
   const candidatesReference = db.collection('Candidates');
+  const jobApplicationsReference = db.collection('JobApplications');
 
   const registerCandidate = async (candidateData: any) => {
     const recordData = await candidatesReference.create(candidateData);
@@ -72,6 +73,12 @@ const usePolybase = (signer?: Signer) => {
 
   const registerCompany = async (companyData: any) => {
     const recordData = await companiesReference.create(companyData);
+    return recordData;
+  };
+
+  const registerJobApplication = async (jobApplicationData: any) => {
+    const recordData =
+      await jobApplicationsReference.create(jobApplicationData);
     return recordData;
   };
 
@@ -150,6 +157,7 @@ const usePolybase = (signer?: Signer) => {
     readAllJobListingsForClient,
     updateJobListing,
     readCandidateDataForJob,
+    registerJobApplication,
   };
 };
 
