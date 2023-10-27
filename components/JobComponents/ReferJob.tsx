@@ -3,13 +3,15 @@ import emailjs from 'emailjs-com';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { keccak256, toBytes } from 'viem';
+import { keccak256, stringToHex, toBytes } from 'viem';
 import { useAccount, useContractWrite } from 'wagmi';
 import { waitForTransaction } from 'wagmi/actions';
 import usePolybase from '../../hooks/usePolybase';
-import { recruitmentABI, recruitmentAddress } from '../../src/generated';
+import { recruitmentABI, recruitmentAddress, useRecruitmentRegisterReferral } from '../../src/generated';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+const { v4: uuidv4 } = require('uuid');
+
 
 const emailjsKey = process.env.NEXT_PUBLIC_EMAILJS_KEY;
 const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICEID;
@@ -38,10 +40,8 @@ const ReferJob = ({ jobId }: Props) => {
     isLoading,
     isSuccess,
     writeAsync: registerReferral,
-  } = useContractWrite({
-    abi: recruitmentABI,
+  } = useRecruitmentRegisterReferral({
     address: recruitmentAddress,
-    functionName: 'registerReferral',
   });
 
   const registerReferralSC = async () => {
@@ -63,8 +63,9 @@ const ReferJob = ({ jobId }: Props) => {
       return;
     } else {
       if (hashEmail) {
+        const refCode: `0x${string}` = stringToHex(uuidv4().replaceAll('-', '')); 
         const { hash } = await registerReferral({
-          args: [BigInt(jobId), hashEmail],
+          args: [BigInt(jobId), hashEmail,refCode],
         });
         const receipt = await waitForTransaction({ hash });
         const refId = Number(receipt?.logs[0].data);
@@ -72,6 +73,7 @@ const ReferJob = ({ jobId }: Props) => {
           to: refereeMail,
           refId: refId,
           jobId: Number(jobId),
+          refCode: refCode,
         };
         try {
           emailjs
