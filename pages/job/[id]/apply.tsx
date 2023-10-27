@@ -2,7 +2,7 @@ import Banner from '@/components/Banner';
 import * as eth from '@polybase/eth';
 import { Layout } from '@/components/layout';
 import usePolybase from '@/hooks/usePolybase';
-import { recruitmentABI, recruitmentAddress } from '@/src/generated';
+import { recruitmentABI, recruitmentAddress, useRecruitmentConfirmReferral } from '@/src/generated';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -16,6 +16,7 @@ const Apply = () => {
   const router = useRouter();
   const [jobId, setJobId] = useState<string>('');
   const [refId, setRefId] = useState<string>();
+  const [refCode,setRefCode] = useState<string>('');
   const [jobInfo, setJobInfo] = useState<any>();
   const [loading, setLoading] = useState<boolean>(true);
   const { address }: any = useAccount();
@@ -50,7 +51,7 @@ const Apply = () => {
   });
 
   useEffect(() => {
-    const { id, refId }: any = router.query || {};
+    const { id, refId,refCode }: any = router.query || {};
 
     if (!!id) {
       const jobId = String(id);
@@ -58,6 +59,10 @@ const Apply = () => {
 
       if (refId) {
         setRefId(String(refId));
+      }
+
+      if(refCode){
+        setRefCode(String(refCode));
       }
 
       readJobListingById(jobId)
@@ -78,11 +83,7 @@ const Apply = () => {
     isLoading: confirmLoading,
     isSuccess: confirmSuccess,
     writeAsync: confirmReferral,
-  } = useContractWrite({
-    abi: recruitmentABI,
-    address: recruitmentAddress,
-    functionName: 'confirmReferral',
-  });
+  } = useRecruitmentConfirmReferral();
 
   const confirmReferralSC = async () => {
     let candidateExists: boolean;
@@ -104,8 +105,9 @@ const Apply = () => {
     } else {
       if (refId) {
         try {
+          console.log("refCode ", refCode);
           await confirmReferral({
-            args: [BigInt(refId), BigInt(jobId)],
+            args: [BigInt(refId), BigInt(jobId),refCode as `0x${string}`],
           });
         } catch (e) {
           toast.error('Candidate Application Failed');

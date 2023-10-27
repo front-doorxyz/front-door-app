@@ -18,13 +18,14 @@ const JobInfo: NextPage = () => {
   const { readCompanyById, readJobListingById } = usePolybase();
   const [jobId, setJobId] = useState<string>('');
   const [refId, setRefId] = useState<string>();
+  const [refCode, setRefCode] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
   const [jobInfo, setJobInfo] = useState<any>();
   const [refDialogOpen, setRefDialogOpen] = useState<boolean>(false);
   const [companyInfo, setCompanyInfo] = useState<any>({});
 
   useEffect(() => {
-    const { id, refId }: any = router.query || {};
+    const { id, refId, refCode }: any = router.query || {};
 
     if (!!id) {
       const jobId = String(id);
@@ -33,6 +34,9 @@ const JobInfo: NextPage = () => {
       if (refId) {
         setRefId(String(refId));
         setRefDialogOpen(true);
+      }
+      if (refCode) {
+        setRefCode(String(refCode));
       }
 
       readJobListingById(jobId)
@@ -65,7 +69,7 @@ const JobInfo: NextPage = () => {
     <>
       {!loading ? (
         <Layout title='job-info'>
-          {refId ? (
+          {(refId && refCode) ? (
             <ConfettiExplosion
               className='absolute right-1/2'
               zIndex={60}
@@ -90,9 +94,9 @@ const JobInfo: NextPage = () => {
                 />
               </aside>
               <div className='flex flex-col flex-wrap gap-4'>
-                {refId ? (
+                {(refId && refCode) ? (
                   <div className=' rounded-lg bg-white p-3 shadow-sm md:p-7'>
-                    <InlineApply referalId={refId} jobId={jobId} />
+                    <InlineApply referalId={refId} jobId={jobId} refCode={refCode} />
                   </div>
                 ) : null}
                 <div className=' rounded-lg bg-white px-3 pb-3 pt-2 shadow-sm md:p-7'>
@@ -102,10 +106,10 @@ const JobInfo: NextPage = () => {
             </div>
           </div>
 
-          {refId ? (
+          {(refId && refCode) ? (
             <Dialog open={refDialogOpen} onOpenChange={handleDialogClose}>
               <DialogContent className='sm:max-w-[425px]'>
-                <InlineApply jobId={jobId} referalId={refId} />
+                <InlineApply jobId={jobId} referalId={refId} refCode={refCode}/>
               </DialogContent>
             </Dialog>
           ) : null}
