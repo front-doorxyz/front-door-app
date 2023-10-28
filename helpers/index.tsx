@@ -1,5 +1,6 @@
 import { OptionalKeys } from '@/lib/utils.types';
 import { JobProps } from '@/types';
+import { LanguageIcon } from '@heroicons/react/24/outline';
 import {
   ClockIcon,
   DollarSignIcon,
@@ -7,8 +8,6 @@ import {
   MapPinIcon,
   User2Icon,
 } from 'lucide-react';
-import { LanguageIcon } from '@heroicons/react/24/outline';
-import ReactLoading from 'react-loading';
 
 export const truncateDescription = (text: string, maxWords: number): string => {
   // Regular expression to match words and special characters
@@ -75,6 +74,7 @@ export const getSummaryItems = (jobInfo: any) => {
       displayName: 'Bounty',
       value: null,
       icon: <DollarSignIcon className='h-6 text-purple-900' />,
+      prefix: '$',
     },
   };
 

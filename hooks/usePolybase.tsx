@@ -6,8 +6,8 @@ const usePolybase = (signer?: Signer) => {
 
   const db = new Polybase({
     defaultNamespace: dbNameSpace,
-    signer,
   });
+  
   const jobsReference = db.collection('Jobs');
   const referrersReference = db.collection('Referrers');
   const companiesReference = db.collection('Companies');
