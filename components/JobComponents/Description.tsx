@@ -59,7 +59,7 @@ const Description = ({
             </div>
           </div>
           <div className='self-end text-right'>
-            <div>Bounty: {bounty}</div>
+            <div>Bounty: ${bounty}</div>
             <div className='text-sm text-gray-600'>
               {date ? (
                 <>

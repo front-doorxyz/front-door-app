@@ -10,6 +10,7 @@ type SummaryItem = {
   displayName: string;
   value: string;
   icon: React.ReactNode;
+  prefix: string;
 };
 
 const JobOverview = ({ skills, summary }: JobOverview) => {
@@ -25,7 +26,10 @@ const JobOverview = ({ skills, summary }: JobOverview) => {
                 <div className='font-semibold text-gray-900'>
                   {item.displayName}
                 </div>
-                <div className='text-gray-600'>{item.value}</div>
+                <div className='text-gray-600'>
+                  {item.prefix}
+                  {item.value}
+                </div>
               </div>
             </div>
           ) : null

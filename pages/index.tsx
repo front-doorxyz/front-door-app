@@ -44,8 +44,7 @@ const Home: NextPage = () => {
               description={job.description}
               companyName={job.companyName}
               roleTitle={job.roleTitle}
-              location={job.location}
-              salary={job.salary}
+              skills={job?.skills ?? '' !== '' ? job.skills.split(',') : []}
               bounty={job.bounty}
             />
           ))}
