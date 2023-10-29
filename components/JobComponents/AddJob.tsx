@@ -1,35 +1,41 @@
+import { CreateJobItem } from '@/db/entities/job';
+import useCompany from '@/hooks/useCompanyRegistration';
+import { isSuccessResponse } from '@/pages/api/jobs';
+import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import * as eth from '@polybase/eth';
-import { Address, useAccount, useContractWrite } from 'wagmi';
+import { decodeEventLog, parseEther } from 'viem';
+import { useAccount } from 'wagmi';
+import { waitForTransaction } from 'wagmi/actions';
 import { getDate } from '../../helpers';
-import usePolybase from '../../hooks/usePolybase';
 import {
-  frontDoorTokenABI,
-  frontDoorTokenAddress,
   recruitmentABI,
   recruitmentAddress,
-  useFrontDoorTokenAllowance,
+  useFrontDoorTokenApprove,
+  useRecruitmentRegisterJob,
 } from '../../src/generated';
+import JobModal from '../JobModal';
 import TextEditor from '../TextEditor';
 import { Badge } from '../ui/badge';
-import { useRouter } from 'next/router';
-import JobModal from '../JobModal';
-import { waitForTransaction } from 'wagmi/actions';
-import { parseEther } from 'viem';
+import { Button } from '../ui/button';
+
 type Props = {};
 
 const AddJob = (props: Props) => {
   const router = useRouter();
   const { address }: any = useAccount();
-  const { readCompanyById, createJobListing, checkCompanyRegistration } =
-    usePolybase(async (data: string) => {
-      const sig = await eth.sign(data, address);
-      return { h: 'eth-personal-sign', sig };
-    });
+  const { isValidating, company } = useCompany(address);
+  const { isSuccess: tokenApproved, writeAsync: approveToken } =
+    useFrontDoorTokenApprove();
+  const {
+    isLoading,
+    isSuccess: scRegisterSuccess,
+    writeAsync: scRegisterJob,
+  } = useRecruitmentRegisterJob();
+
+  const [jobId, setJobId] = useState<string>();
   const [jobModal, setJobModal] = useState<boolean>(false);
   const [jobInfo, setJobInfo] = useState<any>({
-    companyName: '',
     description: '',
     location: '',
     roleTitle: '',
@@ -39,6 +45,64 @@ const AddJob = (props: Props) => {
     skills: '',
     langaugeSpoken: '',
   });
+
+  const showConfirmationModal = async () => {
+    setJobModal(true);
+  };
+
+  const approveTokenUsage = async () => {
+    try {
+      await approveToken({
+        args: [recruitmentAddress, parseEther(jobInfo.bounty)],
+      });
+    } catch (approvalError: any) {
+      toast.error('Approval Error: ' + approvalError.message);
+      return;
+    }
+  };
+
+  const addJobToSC = async () => {
+    try {
+      const { hash } = await scRegisterJob({
+        args: [parseEther(jobInfo.bounty)],
+      });
+      const receipt = await waitForTransaction({ hash });
+      const topics = decodeEventLog({
+        abi: recruitmentABI,
+        eventName: 'JobCreated',
+        data: receipt?.logs[4].data,
+        topics: receipt?.logs[4].topics,
+      });
+      setJobId(String(topics.args.jobId));
+    } catch (writeError: any) {
+      toast.error('Write Error: ' + writeError.message);
+      return;
+    }
+  };
+
+  const createJobListingDb = async (jobData: CreateJobItem) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(jobData),
+    };
+
+    try {
+      const response = await fetch('api/jobs', options);
+      if (response.ok) {
+        const responseData = await response.json();
+        if (isSuccessResponse(responseData)) {
+          return responseData.items.at(0);
+        }
+      } else {
+        throw new Error('error');
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -59,105 +123,34 @@ const AddJob = (props: Props) => {
     });
   };
 
-  const getCompanyData = async (address: Address) => {
-    const data = await readCompanyById(address);
-    if (data) {
-      setJobInfo({
+  useEffect(() => {
+    if (tokenApproved) {
+      addJobToSC();
+    }
+  }, [tokenApproved]);
+
+  useEffect(() => {
+    if (scRegisterSuccess && jobId) {
+      const date = getDate();
+      const jobData: CreateJobItem = {
         ...jobInfo,
-        companyName: data.companyName,
-      });
+        jobId,
+        companyId: company?.companyId,
+        companyName: company?.name,
+        salary: Number(jobInfo.salary),
+        date,
+      };
+
+      createJobListingDb(jobData)
+        .then((res) => {
+          if (res?.jobId) {
+            toast.success('Job Registered Successfully');
+            router.push('/');
+          }
+        })
+        .catch();
     }
-  };
-
-  useEffect(() => {
-    if (address) {
-      getCompanyData(address);
-    }
-  }, []);
-
-  const { data, isLoading, isSuccess, writeAsync } = useContractWrite({
-    abi: recruitmentABI,
-    address: recruitmentAddress,
-    functionName: 'registerJob',
-  });
-
-  const {
-    data: approval,
-    isLoading: loading,
-    isSuccess: success,
-    writeAsync: approvalFunc,
-  } = useContractWrite({
-    abi: frontDoorTokenABI,
-    address: frontDoorTokenAddress,
-    functionName: 'approve',
-  });
-
-  const approveTokenUsage = async () => {
-    try {
-      await approvalFunc({
-        args: [recruitmentAddress, parseEther(jobInfo.bounty)],
-      });
-    } catch (approvalError: any) {
-      toast.error('Approval Error: ' + approvalError.message);
-      return;
-    }
-  };
-  const addJob = async () => {
-    try {
-      const { hash } = await writeAsync({
-        args: [parseEther(jobInfo.bounty)],
-      });
-      const receipt = await waitForTransaction({ hash });
-      const jobId = Number(receipt?.logs[1].data);
-
-      if (jobId) {
-        const date = getDate();
-        const jobData = [
-          String(jobId),
-          jobInfo.companyName,
-          jobInfo.roleTitle,
-          jobInfo.description,
-          jobInfo.location,
-          jobInfo.skills,
-          jobInfo.experience,
-          Number(jobInfo.salary),
-          jobInfo.bounty,
-          jobInfo.langaugeSpoken,
-          address,
-          date,
-        ];
-        const data = await createJobListing(jobData);
-        if (data.id && isSuccess) {
-          toast.success('Job Registered Successfully');
-          router.push('/');
-        }
-      }
-    } catch (writeError: any) {
-      toast.error('Write Error: ' + writeError.message);
-      return;
-    }
-  };
-
-  const registerJob = async () => {
-    if (await checkCompanyRegistration(address)) {
-      setJobModal(true);
-    } else {
-      toast.error('Please Register as a company');
-      router.push(
-        {
-          pathname: `/register`,
-          query: { tab: 1 },
-        },
-        `/register`
-      );
-    }
-  };
-
-  useEffect(() => {
-    if (success) {
-      addJob();
-    }
-  }, [success]);
+  }, [scRegisterSuccess, jobId]);
 
   return (
     <div className='flex flex-col justify-center gap-4 p-4 shadow-2xl'>
@@ -240,12 +233,14 @@ const AddJob = (props: Props) => {
         onChange={handleChange}
       />
 
-      <button
+      <Button
         className='md:text-md rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  uppercase text-white'
-        onClick={registerJob}
+        onClick={showConfirmationModal}
+        disabled={isLoading || isValidating || !company}
       >
         Register Job
-      </button>
+      </Button>
+
       {jobModal && (
         <JobModal
           setModal={() => setJobModal(false)}

@@ -1,0 +1,15 @@
+service: fd-database
+frameworkVersion: '3'
+
+custom:
+  tableName: '${sls:stage}-front-door'
+
+provider:
+  name: aws
+  region: eu-west-1
+
+resources:
+  Resources:
+    UsersTable:
+      Type: AWS::DynamoDB::Table
+      Properties: ${file(./table.config.js)}

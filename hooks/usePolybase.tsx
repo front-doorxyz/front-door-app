@@ -1,13 +1,13 @@
 import { Polybase, Signer } from '@polybase/client';
 import { Address } from 'wagmi';
-const usePolybase = (signer?: Signer) => {
+const usePolybases = (signer?: Signer) => {
   const dbNameSpace =
     'pk/0xbaeff2028f7c15332ab23549f09c33eee5cb9231559067afe56f975ea6a4b660b1e32eead19b6a8bd48d8347fa3753c8749d43b9a8716905c0fc8a3c70e3e9b1/BFG2';
 
   const db = new Polybase({
     defaultNamespace: dbNameSpace,
   });
-  
+
   const jobsReference = db.collection('Jobs');
   const referrersReference = db.collection('Referrers');
   const companiesReference = db.collection('Companies');
@@ -106,6 +106,16 @@ const usePolybase = (signer?: Signer) => {
     return exists;
   };
 
+  const getCompanyies = async () => {
+    const records = await companiesReference.get();
+
+    let jobListings: any = [];
+    records.data.map((record) => {
+      jobListings.push(record.data);
+    });
+    return jobListings;
+  };
+
   const checkReferrerRegistration = async (id: string) => {
     const record = await referrersReference.record(id).get();
     const exists = record?.exists() || false;
@@ -158,7 +168,8 @@ const usePolybase = (signer?: Signer) => {
     updateJobListing,
     readCandidateDataForJob,
     registerJobApplication,
+    getCompanyies
   };
 };
 
-export default usePolybase;
+export default usePolybases;

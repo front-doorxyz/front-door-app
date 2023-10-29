@@ -1,31 +1,17 @@
+import { CandidateItem } from '@/db/entities/candidate';
 import { isValidURL } from '@/helpers';
-import usePolybase from '@/hooks/usePolybase';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
 
-type Candidate = {
-  id: string;
-  score: number;
-  email: string;
-  name: string;
-  site: string;
-};
+type CandidateDataProps = { loading: boolean; candidates: CandidateItem[] };
 
-const CandidateData = () => {
-  const { readCandidateDataForJob } = usePolybase();
-  const [jobId, setJobId] = useState('');
-  const [jobInfo, setJobInfo] = useState<any>({});
-  const [candidates, setCandidates] = useState<any>([]);
-  const [selectedCandidate, setSelectedCandidate] = useState<Candidate | null>(
-    null
-  );
-  const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
+const CandidateData = ({ candidates = [], loading }: CandidateDataProps) => {
+  const [selectedCandidate, setSelectedCandidate] =
+    useState<CandidateItem | null>(null);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const openModal = (candidate: Candidate) => {
+  const openModal = (candidate: CandidateItem) => {
     setSelectedCandidate(candidate);
     setIsModalOpen(true);
   };
@@ -35,22 +21,6 @@ const CandidateData = () => {
     setIsModalOpen(false);
   };
 
-  useEffect(() => {
-    const { id }: any = router.query;
-    setJobId(String(id));
-
-    readCandidateDataForJob(id)
-      .then((jobCandidates: any) => {
-        console.log(jobCandidates);
-        setCandidates(jobCandidates);
-        setLoading(false); // Set loading to false when data is available
-      })
-      .catch((error: any) => {
-        toast.error('Something went wrong fetching candidates data!');
-        router.push('/');
-      });
-  }, [router]);
-
   return (
     <tbody>
       {loading ? (
@@ -59,56 +29,60 @@ const CandidateData = () => {
         </tr>
       ) : (
         <>
-          {candidates?.map((candidate: any, index: any) => (
-            <tr
-              key={candidate.id}
-              className={index % 2 === 0 ? 'bg-blue-200' : 'bg-blue-100'}
-            >
-              <td className='border border-blue-500 p-2 text-black'>
-                {candidate.id}
-              </td>
-              <td className='border border-blue-500 p-2'>
-                {candidate.feedbackScore}
-              </td>
-              <td className='border border-blue-500 p-2'>
-                <button
-                  className='rounded bg-blue-500 px-2 py-1 text-white'
-                  onClick={() => openModal(candidate)}
-                >
-                  View Profile
-                </button>
-              </td>
-              <td className='border border-blue-500 p-2'>
-                <button
-                  className='rounded bg-blue-500 px-2 py-1 text-white'
-                  onClick={() => {
-                    const portfolioLink = candidate?.site;
-                    if (isValidURL(portfolioLink)) {
-                      window.open(portfolioLink, '_blank');
-                    }
-                  }}
-                >
-                  Contact
-                </button>
-              </td>
-              <td className='border border-blue-500 p-2'>
-                <button
-                  className='rounded bg-blue-500 px-2 py-1 text-white'
-                  onClick={() => toast.warning('coming soon!')}
-                >
-                  Reject
-                </button>
-              </td>
-              <td className='border border-blue-500 p-2'>
-                <button
-                  className='rounded bg-blue-500 px-2 py-1 text-white'
-                  onClick={() => toast.warning('coming soon!')}
-                >
-                  Hire
-                </button>
-              </td>
+          {candidates?.length > 0 ? (
+            candidates?.map((candidate, index) => (
+              <tr
+                key={candidate.walletAddress}
+                className={index % 2 === 0 ? 'bg-blue-200' : 'bg-blue-100'}
+              >
+                <td className='border border-blue-500 p-2 text-black'>
+                  {candidate.walletAddress}
+                </td>
+                <td className='border border-blue-500 p-2'>{candidate.name}</td>
+                <td className='border border-blue-500 p-2'>
+                  <button
+                    className='rounded bg-blue-500 px-2 py-1 text-white'
+                    onClick={() => openModal(candidate)}
+                  >
+                    View Profile
+                  </button>
+                </td>
+                <td className='border border-blue-500 p-2'>
+                  <button
+                    className='rounded bg-blue-500 px-2 py-1 text-white'
+                    onClick={() => {
+                      const portfolioLink = candidate?.site;
+                      if (portfolioLink && isValidURL(portfolioLink)) {
+                        window.open(portfolioLink, '_blank');
+                      }
+                    }}
+                  >
+                    Contact
+                  </button>
+                </td>
+                <td className='border border-blue-500 p-2'>
+                  <button
+                    className='rounded bg-blue-500 px-2 py-1 text-white'
+                    onClick={() => toast.warning('coming soon!')}
+                  >
+                    Reject
+                  </button>
+                </td>
+                <td className='border border-blue-500 p-2'>
+                  <button
+                    className='rounded bg-blue-500 px-2 py-1 text-white'
+                    onClick={() => toast.warning('coming soon!')}
+                  >
+                    Hire
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan={6}>No Candidates yet.</td>
             </tr>
-          ))}
+          )}
         </>
       )}
       {selectedCandidate && (
@@ -122,7 +96,7 @@ const CandidateData = () => {
               <h2 className='mb-2 text-2xl font-bold'>Candidate Profile</h2>
               <p>
                 <span className='font-bold'>Address:</span>{' '}
-                {selectedCandidate.id}
+                {selectedCandidate.walletAddress}
               </p>
               <p>
                 <span className='font-bold'>Email:</span>{' '}

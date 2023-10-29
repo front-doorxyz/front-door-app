@@ -1,9 +1,9 @@
 import JobCard from '@/components/JobComponents/JobCard';
 import Stats from '@/components/ui/stats';
+import { JobItem } from '@/db/entities/job';
 import type { NextPage } from 'next';
 import { useEffect, useState } from 'react';
 import { Layout } from '../components/layout';
-import usePolybase from '../hooks/usePolybase';
 
 const stats = [
   { name: 'New Jobs', value: 200 },
@@ -12,12 +12,16 @@ const stats = [
 ];
 
 const Home: NextPage = () => {
-  const { readAllJobListings } = usePolybase();
-  const [jobArr, setJobArr] = useState<any>([]);
+  const [jobArr, setJobArr] = useState<JobItem[]>([]);
+
+  const readAllJobListings = async () => {
+    const response = await fetch('api/jobs');
+    return await response.json();
+  };
 
   useEffect(() => {
     readAllJobListings()
-      .then((jobListings) => setJobArr(jobListings))
+      .then((jobListings) => setJobArr(jobListings.items))
       .catch((error) => {
         console.log(error);
       });
@@ -37,10 +41,10 @@ const Home: NextPage = () => {
           Showing {jobArr.length} Jobs
         </div>
         <div className='mt-[2%] flex flex-wrap justify-center gap-5 md:justify-start md:gap-7'>
-          {jobArr.map((job: any) => (
+          {jobArr.map((job) => (
             <JobCard
-              key={job.id}
-              id={job.id}
+              key={job.jobId}
+              id={job.jobId}
               description={job.description}
               companyName={job.companyName}
               roleTitle={job.roleTitle}

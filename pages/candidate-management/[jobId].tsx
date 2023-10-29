@@ -1,20 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import { CandidateItem } from '@/db/entities/candidate';
 import { NextPage } from 'next';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 import Banner from '../../components/Banner';
 import { Layout } from '../../components/layout';
-import { isValidURL } from '@/helpers';
 import CandidateData from './candidateData';
-import { CandidateItem } from '@/db/entities/candidate';
-import { useAccount } from 'wagmi';
 
 const CandidateManagement: NextPage = () => {
-  const { address } = useAccount();
-
+  const router = useRouter();
+  
   const [isLoading, setLoading] = useState<boolean>(true);
   const [candidates, setCandidates] = useState<CandidateItem[]>([]);
 
-  const listCompanyCandidates = async () => {
-    const res = await fetch('../api/companies/' + address + '/applications');
+  const listAppliedCandidates = async (jobId: string) => {
+    const res = await fetch('../api/jobs/' + jobId + '/candidates');
     if (res.ok) {
       return res.json();
     } else {
@@ -23,19 +23,24 @@ const CandidateManagement: NextPage = () => {
   };
 
   useEffect(() => {
-    if (address) {
-      listCompanyCandidates()
-        .then((candidateList) => setCandidates(candidateList.items))
-        .catch((error) => {
-          console.log(error);
+    let { jobId } = router.query;
+    jobId = Array.isArray(jobId) ? jobId[0] : jobId;
+    if (jobId) {
+      listAppliedCandidates(jobId)
+        .then((jobCandidates) => {
+          setCandidates(jobCandidates.items);
+        })
+        .catch((error: any) => {
+          toast.error('Something went wrong fetching candidates data!');
+          router.push('/');
         })
         .finally(() => setLoading(false));
     }
-  }, [address]);
+  }, [router]);
 
   return (
-    <Layout title='Candidate Management'>
-      <Banner title='Candidate Management Test' />
+    <Layout title='Profile'>
+      <Banner title='Candidate Management' />
       <div className='mt-[2%] flex flex-col items-center justify-center pl-3 pr-3'>
         <table className='w-full border-collapse border border-blue-500'>
           <thead>

@@ -1,11 +1,10 @@
+import { JobItem } from '@/db/entities/job';
+import { isSuccessResponse } from '@/pages/api/companies/[companyId]/jobs';
 import { MapPinIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
 import { useAccount } from 'wagmi';
 import { truncateDescription } from '../../helpers';
-import usePolybase from '../../hooks/usePolybase';
-import { JobProps } from '../../types';
 import { Badge } from '../ui/badge';
 
 type ClientJobProps = {
@@ -36,8 +35,7 @@ const ClientJob = (props: ClientJobProps) => {
   } = props;
   const router = useRouter();
   const viewCandidates = () => {
-    // toast.warning('Coming Soon!');
-    router.push(`/candidate-management/${id}`); //TODO: uncomment once pages built
+    router.push(`/candidate-management/${id}`);
   };
 
   const handleEditJob = () => {
@@ -51,7 +49,7 @@ const ClientJob = (props: ClientJobProps) => {
           <div className='mb-[2%] font-semibold uppercase'>{roleTitle}</div>
           <div className='flex flex-wrap gap-2 '>
             <Badge className='self-start bg-[#5F9FFF]'>
-              {'Bounty: ' + '$' + Math.floor(100 + Math.random() * 900)}
+              {'Bounty: ' + '$' + bounty}
             </Badge>
             <Badge className='self-start bg-[#3F3F5F]'>Salary {salary}</Badge>
           </div>
@@ -85,34 +83,38 @@ const ClientJob = (props: ClientJobProps) => {
 };
 
 const ClientJobs = () => {
-  const { address }: any = useAccount();
-  const { readAllJobListingsForClient } = usePolybase();
-  const [jobArr, setJobArr] = useState<any>([]);
+  const { address } = useAccount();
+
+  const [jobArr, setJobArr] = useState<JobItem[]>([]);
+
+  const listJobListingsForClient = async (address: `0x${string}`) => {
+    const res = await fetch('api/companies/' + address + '/jobs');
+    if (res.ok) {
+      const responseData = await res.json();
+      if (isSuccessResponse(responseData)) {
+        return responseData;
+      } else {
+        throw new Error('bad response');
+      }
+    } else {
+      throw new Error('bad response');
+    }
+  };
 
   useEffect(() => {
     if (address) {
-      readAllJobListingsForClient(address).then((jobListing) =>
-        setJobArr([...jobListing])
+      listJobListingsForClient(address).then((jobListing) =>
+        setJobArr([...jobListing.items])
       );
     }
-  }, []);
+  }, [address]);
 
   return (
     <div className='flex flex-col items-center justify-center'>
       <div className='flex flex-col  gap-2'>
         <div className='mt-[2%] flex flex-col flex-wrap items-center justify-center gap-8'>
-          {jobArr.map((job: JobProps) => (
-            <ClientJob
-              key={job.id}
-              id={job.id}
-              location={job.location}
-              status={job.status}
-              salary={job.salary}
-              roleTitle={job.roleTitle}
-              bounty={job.bounty}
-              description={job.description}
-              date={job.date}
-            />
+          {jobArr.map((job) => (
+            <ClientJob key={job.jobId} id={job.jobId} {...job} />
           ))}
         </div>
       </div>
