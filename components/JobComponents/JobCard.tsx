@@ -9,7 +9,7 @@ export type JobCardProps = {
   roleTitle: string;
   description: string;
   companyName: string;
-  bounty: number;
+  bounty: string;
   skills: string[];
 };
 const JobCard = ({

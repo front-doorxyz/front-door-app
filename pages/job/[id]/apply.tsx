@@ -1,25 +1,33 @@
 import Banner from '@/components/Banner';
-import * as eth from '@polybase/eth';
+import JobOverview from '@/components/JobComponents/JobOverview';
 import { Layout } from '@/components/layout';
-import usePolybase from '@/hooks/usePolybase';
-import { recruitmentABI, recruitmentAddress, useRecruitmentConfirmReferral } from '@/src/generated';
+import { Button } from '@/components/ui/button';
+import { JobItem } from '@/db/entities/job';
+import { JobApplicationItem } from '@/db/entities/job-application';
+import { getSummaryItems } from '@/helpers';
+import useCandidate from '@/hooks/useCandidate';
+import { useRecruitmentConfirmReferral } from '@/src/generated';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import { useAccount, useContractWrite } from 'wagmi';
-import { Button } from '@/components/ui/button';
-import JobOverview from '@/components/JobComponents/JobOverview';
-import { getSummaryItems } from '@/helpers';
 import ReactLoading from 'react-loading';
+import { toast } from 'react-toastify';
+import { useAccount } from 'wagmi';
 
 const Apply = () => {
   const router = useRouter();
+  const { address } = useAccount();
+  const { isValidating, isRegistered } = useCandidate(address, '../../');
+  const {
+    isLoading: confirmLoading,
+    isSuccess: confirmSuccess,
+    writeAsync: confirmReferral,
+  } = useRecruitmentConfirmReferral();
+
   const [jobId, setJobId] = useState<string>('');
   const [refId, setRefId] = useState<string>();
-  const [refCode,setRefCode] = useState<string>('');
-  const [jobInfo, setJobInfo] = useState<any>();
+  const [refCode, setRefCode] = useState<string>('');
+  const [jobInfo, setJobInfo] = useState<JobItem>();
   const [loading, setLoading] = useState<boolean>(true);
-  const { address }: any = useAccount();
   const [candidateApplication, setCandidateApplication] = useState<any>({
     cvLink: '',
     location: '',
@@ -27,6 +35,74 @@ const Apply = () => {
     preferredSalary: '',
     description: '',
   });
+
+  const confirmReferralSC = async () => {
+    if (!isRegistered) {
+      toast.warning('Register as a candidate!');
+      router.push(
+        {
+          pathname: `/register`,
+          query: { tab: 3 },
+        },
+        `/register`
+      );
+      return;
+    } else {
+      if (refId) {
+        try {
+          await confirmReferral({
+            args: [BigInt(refId), BigInt(jobId), refCode as `0x${string}`],
+          });
+        } catch (e) {
+          toast.error('Candidate Application Failed');
+        }
+      }
+    }
+  };
+
+  const registerApplicationDb = async () => {
+    const jobApplicationData = {
+      ...candidateApplication,
+      referrerId: refId,
+      jobId,
+      walletAddress: address,
+      companyId: jobInfo?.companyId,
+    };
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(jobApplicationData),
+    };
+
+    try {
+      const response = await fetch('../../api/applications', options);
+      if (response.ok) {
+        const responseData = (await response.json()) as {
+          items: JobApplicationItem[];
+        };
+        if (responseData.items.at(0)?.applicationId) {
+          toast.success(`Applied For Job Successfully!`);
+          router.push('/');
+        }
+      } else {
+        toast.error(`Registration Unsuccessful. Please contact support.`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error(`Registration Unsuccessful. Please contact support.`);
+    }
+  };
+
+  const getJobListingById = async (jobId: string) => {
+    const res = await fetch('../../api/jobs/' + jobId);
+    if (res.ok) {
+      return res.json();
+    } else {
+      throw new Error('bad response');
+    }
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -40,34 +116,19 @@ const Apply = () => {
     });
   };
 
-  const {
-    checkCandidateRegistration,
-    applyforJob,
-    readJobListingById,
-    registerJobApplication,
-  } = usePolybase(async (data: string) => {
-    const sig = await eth.sign(data, address);
-    return { h: 'eth-personal-sign', sig };
-  });
-
   useEffect(() => {
-    const { id, refId,refCode }: any = router.query || {};
+    let { id, refId, refCode } = router.query;
+    id = Array.isArray(id) ? id[0] : id;
+    refId = Array.isArray(refId) ? refId[0] : refId;
+    refCode = Array.isArray(refCode) ? refCode[0] : refCode;
+    if (id && refId && refCode) {
+      setJobId(id);
+      setRefId(refId);
+      setRefCode(refCode);
 
-    if (!!id) {
-      const jobId = String(id);
-      setJobId(jobId);
-
-      if (refId) {
-        setRefId(String(refId));
-      }
-
-      if(refCode){
-        setRefCode(String(refCode));
-      }
-
-      readJobListingById(jobId)
+      getJobListingById(id)
         .then((jobListing) => {
-          setJobInfo(jobListing);
+          setJobInfo(jobListing.item);
         })
         .catch((error) => {
           //  Handle the error appropriately
@@ -78,66 +139,9 @@ const Apply = () => {
     }
   }, [router]);
 
-  const {
-    data: confirmData,
-    isLoading: confirmLoading,
-    isSuccess: confirmSuccess,
-    writeAsync: confirmReferral,
-  } = useRecruitmentConfirmReferral();
-
-  const confirmReferralSC = async () => {
-    let candidateExists: boolean;
-    try {
-      candidateExists = await checkCandidateRegistration(address);
-    } catch (e) {
-      candidateExists = false;
-    }
-    if (!candidateExists) {
-      toast.warning('Register as a candidate!');
-      router.push(
-        {
-          pathname: `/register`,
-          query: { tab: 3 },
-        },
-        `/register`
-      );
-      return;
-    } else {
-      if (refId) {
-        try {
-          console.log("refCode ", refCode);
-          await confirmReferral({
-            args: [BigInt(refId), BigInt(jobId),refCode as `0x${string}`],
-          });
-        } catch (e) {
-          toast.error('Candidate Application Failed');
-        }
-      }
-    }
-  };
-
-  const jobApplicationPolybase = async () => {
-    const jobApplicationData = [
-      String(refId),
-      String(jobId),
-      candidateApplication.cvLink,
-      candidateApplication.location,
-      candidateApplication.noticePeriod,
-      candidateApplication.preferredSalary,
-      candidateApplication.description,
-    ];
-
-    const jobApplication = await registerJobApplication(jobApplicationData);
-    const applyData = await applyforJob(String(jobId), address);
-    if (jobApplication.id && applyData.id) {
-      toast.success(`Applied For Job Successfully!`);
-      router.push('/');
-    }
-  };
-
   useEffect(() => {
     if (confirmSuccess) {
-      jobApplicationPolybase();
+      registerApplicationDb();
     }
   }, [confirmSuccess]);
 
@@ -199,7 +203,7 @@ const Apply = () => {
                   />
                   <Button
                     className='md:text-md w-full rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  uppercase text-white'
-                    disabled={confirmLoading}
+                    disabled={confirmLoading || isValidating}
                     onClick={confirmReferralSC}
                   >
                     Apply
@@ -212,7 +216,7 @@ const Apply = () => {
                 <JobOverview
                   skills={
                     jobInfo?.skills ?? '' !== ''
-                      ? jobInfo.skills.split(',')
+                      ? (jobInfo?.skills ?? '').split(',')
                       : []
                   }
                   summary={getSummaryItems(jobInfo)}

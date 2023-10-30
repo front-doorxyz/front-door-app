@@ -1,20 +1,18 @@
-import * as eth from '@polybase/eth';
+import useReferrer from '@/hooks/useReferrer';
 import emailjs from 'emailjs-com';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { keccak256, stringToHex, toBytes } from 'viem';
-import { useAccount, useContractWrite } from 'wagmi';
+import { useAccount } from 'wagmi';
 import { waitForTransaction } from 'wagmi/actions';
-import usePolybase from '../../hooks/usePolybase';
-import { recruitmentABI, recruitmentAddress, useRecruitmentRegisterReferral } from '../../src/generated';
+import {
+  recruitmentAddress,
+  useRecruitmentRegisterReferral,
+} from '../../src/generated';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 const { v4: uuidv4 } = require('uuid');
-
-
-const emailjsKey = process.env.NEXT_PUBLIC_EMAILJS_KEY;
-const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICEID;
 
 type Props = {
   jobId: string;
@@ -23,35 +21,23 @@ type Props = {
 const ReferJob = ({ jobId }: Props) => {
   const router = useRouter();
   const { address }: any = useAccount();
-  const { checkReferrerRegistration } = usePolybase(async (data: string) => {
-    const sig = await eth.sign(data, address);
-    return { h: 'eth-personal-sign', sig };
-  });
-  const [refereeMail, setRefereeMail] = useState<string>('');
-  const [hashEmail, setHashEmail] = useState<`0x${string}`>('0x');
+  const { isValidating, isRegistered } = useReferrer(address, '../');
+
+  const [refereeMail, setRefereeMail] = useState<string>();
+  const [hashEmail, setHashEmail] = useState<`0x${string}`>();
+
+  const { isLoading, writeAsync: registerReferral } =
+    useRecruitmentRegisterReferral({
+      address: recruitmentAddress,
+    });
 
   const handleEmailChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setHashEmail(keccak256(toBytes(event.target.value)));
     setRefereeMail(event.target.value);
   };
 
-  const {
-    data,
-    isLoading,
-    isSuccess,
-    writeAsync: registerReferral,
-  } = useRecruitmentRegisterReferral({
-    address: recruitmentAddress,
-  });
-
   const registerReferralSC = async () => {
-    let referrerExists: boolean;
-    try {
-      referrerExists = await checkReferrerRegistration(address);
-    } catch (e) {
-      referrerExists = false;
-    }
-    if (!referrerExists) {
+    if (!isRegistered) {
       toast.warning('Register as a referrer');
       router.push(
         {
@@ -63,9 +49,11 @@ const ReferJob = ({ jobId }: Props) => {
       return;
     } else {
       if (hashEmail) {
-        const refCode: `0x${string}` = stringToHex(uuidv4().replaceAll('-', '')); 
+        const refCode: `0x${string}` = stringToHex(
+          uuidv4().replaceAll('-', '')
+        );
         const { hash } = await registerReferral({
-          args: [BigInt(jobId), hashEmail,refCode],
+          args: [BigInt(jobId), hashEmail, refCode],
         });
         const receipt = await waitForTransaction({ hash });
         const refId = Number(receipt?.logs[0].data);
@@ -85,6 +73,8 @@ const ReferJob = ({ jobId }: Props) => {
             )
             .then(
               (result: { text: string }) => {
+                setHashEmail(undefined);
+                setRefereeMail(undefined);
                 toast.success('Referral sent successfully');
               },
               (error: { text: string }) => {
@@ -97,7 +87,7 @@ const ReferJob = ({ jobId }: Props) => {
       }
     }
   };
-  
+
   return (
     <div className=''>
       <h1 className='text-xl font-semibold md:mb-6'>
@@ -108,14 +98,14 @@ const ReferJob = ({ jobId }: Props) => {
         type='text'
         placeholder='Candidate email'
         name='name'
-        className=' mb-4  p-3'
+        className=' mb-4 p-3'
         onChange={handleEmailChange}
       />
 
       <Button
         className='md:text-md w-full rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  text-white'
         onClick={registerReferralSC}
-        disabled={isLoading}
+        disabled={isLoading || isValidating}
       >
         Refer
       </Button>

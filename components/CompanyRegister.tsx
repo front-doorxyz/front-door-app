@@ -1,24 +1,67 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { CreateCompanyItem } from '@/db/entities/company';
+import useCompany from '@/hooks/useCompanyRegistration';
+import { isSuccessResponse } from '@/pages/api/companies';
 import { useRouter } from 'next/router';
-import { useAccount, useContractWrite } from 'wagmi';
-import { recruitmentABI, recruitmentAddress } from '../src/generated';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import usePolybase from '../hooks/usePolybase';
-import * as eth from '@polybase/eth';
+import { useAccount } from 'wagmi';
+import { useRecruitmentRegisterCompany } from '../src/generated';
 import { Badge } from './ui/badge';
 
 const CompanyRegister = () => {
-  const { address }: any = useAccount();
-  const { registerCompany, checkCompanyRegistration } = usePolybase(
-    async (data: string) => {
-      const sig = await eth.sign(data, address);
-      return { h: 'eth-personal-sign', sig };
-    }
-  );
   const router = useRouter();
+  const { address } = useAccount();
+  const { isValidating, isRegistered } = useCompany(address);
+  const { isLoading, isSuccess, writeAsync } = useRecruitmentRegisterCompany();
+
   const [companyName, setCompanyName] = useState('');
   const [companyEmail, setCompanyEmail] = useState('');
   const [companySite, setCompanySite] = useState('');
+
+  const registerCompanySc = async () => {
+    if (isRegistered) {
+      toast.error('Wallet address is already registered');
+      return;
+    }
+    try {
+      await writeAsync();
+    } catch (e) {
+      toast.error('Company registration failed. Please contact support');
+    }
+  };
+
+  const registerCompanyDb = async () => {
+    const companyData: CreateCompanyItem = {
+      companyId: address as string,
+      name: companyName,
+      email: companyEmail,
+      site: companySite,
+    };
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(companyData),
+    };
+
+    try {
+      const response = await fetch('api/companies', options);
+      if (response.ok) {
+        const responseData = await response.json();
+
+        if (isSuccessResponse(responseData)) {
+          toast.success(`${responseData.item.name} Registered Successfully`);
+          router.push('/');
+        }
+      } else {
+        toast.error(`Registration Unsuccessful. Please contact support.`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error(`Registration Unsuccessful. Please contact support.`);
+    }
+  };
 
   const handleCompanyNameChange = (event: any) => {
     setCompanyName(event.target.value);
@@ -32,43 +75,9 @@ const CompanyRegister = () => {
     setCompanySite(event.target.value);
   };
 
-  const { data, isLoading, isSuccess, writeAsync } = useContractWrite({
-    abi: recruitmentABI,
-    address: recruitmentAddress,
-    functionName: 'registerCompany',
-  });
-
-  const registerCompanySc = async () => {
-    let CompanyExists: boolean;
-    try {
-      CompanyExists = await checkCompanyRegistration(address);
-    } catch (e) {
-      CompanyExists = false;
-    }
-    if (CompanyExists) {
-      toast.success('Already Registered!');
-      router.push('/');
-      return;
-    }
-    try {
-      await writeAsync();
-    } catch (e) {
-      toast.error('Company Registration failed');
-    }
-  };
-
-  const registerCompanyPolybase = async () => {
-    const companyData = [address, companyName, companyEmail, companySite];
-    const company = await registerCompany(companyData);
-    if (company.id) {
-      toast.success(`${companyName} Registered Successfully`);
-      router.push('/');
-    }
-  };
-
   useEffect(() => {
     if (isSuccess) {
-      registerCompanyPolybase();
+      registerCompanyDb();
     }
   }, [isSuccess]);
 
@@ -76,7 +85,7 @@ const CompanyRegister = () => {
     <>
       <div
         id='form'
-        className='mt-[2%] flex h-[50vh]  w-[300px] flex-col  items-center justify-center gap-4 bg-blue-50 p-2 shadow-2xl md:w-[30vw]'
+        className='relative mt-[2%] flex h-[50vh]  w-[300px] flex-col  items-center justify-center gap-4 bg-blue-50 p-2 shadow-2xl md:w-[30vw]'
       >
         <div className='flex flex-col gap-2'>
           <Badge className='w-[30%] bg-[#3F3F5F]'>Company Name</Badge>
@@ -110,7 +119,7 @@ const CompanyRegister = () => {
           type='button'
           className='btn btn-primary w-[70%]'
           onClick={registerCompanySc}
-          disabled={isLoading}
+          disabled={isLoading || isValidating}
         >
           Register
         </button>
