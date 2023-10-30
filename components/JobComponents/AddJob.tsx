@@ -8,12 +8,7 @@ import { decodeEventLog, parseEther } from 'viem';
 import { useAccount } from 'wagmi';
 import { waitForTransaction } from 'wagmi/actions';
 import { getDate } from '../../helpers';
-import {
-  recruitmentABI,
-  recruitmentAddress,
-  useFrontDoorTokenApprove,
-  useRecruitmentRegisterJob,
-} from '../../src/generated';
+import { recruitmentABI, useRecruitmentRegisterJob } from '../../src/generated';
 import JobModal from '../JobModal';
 import TextEditor from '../TextEditor';
 import { Badge } from '../ui/badge';
@@ -25,8 +20,6 @@ const AddJob = (props: Props) => {
   const router = useRouter();
   const { address }: any = useAccount();
   const { isValidating, company } = useCompany(address);
-  const { isSuccess: tokenApproved, writeAsync: approveToken } =
-    useFrontDoorTokenApprove();
   const {
     isLoading,
     isSuccess: scRegisterSuccess,
@@ -48,17 +41,6 @@ const AddJob = (props: Props) => {
 
   const showConfirmationModal = async () => {
     setJobModal(true);
-  };
-
-  const approveTokenUsage = async () => {
-    try {
-      await approveToken({
-        args: [recruitmentAddress, parseEther(jobInfo.bounty)],
-      });
-    } catch (approvalError: any) {
-      toast.error('Approval Error: ' + approvalError.message);
-      return;
-    }
   };
 
   const addJobToSC = async () => {
@@ -122,12 +104,6 @@ const AddJob = (props: Props) => {
       description: value,
     });
   };
-
-  useEffect(() => {
-    if (tokenApproved) {
-      addJobToSC();
-    }
-  }, [tokenApproved]);
 
   useEffect(() => {
     if (scRegisterSuccess && jobId) {
@@ -244,7 +220,7 @@ const AddJob = (props: Props) => {
       {jobModal && (
         <JobModal
           setModal={() => setJobModal(false)}
-          approveJob={approveTokenUsage}
+          approveJob={addJobToSC}
           jobInfo={jobInfo}
           loading={isLoading}
         />
