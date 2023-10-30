@@ -62,6 +62,7 @@ const ReferJob = ({ jobId }: Props) => {
           refId: refId,
           jobId: Number(jobId),
           refCode: refCode,
+          origin: new URL(window.location.href).origin,
         };
         try {
           emailjs
