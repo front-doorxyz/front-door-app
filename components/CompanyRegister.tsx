@@ -1,28 +1,23 @@
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import { useForm } from 'react-hook-form';
-import { useAccount } from 'wagmi';
+import { CreateCompanyItem } from '@/db/entities/company';
 import useCompany from '@/hooks/useCompanyRegistration';
-import { useRecruitmentRegisterCompany } from '../src/generated';
+import { isSuccessResponse } from '@/pages/api/companies';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
-import { isSuccessResponse } from '@/pages/api/companies';
+import { useAccount } from 'wagmi';
+import { z } from 'zod';
+import { useRecruitmentRegisterCompany } from '../src/generated';
 import { Badge } from './ui/badge';
 
-const schema = yup.object().shape({
-  companyName: yup.string().required('Company Name is required'),
-  companyEmail: yup
+const schema = z.object({
+  companyName: z
     .string()
-    .email('Invalid email')
-    .required('Email is required'),
-  companySite: yup
-    .string()
-    .matches(
-      /^(https?:\/\/)?(www\.)?([A-Za-z0-9-._~:/?#[\]@!$&'()*+,;=]|%[A-Fa-f0-9]{2})*$/,
-      'Invalid website URL'
-    )
-  });
+    .min(1, { message: 'Company Name is required' })
+    .max(255),
+  companyEmail: z.string().email({ message: 'Invalid email format' }),
+});
 
 interface FormData {
   companyName: string;
@@ -34,22 +29,21 @@ const CompanyRegister = () => {
   const router = useRouter();
   const { address } = useAccount();
   const { isRegistered } = useCompany(address);
+  const [isValidating] = useState(false);
   const { isLoading, isSuccess, writeAsync } = useRecruitmentRegisterCompany();
 
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid },
     getValues,
-  } = useForm<FormData>({
-    resolver: yupResolver(schema) as any,
-  });
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const onSubmit = async (data: FormData) => {
     if (!isRegistered) {
       try {
         await writeAsync();
-        registerCompanyDb(data); // Pass the data received from the form
+        registerCompanyDb(data);
       } catch (error) {
         console.error('Error:', error);
         toast.error('Registration Unsuccessful. Please contact support.');
@@ -60,44 +54,43 @@ const CompanyRegister = () => {
   };
 
   const registerCompanyDb = async (data: FormData) => {
-    const companyData = {
-      companyId: address as string,
-      name: data.companyName,
-      email: data.companyEmail,
-      site: data.companySite,
-    };
+    const validatedData = schema.safeParse(data);
 
-    const options = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(companyData),
-    };
+    if (validatedData.success) {
+      const companyData: CreateCompanyItem = {
+        companyId: address as string,
+        name: data.companyName,
+        email: data.companyEmail,
+        site: data.companySite,
+      };
 
-    try {
-      const response = await fetch('api/companies', options);
-      if (response.ok) {
-        const responseData = await response.json();
-        if (isSuccessResponse(responseData)) {
-          toast.success(`${responseData.item.name} Registered Successfully`);
-          router.push('/');
-        } else {
-          toast.error('Registration Unsuccessful. Please contact support.');
+      const options = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(companyData),
+      };
+
+      try {
+        const response = await fetch('api/companies', options);
+        if (response.ok) {
+          const responseData = await response.json();
+          if (isSuccessResponse(responseData)) {
+            toast.success(`${responseData.item.name} Registered Successfully`);
+            router.push('/');
+          } else {
+            toast.error('Registration Unsuccessful. Please contact support.');
+          }
         }
+      } catch (error) {
+        console.error('Error:', error);
+        toast.error('Registration Unsuccessful. Please contact support.');
       }
-    } catch (error) {
-      console.error('Error:', error);
-      toast.error('Registration Unsuccessful. Please contact support.');
+    } else {
+      toast.error('Invalid input. Please check the form.');
     }
   };
-
-
-  useEffect(() => {
-    if (isSuccess) {
-      const formData = getValues();
-      registerCompanyDb(formData);    }
-  }, [isSuccess]);
 
   return (
     <>
@@ -110,30 +103,39 @@ const CompanyRegister = () => {
               {...register('companyName')}
               className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
             />
-            {errors.companyName && <span className="text-red-500">{errors.companyName.message}</span>}
+            {errors.companyName && (
+              <span className='text-red-500'>{errors.companyName.message}</span>
+            )}
           </div>
           <div className='flex flex-col gap-2'>
-            <Badge className='w-[30%] bg-[#3F3F5F] mt-5'>Email</Badge>
+            <Badge className='mt-5 w-[30%] bg-[#3F3F5F]'>Email</Badge>
 
             <input
               type='text'
               {...register('companyEmail')}
               className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
             />
-            {errors.companyEmail && <span className="text-red-500">{errors.companyEmail.message}</span>}
+            {errors.companyEmail && (
+              <span className='text-red-500'>
+                {errors.companyEmail.message}
+              </span>
+            )}
           </div>
           <div className='flex flex-col gap-2'>
-            <Badge className='w-[30%] bg-[#3F3F5F] mt-5'>Website</Badge>
+            <Badge className='mt-5 w-[30%] bg-[#3F3F5F]'>Website</Badge>
             <input
               type='text'
               {...register('companySite')}
               className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
             />
-            {errors.companySite && <span className="text-red-500">{errors.companySite.message}</span>}
+            {errors.companySite && (
+              <span className='text-red-500'>{errors.companySite.message}</span>
+            )}
           </div>
-          <button type='submit' 
-          className='btn btn-primary w-[100%] mt-5'
-          disabled={isLoading}
+          <button
+            type='submit'
+            className='btn btn-primary mt-5 w-[100%]'
+            disabled={isLoading || isValidating || !isValid}
           >
             Register
           </button>
