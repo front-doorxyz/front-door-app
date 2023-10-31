@@ -57,23 +57,6 @@ const CompanyRegister = () => {
     }
   };
 
-
-  // const registerCompanySc = async () => {
-  //   if (isRegistered) {
-  //     toast.error('Wallet address is already registered');
-  //     return;
-  //   }
-
-  //   try {
-  //     await writeAsync();
-
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //     toast.error(`Registration Unsuccessful. Please contact support.`);
-  //   }
-  // };
-
-
   const registerCompanyDb = async (data: FormData) => {
     const companyData = {
       companyId: address as string,
