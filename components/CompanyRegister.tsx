@@ -18,9 +18,11 @@ const schema = yup.object().shape({
     .required('Email is required'),
   companySite: yup
     .string()
-    .url('Invalid website URL')
-    .required('Website is required'),
-});
+    .matches(
+      /^(https?:\/\/)?(www\.)?([A-Za-z0-9-._~:/?#[\]@!$&'()*+,;=]|%[A-Fa-f0-9]{2})*$/,
+      'Invalid website URL'
+    )
+  });
 
 interface FormData {
   companyName: string;
@@ -40,7 +42,7 @@ const CompanyRegister = () => {
     formState: { errors },
     getValues,
   } = useForm<FormData>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schema) as any,
   });
 
   const onSubmit = async (data: FormData) => {
