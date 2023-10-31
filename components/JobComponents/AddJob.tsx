@@ -5,10 +5,15 @@ import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { decodeEventLog, parseEther } from 'viem';
-import { useAccount } from 'wagmi';
+import { useAccount, useContractWrite, useWaitForTransaction } from 'wagmi';
 import { waitForTransaction } from 'wagmi/actions';
-import { getDate } from '../../helpers';
-import { recruitmentABI, useRecruitmentRegisterJob } from '../../src/generated';
+import { getDate, isTransactionalError } from '../../helpers';
+import {
+  recruitmentABI,
+  recruitmentAddress,
+  usePrepareFrontDoorTokenApprove,
+  useRecruitmentRegisterJob,
+} from '../../src/generated';
 import JobModal from '../JobModal';
 import TextEditor from '../TextEditor';
 import { Badge } from '../ui/badge';
@@ -17,15 +22,6 @@ import { Button } from '../ui/button';
 type Props = {};
 
 const AddJob = (props: Props) => {
-  const router = useRouter();
-  const { address }: any = useAccount();
-  const { isValidating, company } = useCompany(address);
-  const {
-    isLoading,
-    isSuccess: scRegisterSuccess,
-    writeAsync: scRegisterJob,
-  } = useRecruitmentRegisterJob();
-
   const [jobId, setJobId] = useState<string>();
   const [jobModal, setJobModal] = useState<boolean>(false);
   const [jobInfo, setJobInfo] = useState<any>({
@@ -38,6 +34,43 @@ const AddJob = (props: Props) => {
     skills: '',
     langaugeSpoken: '',
   });
+
+  const router = useRouter();
+  const { address }: any = useAccount();
+  const { isValidating, company } = useCompany(address);
+  const {
+    isLoading,
+    isSuccess: scRegisterSuccess,
+    writeAsync: scRegisterJob,
+  } = useRecruitmentRegisterJob();
+
+  const { config: preparedTokenConfig } = usePrepareFrontDoorTokenApprove({
+    args: [recruitmentAddress, parseEther(jobInfo.bounty)],
+  });
+  const { data, writeAsync: approveToken } =
+    useContractWrite(preparedTokenConfig);
+  const { isSuccess: tokenApproved, isLoading: isApproving } =
+    useWaitForTransaction({
+      hash: data?.hash,
+    });
+
+  const approveTokenUsage = async () => {
+    try {
+      if (!approveToken) {
+        toast.error('Approval Error: Unexpected please contact support');
+        return;
+      }
+      await approveToken();
+    } catch (error: unknown) {
+      if (isTransactionalError(error)) {
+        toast.error('Approval Error: Token approval denied');
+        return;
+      } else {
+        console.error(error);
+        toast.error('Approval Error: unexpected error. Please contact support');
+      }
+    }
+  };
 
   const showConfirmationModal = async () => {
     setJobModal(true);
@@ -104,6 +137,12 @@ const AddJob = (props: Props) => {
       description: value,
     });
   };
+
+  useEffect(() => {
+    if (tokenApproved) {
+      addJobToSC();
+    }
+  }, [tokenApproved]);
 
   useEffect(() => {
     if (scRegisterSuccess && jobId) {
@@ -212,7 +251,7 @@ const AddJob = (props: Props) => {
       <Button
         className='md:text-md rounded-[5px] bg-[#3F007F] px-6 py-2 text-sm  uppercase text-white'
         onClick={showConfirmationModal}
-        disabled={isLoading || isValidating || !company}
+        disabled={isLoading || isValidating || !company || !approveToken}
       >
         Register Job
       </Button>
@@ -220,9 +259,15 @@ const AddJob = (props: Props) => {
       {jobModal && (
         <JobModal
           setModal={() => setJobModal(false)}
-          approveJob={addJobToSC}
+          approveJob={approveTokenUsage}
           jobInfo={jobInfo}
-          loading={isLoading}
+          loading={
+            isLoading ||
+            isValidating ||
+            !company ||
+            !approveToken ||
+            isApproving
+          }
         />
       )}
     </div>
