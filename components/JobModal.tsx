@@ -1,6 +1,7 @@
 import { JobProps } from '@/types';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { useEffect, useState } from 'react';
+import { Button } from './ui/button';
 
 type Props = {
   setModal: (value: boolean) => void;
@@ -74,13 +75,13 @@ const JobModal = ({ approveJob, jobInfo, setModal, loading }: Props) => {
           </div>
         </div>
         <div id='confirm' className='mt-4 text-center'>
-          <button
+          <Button
             className={`btn btn-primary`}
             disabled={loading}
             onClick={approveJob}
           >
             {!loading ? 'Confirm Job' : 'Loading'}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

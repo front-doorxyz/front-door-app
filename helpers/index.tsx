@@ -8,6 +8,7 @@ import {
   MapPinIcon,
   User2Icon,
 } from 'lucide-react';
+import { TransactionExecutionError } from 'viem';
 
 export const truncateDescription = (text: string, maxWords: number): string => {
   // Regular expression to match words and special characters
@@ -85,3 +86,10 @@ export const getSummaryItems = (jobInfo: any) => {
   }
   return wantedKeys;
 };
+
+export const isTransactionalError = (
+  error: any
+): error is TransactionExecutionError =>
+  typeof error === 'object' &&
+  error !== null &&
+  error.name === 'TransactionExecutionError';
