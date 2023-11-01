@@ -336,6 +336,25 @@ export const abi = [
   {
     "inputs": [
       {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
+      }
+    ],
+    "name": "JobIdtoTeferralCodeList",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "",
         "type": "address"
@@ -378,9 +397,9 @@ export const abi = [
         "type": "address"
       },
       {
-        "internalType": "uint40",
+        "internalType": "uint256",
         "name": "timeOfHiring",
-        "type": "uint40"
+        "type": "uint256"
       },
       {
         "internalType": "uint16",
@@ -437,9 +456,9 @@ export const abi = [
         "type": "address"
       },
       {
-        "internalType": "uint40",
+        "internalType": "uint256",
         "name": "timeOfHiring",
-        "type": "uint40"
+        "type": "uint256"
       },
       {
         "internalType": "uint16",
@@ -670,6 +689,11 @@ export const abi = [
         "internalType": "uint256",
         "name": "_jobId",
         "type": "uint256"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "_referralCode",
+        "type": "bytes32"
       }
     ],
     "name": "confirmReferral",
@@ -726,9 +750,9 @@ export const abi = [
             "type": "uint256"
           },
           {
-            "internalType": "uint40",
+            "internalType": "uint256",
             "name": "timeAtWhichJobCreated",
-            "type": "uint40"
+            "type": "uint256"
           },
           {
             "internalType": "uint16",
@@ -792,9 +816,9 @@ export const abi = [
             "type": "address"
           },
           {
-            "internalType": "uint40",
+            "internalType": "uint256",
             "name": "timeOfHiring",
-            "type": "uint40"
+            "type": "uint256"
           },
           {
             "internalType": "uint16",
@@ -853,9 +877,9 @@ export const abi = [
             "type": "address"
           },
           {
-            "internalType": "uint40",
+            "internalType": "uint256",
             "name": "timeOfHiring",
-            "type": "uint40"
+            "type": "uint256"
           },
           {
             "internalType": "uint16",
@@ -914,9 +938,9 @@ export const abi = [
             "type": "address"
           },
           {
-            "internalType": "uint40",
+            "internalType": "uint256",
             "name": "timeOfHiring",
-            "type": "uint40"
+            "type": "uint256"
           },
           {
             "internalType": "uint16",
@@ -1169,9 +1193,9 @@ export const abi = [
         "type": "address"
       },
       {
-        "internalType": "uint40",
+        "internalType": "uint256",
         "name": "timeOfHiring",
-        "type": "uint40"
+        "type": "uint256"
       },
       {
         "internalType": "uint16",
@@ -1218,9 +1242,9 @@ export const abi = [
         "type": "uint256"
       },
       {
-        "internalType": "uint40",
+        "internalType": "uint256",
         "name": "timeAtWhichJobCreated",
-        "type": "uint40"
+        "type": "uint256"
       },
       {
         "internalType": "uint16",
@@ -1259,6 +1283,54 @@ export const abi = [
         "internalType": "address",
         "name": "",
         "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "referralCodeList",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "code",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "expirationDate",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "isUsed",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "name": "referralCodeToJobId",
+    "outputs": [
+      {
+        "internalType": "uint16",
+        "name": "",
+        "type": "uint16"
       }
     ],
     "stateMutability": "view",
@@ -1343,9 +1415,9 @@ export const abi = [
             "type": "address"
           },
           {
-            "internalType": "uint40",
+            "internalType": "uint256",
             "name": "timeOfHiring",
-            "type": "uint40"
+            "type": "uint256"
           },
           {
             "internalType": "uint16",
@@ -1385,9 +1457,9 @@ export const abi = [
             "type": "uint256"
           },
           {
-            "internalType": "uint40",
+            "internalType": "uint256",
             "name": "timeAtWhichJobCreated",
-            "type": "uint40"
+            "type": "uint256"
           },
           {
             "internalType": "uint16",
@@ -1420,14 +1492,19 @@ export const abi = [
         "type": "tuple"
       },
       {
-        "internalType": "uint40",
-        "name": "timeAtWhichReferralStarted",
-        "type": "uint40"
+        "internalType": "bytes32",
+        "name": "referralCode",
+        "type": "bytes32"
       },
       {
-        "internalType": "uint40",
+        "internalType": "uint256",
+        "name": "timeAtWhichReferralStarted",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
         "name": "referralEnd",
-        "type": "uint40"
+        "type": "uint256"
       },
       {
         "internalType": "uint16",
@@ -1437,11 +1514,6 @@ export const abi = [
       {
         "internalType": "bool",
         "name": "isConfirmed",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "confirmed",
         "type": "bool"
       }
     ],
@@ -1547,6 +1619,11 @@ export const abi = [
       {
         "internalType": "bytes32",
         "name": "refereeMail",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "referralCode",
         "type": "bytes32"
       }
     ],

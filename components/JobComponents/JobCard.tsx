@@ -1,19 +1,25 @@
 import { truncateDescription } from '@/helpers';
-import Image from 'next/image';
 import { useRouter } from 'next/router';
-import { JobProps } from '../../types';
 import StarRating from '../StarRating';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 
+export type JobCardProps = {
+  id: string;
+  roleTitle: string;
+  description: string;
+  companyName: string;
+  bounty: string;
+  skills: string[];
+};
 const JobCard = ({
   id,
   roleTitle,
-  location,
+  skills,
   description = '',
   companyName,
   bounty,
-}: Partial<JobProps>) => {
+}: JobCardProps) => {
   const router = useRouter();
 
   return (
@@ -24,7 +30,7 @@ const JobCard = ({
             <div className='bacground-pattern'></div>
           </div>
           <Badge className='self-start bg-[#5F9FFF]'>
-            {'Bounty: ' + '$' + Math.floor(100 + Math.random() * 900)}
+            {'Bounty: ' + '$' + bounty}
           </Badge>
         </div>
 
@@ -40,17 +46,16 @@ const JobCard = ({
           </p>
         </div>
 
-        <div className='mb-7 flex justify-start gap-2'>
-          <Badge className='bg-[#3F3F5F]'>
-            <div className=' truncate'>{location}</div>
-          </Badge>
-          <Badge className='bg-[#3F3F5F]'>
-            <div className='truncate'>Mid Level</div>
-          </Badge>
-          <Badge className='bg-[#3F3F5F]'>
-            <div className='truncate'>English</div>
-          </Badge>
-        </div>
+        {skills.length ? (
+          <div className='mb-7 flex justify-start gap-2'>
+            {skills.map((skill) => (
+              <Badge key={skill} className='bg-[#3F3F5F]'>
+                <div>{skill}</div>
+              </Badge>
+            ))}
+          </div>
+        ) : null}
+
         <Button
           onClick={() => router.push(`/job/${id}`)}
           className='bg-[#3F007F]'

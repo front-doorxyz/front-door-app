@@ -1,43 +1,33 @@
-import React, { useState } from 'react';
+import { CreateReferrerItem } from '@/db/entities/referrer';
+import useReferrer from '@/hooks/useReferrer';
+import { isSuccessResponse } from '@/pages/api/referrers';
+import { useRecruitmentRegisterReferrer } from '@/src/generated';
 import { useRouter } from 'next/router';
-import { useAccount, useContractWrite } from 'wagmi';
-import * as eth from '@polybase/eth';
-import usePolybase from '../hooks/usePolybase';
-import { recruitmentABI, recruitmentAddress } from '../src/generated';
+import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { toBytes, keccak256 } from 'viem';
+import { keccak256, toBytes } from 'viem';
+import { useAccount } from 'wagmi';
 import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 
 const ReferrerRegister = () => {
   const router = useRouter();
   const { address }: any = useAccount();
-  const { registerReferrer } = usePolybase(async (data: string) => {
-    const sig = await eth.sign(data, address);
-    return { h: 'eth-personal-sign', sig };
-  });
+  const { isValidating, isRegistered } = useReferrer(address);
+  const { isLoading, isSuccess, writeAsync } = useRecruitmentRegisterReferrer();
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState<string>('');
-  const [hashEmail, setHashEmail] = useState<`0x${string}`>('0x');
-
-  const handleNameChange = (event: any) => {
-    setName(event.target.value);
-  };
-
-  const handleEmailChange = (event: any) => {
-    setHashEmail(keccak256(toBytes(event.target.value)));
-    setEmail(event.target.value);
-  };
-
-  const { data, isLoading, isSuccess, writeAsync } = useContractWrite({
-    abi: recruitmentABI,
-    address: recruitmentAddress,
-    functionName: 'registerReferrer',
-  });
 
   const registerReferrerSc = async () => {
+    if (isRegistered) {
+      toast.success('Already Registered!');
+      router.push('/');
+      return;
+    }
     try {
-      const referrerData = [address, name, email];
-      if (hashEmail) {
+      if (email) {
+        const hashEmail = keccak256(toBytes(email));
         await writeAsync({
           args: [hashEmail],
         });
@@ -45,19 +35,56 @@ const ReferrerRegister = () => {
         toast.error('No email supplied');
         return;
       }
-      if (!isSuccess) {
-        toast.error('Referrer already registered');
-      } else {
-        const referrer = await registerReferrer(referrerData);
-        if (isSuccess && referrer.id) {
-          toast.success(`${name} registered as Referrer!`);
-          router.push('/');
-        }
-      }
     } catch (e) {
       toast.error('Referrer Registration failed');
     }
   };
+
+  const registerCompanyDb = async () => {
+    const referrerData: CreateReferrerItem = {
+      walletAddress: address,
+      name,
+      email,
+    };
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(referrerData),
+    };
+
+    try {
+      const response = await fetch('api/referrers', options);
+      if (response.ok) {
+        const responseData = await response.json();
+
+        if (isSuccessResponse(responseData)) {
+          toast.success(`${responseData.item.name} Registered Successfully`);
+          router.push('/');
+        }
+      } else {
+        toast.error(`Registration Unsuccessful. Please contact support.`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error(`Registration Unsuccessful. Please contact support.`);
+    }
+  };
+
+  const handleNameChange = (event: any) => {
+    setName(event.target.value);
+  };
+
+  const handleEmailChange = (event: any) => {
+    setEmail(event.target.value);
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      registerCompanyDb();
+    }
+  }, [isSuccess]);
 
   return (
     <>
@@ -85,14 +112,14 @@ const ReferrerRegister = () => {
           />
         </div>
 
-        <button
+        <Button
           type='button'
           className='btn btn-primary w-[70%]'
           onClick={registerReferrerSc}
-          disabled={isLoading}
+          disabled={isLoading || isValidating}
         >
           Register
-        </button>
+        </Button>
       </div>
     </>
   );

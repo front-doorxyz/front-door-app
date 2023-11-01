@@ -1,23 +1,58 @@
-import React, { useState } from 'react';
+import { CandidateItem } from '@/db/entities/candidate';
+import useCandidate from '@/hooks/useCandidate';
 import { useRouter } from 'next/router';
-import { useAccount, useContractWrite } from 'wagmi';
-import * as eth from '@polybase/eth';
-import usePolybase from '../hooks/usePolybase';
-import { recruitmentABI, recruitmentAddress } from '../src/generated';
+import { useState } from 'react';
 import { toast } from 'react-toastify';
-import { toBytes, keccak256 } from 'viem';
+import { useAccount } from 'wagmi';
 import { Badge } from './ui/badge';
+import { Button } from './ui/button';
 
 const CandidateRegister = () => {
   const router = useRouter();
   const { address }: any = useAccount();
-  const { registerCandidate } = usePolybase(async (data: string) => {
-    const sig = await eth.sign(data, address);
-    return { h: 'eth-personal-sign', sig };
-  });
+  const { isValidating, isRegistered } = useCandidate(address);
+
   const [name, setName] = useState('');
   const [email, setEmail] = useState<string>('');
   const [site, setSite] = useState('');
+
+  const registerCandidate = async () => {
+    if (isRegistered) {
+      toast.success('Already Registered!');
+      router.push('/');
+      return;
+    }
+
+    const candidateData = { walletAddress: address, name, email, site };
+    await registerCandidateDB(candidateData);
+  };
+
+  const registerCandidateDB = async (candidateData: CandidateItem) => {
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(candidateData),
+    };
+
+    try {
+      const response = await fetch('api/candidates', options);
+      if (response.ok) {
+        const responseData = (await response.json()) as { item: CandidateItem };
+        console.log(responseData);
+        if (responseData.item.name) {
+          toast.success(`${responseData.item.name} Registered Successfully`);
+          router.push('/');
+        }
+      } else {
+        toast.error(`Registration Unsuccessful. Please contact support.`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error(`Registration Unsuccessful. Please contact support.`);
+    }
+  };
 
   const handleNameChange = (event: any) => {
     setName(event.target.value);
@@ -29,19 +64,6 @@ const CandidateRegister = () => {
 
   const handleEmailChange = (event: any) => {
     setEmail(event.target.value);
-  };
-
-  const registerCandidateDB = async () => {
-    try {
-      const candidateData = [address, name, email, site];
-      const candidate = await registerCandidate(candidateData);
-      if (candidate.id) {
-        toast.success(`${name} registered as Candidate!`);
-        router.push('/');
-      }
-    } catch (e) {
-      toast.error('Candidate Registeration failed');
-    }
   };
 
   return (
@@ -78,13 +100,14 @@ const CandidateRegister = () => {
           />
         </div>
 
-        <button
+        <Button
           type='button'
           className='btn btn-primary w-[70%]'
-          onClick={registerCandidateDB}
+          onClick={registerCandidate}
+          disabled={isValidating}
         >
           Register
-        </button>
+        </Button>
       </div>
     </>
   );
