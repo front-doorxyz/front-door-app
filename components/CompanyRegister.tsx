@@ -28,13 +28,13 @@ type FormData = z.infer<typeof schema>;
 const CompanyRegister = () => {
   const router = useRouter();
   const { address } = useAccount();
-  const { isRegistered } = useCompany(address);
-  const [isValidating, setIsValidating] = useState(false);
+  const { isValidating, isRegistered } = useCompany(address);
   const { isLoading, isSuccess, writeAsync } = useRecruitmentRegisterCompany();
 
   const {
     register,
     handleSubmit,
+    getValues,
     formState: { errors, isValid },
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
@@ -42,7 +42,6 @@ const CompanyRegister = () => {
     if (!isRegistered) {
       try {
         await writeAsync();
-        registerCompanyDb(data);
       } catch (error) {
         console.error('Error:', error);
         toast.error('Registration Unsuccessful. Please contact support.');
@@ -86,8 +85,11 @@ const CompanyRegister = () => {
   };
 
   useEffect(() => {
-    setIsValidating(false);
-  })
+    if (isSuccess) {
+      const formData = getValues();
+      registerCompanyDb(formData);     }
+  }, [isSuccess]);
+
 
   return (
     <>
