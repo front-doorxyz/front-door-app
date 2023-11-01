@@ -3,15 +3,13 @@ import useCompany from '@/hooks/useCompanyRegistration';
 import { isSuccessResponse } from '@/pages/api/companies';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useEffect } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useAccount } from 'wagmi';
 import { z } from 'zod';
 import { useRecruitmentRegisterCompany } from '../src/generated';
 import { Badge } from './ui/badge';
-import { SubmitHandler } from 'react-hook-form';
-
 
 const schema = z.object({
   companyName: z
@@ -19,11 +17,10 @@ const schema = z.object({
     .min(1, { message: 'Company Name is required' })
     .max(255),
   companyEmail: z.string().email({ message: 'Invalid email format' }),
-  companySite: z.string().default(""),
+  companySite: z.string().default(''),
 });
 
 type FormData = z.infer<typeof schema>;
-
 
 const CompanyRegister = () => {
   const router = useRouter();
@@ -39,7 +36,7 @@ const CompanyRegister = () => {
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
-    if (!isRegistered) {
+    if (!isRegistered && isValid) {
       try {
         await writeAsync();
       } catch (error) {
@@ -52,44 +49,44 @@ const CompanyRegister = () => {
   };
 
   const registerCompanyDb = async (data: FormData) => {
-      const companyData: CreateCompanyItem = {
-        companyId: address as string,
-        name: data.companyName,
-        email: data.companyEmail,
-        site: data.companySite,
-      };
+    const companyData: CreateCompanyItem = {
+      companyId: address as string,
+      name: data.companyName,
+      email: data.companyEmail,
+      site: data.companySite,
+    };
 
-      const options = {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(companyData),
-      };
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(companyData),
+    };
 
-      try {
-        const response = await fetch('api/companies', options);
-        if (response.ok) {
-          const responseData = await response.json();
-          if (isSuccessResponse(responseData)) {
-            toast.success(`${responseData.item.name} Registered Successfully`);
-            router.push('/');
-          } else {
-            toast.error('Registration Unsuccessful. Please contact support.');
-          }
+    try {
+      const response = await fetch('api/companies', options);
+      if (response.ok) {
+        const responseData = await response.json();
+        if (isSuccessResponse(responseData)) {
+          toast.success(`${responseData.item.name} Registered Successfully`);
+          router.push('/');
+        } else {
+          toast.error('Registration Unsuccessful. Please contact support.');
         }
-      } catch (error) {
-        console.error('Error:', error);
-        toast.error('Registration Unsuccessful. Please contact support.');
       }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error('Registration Unsuccessful. Please contact support.');
+    }
   };
 
   useEffect(() => {
     if (isSuccess) {
       const formData = getValues();
-      registerCompanyDb(formData);     }
+      registerCompanyDb(formData);
+    }
   }, [isSuccess]);
-
 
   return (
     <>
@@ -115,9 +112,7 @@ const CompanyRegister = () => {
               className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
             />
             {errors.companyEmail && typeof errors.companyEmail === 'string' && (
-              <span className='text-red-500'>
-                {errors.companyEmail}
-              </span>
+              <span className='text-red-500'>{errors.companyEmail}</span>
             )}
           </div>
           <div className='flex flex-col gap-2'>
@@ -134,7 +129,7 @@ const CompanyRegister = () => {
           <button
             type='submit'
             className='btn btn-primary mt-5 w-[100%]'
-            disabled={isLoading || isValidating || !isValid}
+            disabled={isLoading || isValidating}
           >
             Register
           </button>
