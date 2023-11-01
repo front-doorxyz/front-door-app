@@ -10,6 +10,8 @@ import { useAccount } from 'wagmi';
 import { z } from 'zod';
 import { useRecruitmentRegisterCompany } from '../src/generated';
 import { Badge } from './ui/badge';
+import { SubmitHandler } from 'react-hook-form';
+
 
 const schema = z.object({
   companyName: z
@@ -17,29 +19,26 @@ const schema = z.object({
     .min(1, { message: 'Company Name is required' })
     .max(255),
   companyEmail: z.string().email({ message: 'Invalid email format' }),
+  companySite: z.string().default(""),
 });
 
-interface FormData {
-  companyName: string;
-  companyEmail: string;
-  companySite: string;
-}
+type FormData = z.infer<typeof schema>;
+
 
 const CompanyRegister = () => {
   const router = useRouter();
   const { address } = useAccount();
   const { isRegistered } = useCompany(address);
-  const [isValidating] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
   const { isLoading, isSuccess, writeAsync } = useRecruitmentRegisterCompany();
 
   const {
     register,
     handleSubmit,
     formState: { errors, isValid },
-    getValues,
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  const onSubmit = async (data: FormData) => {
+  const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
     if (!isRegistered) {
       try {
         await writeAsync();
@@ -54,9 +53,6 @@ const CompanyRegister = () => {
   };
 
   const registerCompanyDb = async (data: FormData) => {
-    const validatedData = schema.safeParse(data);
-
-    if (validatedData.success) {
       const companyData: CreateCompanyItem = {
         companyId: address as string,
         name: data.companyName,
@@ -87,10 +83,11 @@ const CompanyRegister = () => {
         console.error('Error:', error);
         toast.error('Registration Unsuccessful. Please contact support.');
       }
-    } else {
-      toast.error('Invalid input. Please check the form.');
-    }
   };
+
+  useEffect(() => {
+    setIsValidating(false);
+  })
 
   return (
     <>
@@ -103,8 +100,8 @@ const CompanyRegister = () => {
               {...register('companyName')}
               className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
             />
-            {errors.companyName && (
-              <span className='text-red-500'>{errors.companyName.message}</span>
+            {errors.companyName && typeof errors.companyName === 'string' && (
+              <span className='text-red-500'>{errors.companyName}</span>
             )}
           </div>
           <div className='flex flex-col gap-2'>
@@ -115,9 +112,9 @@ const CompanyRegister = () => {
               {...register('companyEmail')}
               className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
             />
-            {errors.companyEmail && (
+            {errors.companyEmail && typeof errors.companyEmail === 'string' && (
               <span className='text-red-500'>
-                {errors.companyEmail.message}
+                {errors.companyEmail}
               </span>
             )}
           </div>
@@ -128,8 +125,8 @@ const CompanyRegister = () => {
               {...register('companySite')}
               className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
             />
-            {errors.companySite && (
-              <span className='text-red-500'>{errors.companySite.message}</span>
+            {errors.companySite && typeof errors.companySite === 'string' && (
+              <span className='text-red-500'>{errors.companySite}</span>
             )}
           </div>
           <button
