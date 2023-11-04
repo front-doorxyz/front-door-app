@@ -1,4 +1,5 @@
 import { Referral, ReferralItem } from '@/db/entities/referral';
+import { checkParams } from '@/helpers';
 
 import type { NextApiRequest, NextApiResponse } from 'next';
 
@@ -10,24 +11,16 @@ export default async function handler(
 ) {
   if (req.method === 'GET') {
     const { email, referralId, jobId } = req.query;
-
-    if (
-      !email ||
-      Array.isArray(email) ||
-      !referralId ||
-      Array.isArray(referralId) ||
-      !jobId ||
-      Array.isArray(jobId)
-    ) {
+    if (!checkParams(email, referralId, jobId)) {
       return res.status(400).json({
         error: 'The request is malformed. Only one referral can be requested',
       });
     }
     try {
       const result = await Referral.get({
-        refId: parseInt(referralId),
-        jobId: parseInt(jobId),
-        email,
+        refId: parseInt(referralId as string),
+        jobId: parseInt(jobId as string),
+        email: email as string,
       }).go();
 
       if (result.data) {
@@ -43,25 +36,16 @@ export default async function handler(
     const { email, referralId, jobId } = req.query;
     const { status } = req.body;
 
-    if (
-      !email ||
-      Array.isArray(email) ||
-      !referralId ||
-      Array.isArray(referralId) ||
-      !jobId ||
-      Array.isArray(jobId) ||
-      !status ||
-      Array.isArray(status)
-    ) {
+    if (!checkParams(email, referralId, jobId, status)) {
       return res.status(400).json({
         error: 'The request is malformed. Only one referral can be requested',
       });
     }
     try {
       const result = await Referral.update({
-        email,
-        refId: parseInt(referralId),
-        jobId: parseInt(jobId),
+        refId: parseInt(referralId as string),
+        jobId: parseInt(jobId as string),
+        email: email as string,
       })
         .set({ status })
         .go({

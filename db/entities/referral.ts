@@ -1,4 +1,4 @@
-import { Entity, EntityItem } from 'electrodb';
+import { CreateEntityItem, Entity, EntityItem, QueryResponse } from 'electrodb';
 import { DB_CLIENT as client } from '../client';
 
 const table = process.env.DATABASE_TABLE_NAME;
@@ -17,6 +17,10 @@ export const Referral = new Entity(
       },
       refId: {
         type: 'number',
+        required: true,
+      },
+      walletAddress: {
+        type: 'string',
         required: true,
       },
       jobId: {
@@ -43,11 +47,22 @@ export const Referral = new Entity(
           composite: [],
         },
       },
+      referrer: {
+        index: 'gsi2pk-gsi2sk-index',
+        pk: {
+          field: 'gsi2pk',
+          composite: ['walletAddress'],
+        },
+        sk: {
+          field: 'gsi2sk',
+          composite: [],
+        },
+      },
     },
   },
   { client, table }
 );
 
 export type ReferralItem = EntityItem<typeof Referral>;
-// export type CreateTaskItem = CreateEntityItem<typeof task>;
-// export type TaskQueryResponse = QueryResponse<typeof task>;
+export type CreateReferralItem = CreateEntityItem<typeof Referral>;
+export type ReferralQueryResponse = QueryResponse<typeof Referral>;
