@@ -3,10 +3,10 @@ import { DB_CLIENT as client } from '../client';
 
 const table = process.env.DATABASE_TABLE_NAME;
 
-export const Referee = new Entity(
+export const Referral = new Entity(
   {
     model: {
-      entity: 'Referee',
+      entity: 'Referral',
       version: '1',
       service: 'frontDoor',
     },
@@ -16,10 +16,14 @@ export const Referee = new Entity(
         required: true,
       },
       refId: {
-        type: 'string',
+        type: 'number',
         required: true,
       },
       jobId: {
+        type: 'number',
+        required: true,
+      },
+      refCode: {
         type: 'string',
         required: true,
       },
@@ -29,10 +33,10 @@ export const Referee = new Entity(
       },
     },
     indexes: {
-      candidate: {
+      referral: {
         pk: {
           field: 'pk',
-          composite: ['email'],
+          composite: ['email', 'jobId', 'refId'],
         },
         sk: {
           field: 'sk',
@@ -44,6 +48,6 @@ export const Referee = new Entity(
   { client, table }
 );
 
-export type RefereeItem = EntityItem<typeof Referee>;
+export type ReferralItem = EntityItem<typeof Referral>;
 // export type CreateTaskItem = CreateEntityItem<typeof task>;
 // export type TaskQueryResponse = QueryResponse<typeof task>;

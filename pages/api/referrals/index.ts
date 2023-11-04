@@ -1,4 +1,4 @@
-import { Referee, RefereeItem } from '@/db/entities/referee';
+import { Referral, ReferralItem } from '@/db/entities/referral';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 type Error = {
@@ -7,7 +7,7 @@ type Error = {
 };
 
 type Success = {
-  item?: RefereeItem;
+  item?: ReferralItem;
 };
 
 type ResponseData = Success | Error;
@@ -18,7 +18,7 @@ export default async function handler(
 ) {
   if (req.method === 'POST') {
     try {
-      const result = await Referee.create({
+      const result = await Referral.create({
         ...req.body,
       }).go();
       res.status(200).json({ item: result.data });
