@@ -16,7 +16,10 @@ const schema = z.object({
     .string()
     .min(1, { message: 'Company Name is required' })
     .max(255),
-  companyEmail: z.string().email({ message: 'Invalid email format' }),
+  companyEmail: z
+    .string()
+    .email({ message: 'Invalid or missing email format' })
+    .min(1, { message: 'Email is required' }),
   companySite: z.string().default(''),
 });
 
@@ -99,9 +102,7 @@ const CompanyRegister = () => {
               {...register('companyName')}
               className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
             />
-            {errors.companyName && typeof errors.companyName === 'string' && (
-              <span className='text-red-500'>{errors.companyName}</span>
-            )}
+            {errors.companyName && <span className='text-red-500'>{errors.companyName.message}</span>}
           </div>
           <div className='flex flex-col gap-2'>
             <Badge className='mt-5 w-[30%] bg-[#3F3F5F]'>Email</Badge>
@@ -111,9 +112,7 @@ const CompanyRegister = () => {
               {...register('companyEmail')}
               className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
             />
-            {errors.companyEmail && typeof errors.companyEmail === 'string' && (
-              <span className='text-red-500'>{errors.companyEmail}</span>
-            )}
+            {errors.companyEmail && <span className='text-red-500'>{errors.companyEmail.message}</span>}
           </div>
           <div className='flex flex-col gap-2'>
             <Badge className='mt-5 w-[30%] bg-[#3F3F5F]'>Website</Badge>
@@ -122,9 +121,7 @@ const CompanyRegister = () => {
               {...register('companySite')}
               className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
             />
-            {errors.companySite && typeof errors.companySite === 'string' && (
-              <span className='text-red-500'>{errors.companySite}</span>
-            )}
+            {errors.companySite && <span className='text-red-500'>{errors.companySite.message}</span>}
           </div>
           <button
             type='submit'
