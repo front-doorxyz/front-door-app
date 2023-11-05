@@ -9,7 +9,6 @@ export default async function handler(
 ) {
   if (req.method === 'GET') {
     const { referrerId } = req.query;
-    console.log(req.query);
     if (!referrerId || Array.isArray(referrerId)) {
       return res.status(400).json({
         error:
