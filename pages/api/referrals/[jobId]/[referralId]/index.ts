@@ -10,17 +10,17 @@ export default async function handler(
   res: NextApiResponse<ResponseData>
 ) {
   if (req.method === 'GET') {
-    const { email, referralId, jobId } = req.query;
-    if (!checkParams(email, referralId, jobId)) {
+    const { refererAddress, referralId, jobId } = req.query;
+    if (!checkParams(refererAddress, referralId, jobId)) {
       return res.status(400).json({
         error: 'The request is malformed. Only one referral can be requested',
       });
     }
     try {
       const result = await Referral.get({
-        refId: parseInt(referralId as string),
+        refererAddress: refererAddress as string,
         jobId: parseInt(jobId as string),
-        email: email as string,
+        refId: parseInt(referralId as string),
       }).go();
 
       if (result.data) {
@@ -33,10 +33,10 @@ export default async function handler(
       res.status(500);
     }
   } else if (req.method === 'PUT') {
-    const { email, referralId, jobId } = req.query;
+    const { refererAddress, referralId, jobId } = req.query;
     const { status } = req.body;
 
-    if (!checkParams(email, referralId, jobId, status)) {
+    if (!checkParams(refererAddress, referralId, jobId, status)) {
       return res.status(400).json({
         error: 'The request is malformed. Only one referral can be requested',
       });
@@ -45,7 +45,7 @@ export default async function handler(
       const result = await Referral.update({
         refId: parseInt(referralId as string),
         jobId: parseInt(jobId as string),
-        email: email as string,
+        refererAddress: refererAddress as string,
       })
         .set({ status })
         .go({

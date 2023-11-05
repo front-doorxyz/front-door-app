@@ -19,7 +19,7 @@ export const Referral = new Entity(
         type: 'number',
         required: true,
       },
-      walletAddress: {
+      refererAddress: {
         type: 'string',
         required: true,
       },
@@ -40,22 +40,11 @@ export const Referral = new Entity(
       referral: {
         pk: {
           field: 'pk',
-          composite: ['email', 'jobId', 'refId'],
+          composite: ['refererAddress'],
         },
         sk: {
           field: 'sk',
-          composite: [],
-        },
-      },
-      referrer: {
-        index: 'gsi2pk-gsi2sk-index',
-        pk: {
-          field: 'gsi2pk',
-          composite: ['walletAddress'],
-        },
-        sk: {
-          field: 'gsi2sk',
-          composite: [],
+          composite: ['jobId', 'refId'],
         },
       },
     },

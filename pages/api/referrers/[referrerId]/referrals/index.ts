@@ -8,19 +8,15 @@ export default async function handler(
   res: NextApiResponse<ResponseData>
 ) {
   if (req.method === 'GET') {
-    const { referrerId } = req.query;
-    if (!referrerId || Array.isArray(referrerId)) {
+    const { refererAddress } = req.query;
+    if (!refererAddress || Array.isArray(refererAddress)) {
       return res.status(400).json({
         error:
           'The request is malformed. Only one referrer wallet address can be requested',
       });
     }
     try {
-      const result = await Referral.query
-        .referrer({
-          walletAddress: referrerId,
-        })
-        .go();
+      const result = await Referral.query.referral({ refererAddress }).go();
 
       if (result.data) {
         res.status(200).json({ items: result.data });
