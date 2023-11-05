@@ -30,6 +30,15 @@ export const getDate = () => {
   return date;
 };
 
+export const checkParams = (...params: any): boolean => {
+  for (const param of params) {
+    if (!param || typeof param === 'undefined' || Array.isArray(param)) {
+      return false;
+    }
+  }
+  return true;
+};
+
 export const isValidURL = (url: string) => {
   try {
     new URL(url);

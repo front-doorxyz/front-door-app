@@ -11,7 +11,7 @@ export default async function handler(
     const { referrerId } = req.query;
     if (!referrerId || Array.isArray(referrerId)) {
       return res.status(400).json({
-        error: 'The request is malformed. Only one comapny can be requested',
+        error: 'The request is malformed. Only one referrer can be requested',
       });
     }
     try {
@@ -22,7 +22,9 @@ export default async function handler(
       if (result.data) {
         res.status(200).json({ item: result.data });
       } else {
-        res.status(404).json({ error: 'The requested company does not exist' });
+        res
+          .status(404)
+          .json({ error: 'The requested referrer does not exist' });
       }
     } catch (error) {
       console.log(error);

@@ -32,7 +32,7 @@ export const Referrer = new Entity(
         },
         sk: {
           field: 'sk',
-          composite: [],
+          composite: ['walletAddress'],
         },
       },
     },
