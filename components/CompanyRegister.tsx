@@ -1,12 +1,29 @@
 import { CreateCompanyItem } from '@/db/entities/company';
 import useCompany from '@/hooks/useCompanyRegistration';
 import { isSuccessResponse } from '@/pages/api/companies';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { useAccount } from 'wagmi';
+import { z } from 'zod';
 import { useRecruitmentRegisterCompany } from '../src/generated';
 import { Badge } from './ui/badge';
+
+const schema = z.object({
+  companyName: z
+    .string()
+    .min(1, { message: 'Company Name is required' })
+    .max(255),
+  companyEmail: z
+    .string()
+    .email({ message: 'Invalid or missing email format' })
+    .min(1, { message: 'Email is required' }),
+  companySite: z.string().default(''),
+});
+
+type FormData = z.infer<typeof schema>;
 
 const CompanyRegister = () => {
   const router = useRouter();
@@ -14,29 +31,34 @@ const CompanyRegister = () => {
   const { isValidating, isRegistered } = useCompany(address);
   const { isLoading, isSuccess, writeAsync } = useRecruitmentRegisterCompany();
 
-  const [companyName, setCompanyName] = useState('');
-  const [companyEmail, setCompanyEmail] = useState('');
-  const [companySite, setCompanySite] = useState('');
+  const {
+    register,
+    handleSubmit,
+    getValues,
+    formState: { errors, isValid },
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  const registerCompanySc = async () => {
-    if (isRegistered) {
+  const onSubmit: SubmitHandler<FormData> = async (data: FormData) => {
+    if (!isRegistered && isValid) {
+      try {
+        await writeAsync();
+      } catch (error) {
+        console.error('Error:', error);
+        toast.error('Registration Unsuccessful. Please contact support.');
+      }
+    } else {
       toast.error('Wallet address is already registered');
-      return;
-    }
-    try {
-      await writeAsync();
-    } catch (e) {
-      toast.error('Company registration failed. Please contact support');
     }
   };
 
-  const registerCompanyDb = async () => {
+  const registerCompanyDb = async (data: FormData) => {
     const companyData: CreateCompanyItem = {
       companyId: address as string,
-      name: companyName,
-      email: companyEmail,
-      site: companySite,
+      name: data.companyName,
+      email: data.companyEmail,
+      site: data.companySite,
     };
+
     const options = {
       method: 'POST',
       headers: {
@@ -49,80 +71,66 @@ const CompanyRegister = () => {
       const response = await fetch('api/companies', options);
       if (response.ok) {
         const responseData = await response.json();
-
         if (isSuccessResponse(responseData)) {
           toast.success(`${responseData.item.name} Registered Successfully`);
           router.push('/');
+        } else {
+          toast.error('Registration Unsuccessful. Please contact support.');
         }
-      } else {
-        toast.error(`Registration Unsuccessful. Please contact support.`);
       }
     } catch (error) {
       console.error('Error:', error);
-      toast.error(`Registration Unsuccessful. Please contact support.`);
+      toast.error('Registration Unsuccessful. Please contact support.');
     }
-  };
-
-  const handleCompanyNameChange = (event: any) => {
-    setCompanyName(event.target.value);
-  };
-
-  const handleCompanyEmailChange = (event: any) => {
-    setCompanyEmail(event.target.value);
-  };
-
-  const handleCompanySiteChange = (event: any) => {
-    setCompanySite(event.target.value);
   };
 
   useEffect(() => {
     if (isSuccess) {
-      registerCompanyDb();
+      const formData = getValues();
+      registerCompanyDb(formData);
     }
   }, [isSuccess]);
 
   return (
     <>
-      <div
-        id='form'
-        className='relative mt-[2%] flex h-[50vh]  w-[300px] flex-col  items-center justify-center gap-4 bg-blue-50 p-2 shadow-2xl md:w-[30vw]'
-      >
-        <div className='flex flex-col gap-2'>
-          <Badge className='w-[30%] bg-[#3F3F5F]'>Company Name</Badge>
-          <input
-            type='text'
-            value={companyName}
-            onChange={handleCompanyNameChange}
-            className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
-          />
-        </div>
-        <div className='flex flex-col gap-2'>
-          <Badge className='w-[30%] bg-[#3F3F5F]'>Email</Badge>
-          <input
-            type='text'
-            value={companyEmail}
-            onChange={handleCompanyEmailChange}
-            className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
-          />
-        </div>
-        <div className='flex flex-col gap-2'>
-          <Badge className='w-[30%] bg-[#3F3F5F]'>Website</Badge>
-          <input
-            type='text'
-            value={companySite}
-            onChange={handleCompanySiteChange}
-            className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
-          />
-        </div>
+      <div className='relative mt-[2%] flex h-[65vh] w-[300px] flex-col items-center justify-center gap-4 bg-blue-50 p-2 shadow-2xl md:w-[30vw]'>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className='flex flex-col gap-2'>
+            <Badge className='w-[30%] bg-[#3F3F5F]'>Company Name</Badge>
+            <input
+              type='text'
+              {...register('companyName')}
+              className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
+            />
+            {errors.companyName && <span className='text-red-500'>{errors.companyName.message}</span>}
+          </div>
+          <div className='flex flex-col gap-2'>
+            <Badge className='mt-5 w-[30%] bg-[#3F3F5F]'>Email</Badge>
 
-        <button
-          type='button'
-          className='btn btn-primary w-[70%]'
-          onClick={registerCompanySc}
-          disabled={isLoading || isValidating}
-        >
-          Register
-        </button>
+            <input
+              type='text'
+              {...register('companyEmail')}
+              className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
+            />
+            {errors.companyEmail && <span className='text-red-500'>{errors.companyEmail.message}</span>}
+          </div>
+          <div className='flex flex-col gap-2'>
+            <Badge className='mt-5 w-[30%] bg-[#3F3F5F]'>Website</Badge>
+            <input
+              type='text'
+              {...register('companySite')}
+              className='h-[40px] w-[200px] rounded-lg border border-slate-500 md:w-[20vw]'
+            />
+            {errors.companySite && <span className='text-red-500'>{errors.companySite.message}</span>}
+          </div>
+          <button
+            type='submit'
+            className='btn btn-primary mt-5 w-[100%]'
+            disabled={isLoading || isValidating}
+          >
+            Register
+          </button>
+        </form>
       </div>
     </>
   );
