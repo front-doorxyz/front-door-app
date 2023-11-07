@@ -15,6 +15,12 @@ export const Candidate = new Entity(
         type: 'string',
         required: true,
       },
+      lastName: {
+        type: 'string',
+      },
+      firstName: {
+        type: 'string',
+      },
       name: {
         type: 'string',
         required: true,

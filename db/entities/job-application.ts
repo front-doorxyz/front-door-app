@@ -51,6 +51,10 @@ export const JobApplication = new Entity(
         type: 'string',
         required: true,
       },
+      date: {
+        type: 'string',
+        required: true,
+      },
     },
     indexes: {
       jobApplication: {
