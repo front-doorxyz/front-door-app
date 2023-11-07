@@ -2,9 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['picsum.photos'],
+    domains: ['picsum.photos', 'ui-avatars.com'],
   },
-  webpack: config => {
+  webpack: (config) => {
     config.resolve.fallback = { fs: false, net: false, tls: false };
     return config;
   },

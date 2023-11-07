@@ -32,5 +32,9 @@ module.exports = {
     },
   },
   darkMode: ['class'],
-  plugins: [require('tailwindcss-animate'), require('daisyui')],
+  plugins: [
+    require('tailwindcss-animate'),
+    require('daisyui'),
+    require('@tailwindcss/container-queries'),
+  ],
 };

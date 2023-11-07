@@ -25,6 +25,7 @@ export default async function handler(
       const result = await JobApplication.create({
         ...req.body,
         applicationId: ulid(),
+        date: new Date().toISOString(),
       }).go();
       res.status(200).json({ items: [result.data] });
     } catch (error: any) {
