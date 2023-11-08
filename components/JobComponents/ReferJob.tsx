@@ -1,4 +1,6 @@
+import { CreateReferralItem } from '@/db/entities/referral';
 import useReferrer from '@/hooks/useReferrer';
+import { isSuccessResponse } from '@/pages/api/referrals';
 import emailjs from 'emailjs-com';
 import { useRouter } from 'next/router';
 import React, { useState } from 'react';
@@ -57,6 +59,18 @@ const ReferJob = ({ jobId }: Props) => {
         });
         const receipt = await waitForTransaction({ hash });
         const refId = Number(receipt?.logs[0].data);
+        try{
+          await createReferralDb({
+            email:refereeMail as string,
+            refId,
+            refererAddress: address,
+            jobId:parseInt(jobId),
+            refCode,
+            status:"email"
+          })
+        }catch (e) {
+          toast.error('Referral failed');
+        }
         const emailArgs = {
           to: refereeMail,
           refId: refId,
@@ -88,6 +102,31 @@ const ReferJob = ({ jobId }: Props) => {
       }
     }
   };
+
+  const createReferralDb = async (referralData:CreateReferralItem) =>{
+ 
+    const options = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(referralData),
+    };
+
+    try {
+      const response = await fetch('../api/referrals', options);
+      if (response.ok) {
+        const responseData = await response.json();
+        if (isSuccessResponse(responseData)) {
+          return responseData;
+        }
+      } else {
+        throw new Error('error');
+      }
+    } catch (error: any) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className=''>

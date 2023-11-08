@@ -59,7 +59,38 @@ const Apply = () => {
       }
     }
   };
+  
+  const updateReferralStatusDb = async () =>{
+    const referralData = {
+      statis:"Applied"
+    }
+    const options = {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(referralData),
+    };
 
+    try {
+      const response = await fetch(`../../api/referrals/${refId}/${jobId},`, options);
+      if (response.ok) {
+        const responseData = (await response.json()) as {
+          items: JobApplicationItem[];
+        };
+        if (responseData.items.at(0)?.applicationId) {
+          toast.success(`Applied For Job Successfully!`);
+          router.push('/');
+        }
+      } else {
+        toast.error(`Registration Unsuccessful. Please contact support.`);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast.error(`Registration Unsuccessful. Please contact support.`);
+    }
+
+  }
   const registerApplicationDb = async () => {
     const jobApplicationData = {
       ...candidateApplication,

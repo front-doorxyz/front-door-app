@@ -10,6 +10,9 @@ type Success = {
   item?: ReferralItem;
 };
 
+export const isSuccessResponse = (response: any): response is Success =>
+  typeof response === 'object' && response !== null && !!response.item;
+
 type ResponseData = Success | Error;
 
 export default async function handler(

@@ -21,6 +21,7 @@ const Referrer: NextPage = () => {
               <th className="border border-blue-500 p-2">Probation End date</th>
               <th className="border border-blue-500 p-2">Rejection date</th>
               <th className="border border-blue-500 p-2">Funds received</th>
+              <th className="border border-blue-500 p-2">Candidate Review Score</th>
             </tr>
           </thead>
           <ReferrerData />

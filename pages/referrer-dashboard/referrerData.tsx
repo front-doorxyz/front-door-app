@@ -12,6 +12,7 @@ const data = [
     probationEndDate: "18/06/2023",
     rejectionDate: "18/06/2023",
     fundsReceived: "2350 USD – 100%",
+    reviewScore:"5"
   },
   {
     id: 2,
@@ -73,6 +74,7 @@ const ReferrerData = () => {
           <td className="border border-blue-500 p-2">{item.probationEndDate}</td>
           <td className="border border-blue-500 p-2">{item.rejectionDate}</td>
           <td className="border border-blue-500 p-2">{item.fundsReceived}</td>
+          <td className="border border-blue-500 p-2">{item.reviewScore}</td>
         </tr>
       ))}
     </tbody>
